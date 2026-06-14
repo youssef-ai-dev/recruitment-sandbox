@@ -30,36 +30,42 @@ No sign-up. No API keys. No server. **All processing runs client-side.**
 ## 📸 Preview
 
 <div align="center">
-
-### Empty State — Ready for Input
-<img src="public/screenshot-empty.png" alt="Recruitment Sandbox empty state" width="700">
-
-<br><br>
-
-### Sample Notes Loaded
-<img src="public/screenshot-input.png" alt="Sample notes loaded in the input panel" width="700">
-
-<br><br>
-
-### Generated Job Description
-<img src="public/screenshot-jd.png" alt="LinkedIn-ready Job Description output" width="700">
-
-<br><br>
-
-### Interview Guide with Behavioral Questions
-<img src="public/screenshot-guide.png" alt="Tailored Interview Guide with skill-tagged questions" width="700">
-
-<br><br>
-
-### Settings Panel — Language, Format & Question Count
-<img src="public/screenshot-settings.png" alt="Settings dropdown with language, format and question count" width="700">
-
-<br><br>
-
-### Mobile Responsive Layout
-<img src="public/screenshot-mobile.png" alt="Mobile responsive layout" width="250">
-
+<img src="public/preview-hero.png" alt="Recruitment Sandbox — Dark editorial UI" width="780">
 </div>
+
+<br>
+
+<table align="center">
+<tr>
+<td align="center" width="50%">
+<img src="public/preview-jd.png" alt="Generated Job Description" width="100%"><br>
+<b>LinkedIn-Ready Job Description</b><br>
+<sub>Professional sections, skill pills, EOE statement</sub>
+</td>
+<td align="center" width="50%">
+<img src="public/preview-guide.png" alt="Interview Guide" width="100%"><br>
+<b>Behavioral Interview Guide</b><br>
+<sub>Skill-tagged questions with "Listen For" criteria</sub>
+</td>
+</tr>
+</table>
+
+<br>
+
+<table align="center">
+<tr>
+<td align="center" width="33%">
+<img src="public/preview-settings.png" alt="Settings panel" width="100%"><br>
+<b>Settings</b><br>
+<sub>Language · Format · Question count</sub>
+</td>
+<td align="center" width="33%">
+<img src="public/preview-mobile.png" alt="Mobile responsive" width="260"><br>
+<b>Mobile</b><br>
+<sub>Fully responsive layout</sub>
+</td>
+</tr>
+</table>
 
 ---
 
