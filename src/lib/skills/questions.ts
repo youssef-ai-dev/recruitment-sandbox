@@ -1,141 +1,7 @@
 // ============================================================
-// HARD SKILLS DATABASE
+// QUESTION BANK — Specific matches, generic templates, fallbacks
 // ============================================================
-export const HARD_SKILLS: Record<string, string[]> = {
-  'Software Engineering': [
-    'python','java','javascript','typescript','c++','c#','go','rust',
-    'ruby','php','swift','kotlin','scala','r programming','perl'
-  ],
-  'Web Development': [
-    'react','angular','vue','next.js','nuxt','node.js','express',
-    'django','flask','spring boot','rails','laravel','fastapi',
-    'html','css','sass','rest api','graphql','webpack'
-  ],
-  'Data & Databases': [
-    'sql','postgresql','mysql','mongodb','redis','elasticsearch',
-    'cassandra','dynamodb','neo4j','oracle','sqlite','pandas',
-    'numpy','spark','hadoop','airflow','dbt','etl',
-    'data pipeline','data warehouse','data modeling'
-  ],
-  'Cloud & DevOps': [
-    'aws','azure','gcp','google cloud','docker','kubernetes',
-    'terraform','ansible','jenkins','ci/cd','circleci','gitlab',
-    'cloudformation','ecs','lambda','s3'
-  ],
-  'AI & Machine Learning': [
-    'machine learning','deep learning','tensorflow','pytorch','keras',
-    'nlp','natural language processing','computer vision',
-    'neural networks','llm','generative ai','hugging face',
-    'openai','scikit-learn','data science'
-  ],
-  'Design': [
-    'figma','sketch','adobe xd','photoshop','illustrator',
-    'indesign','ux design','ui design','wireframing','prototyping',
-    'user research','design thinking','design system','canva'
-  ],
-  'Analytics & BI': [
-    'tableau','power bi','looker','google analytics','mixpanel',
-    'amplitude','snowflake','bigquery','redshift','databricks',
-    'data analysis','data visualization','excel','spreadsheet'
-  ],
-  'Product Management': [
-    'product management','product strategy','roadmap','a/b testing',
-    'user stories','requirements gathering','agile','scrum','kanban',
-    'sprint planning','backlog','jira','asana','product analytics'
-  ],
-  'Marketing': [
-    'seo','sem','ppc','google ads','facebook ads','content marketing',
-    'social media marketing','email marketing','marketing automation',
-    'hubspot','marketo','google tag manager','growth marketing',
-    'demand generation'
-  ],
-  'Sales': [
-    'salesforce','hubspot crm','crm','pipeline management',
-    'lead generation','account management','b2b sales','b2c sales',
-    'saas sales','cold outreach','sales strategy','quota attainment'
-  ],
-  'Finance & Accounting': [
-    'financial modeling','financial analysis','budgeting','forecasting',
-    'p&l','gaap','ifrs','valuation','quickbooks','sap','erp',
-    'accounting','audit','tax'
-  ],
-  'Human Resources': [
-    'recruitment','talent acquisition','performance management',
-    'employee engagement','onboarding','compensation','benefits',
-    'hrbp','learning and development','diversity','inclusion',
-    'workforce planning'
-  ],
-  'Operations': [
-    'supply chain','logistics','process improvement','lean',
-    'six sigma','project management','vendor management',
-    'procurement','quality assurance','qa','inventory management'
-  ],
-  'Legal & Compliance': [
-    'compliance','gdpr','hipaa','sox','regulatory','contracts',
-    'legal research','intellectual property','risk management',
-    'internal audit'
-  ]
-};
 
-// ============================================================
-// SOFT SKILLS DATABASE
-// ============================================================
-export const SOFT_SKILLS: string[] = [
-  'communication','leadership','teamwork','collaboration',
-  'problem-solving','problem solving','critical thinking',
-  'creativity','innovation','adaptability','flexibility',
-  'time management','organization','attention to detail',
-  'analytical thinking','strategic thinking','decision-making',
-  'decision making','conflict resolution','negotiation',
-  'presentation','mentoring','coaching','emotional intelligence',
-  'empathy','resilience','initiative','self-motivated',
-  'self motivated','stakeholder management','cross-functional',
-  'cross functional','interpersonal','active listening',
-  'persuasion','influence','public speaking','facilitation',
-  'delegation','accountability','ownership','growth mindset',
-  'curiosity','proactive','detail-oriented','detail oriented',
-  'results-driven','results driven','data-driven','data driven',
-  'customer-centric','customer centric','verbal communication',
-  'written communication','relationship building','networking',
-  'client management','customer-facing'
-];
-
-// ============================================================
-// ACTION VERBS & ROLE KEYWORDS
-// ============================================================
-export const ACTION_VERBS: string[] = [
-  'manage','lead','develop','create','build','design','implement',
-  'oversee','coordinate','drive','establish','define','own',
-  'deliver','execute','analyze','optimize','improve','maintain',
-  'support','collaborate','partner','mentor','train','hire',
-  'scale','launch','plan','research','evaluate','assess',
-  'identify','recommend','present','report','document','ensure',
-  'facilitate','negotiate','resolve','architect','engineer',
-  'test','deploy','monitor','configure','automate','streamline',
-  'cultivate','foster','champion','spearhead','orchestrate',
-  'synthesize','translate','liaise'
-];
-
-export const ROLE_KEYWORDS: string[] = [
-  'manager','director','engineer','developer','analyst','designer',
-  'architect','specialist','coordinator','lead','head','vp','chief',
-  'officer','associate','senior','junior','principal','staff',
-  'consultant','strategist','scientist','administrator',
-  'representative','executive','advisor','technician','examiner',
-  'intern','fellow','contractor','freelancer'
-];
-
-export const SECTION_HEADERS: string[] = [
-  'responsibilities','duties','what you','what we','requirements',
-  'qualifications','skills','experience','about','overview','summary',
-  'role','position','nice to','preferred','required','must have',
-  'good to','bonus','plus','we offer','benefits','compensation',
-  'salary','location','team','company','ideal candidate','who you are'
-];
-
-// ============================================================
-// QUESTION BANK — SPECIFIC MATCHES
-// ============================================================
 interface SpecificQuestion {
   q: string;
   listen: string[];
@@ -331,6 +197,7 @@ export const SPECIFIC_QUESTIONS: Record<string, SpecificQuestion> = {
 // ============================================================
 // GENERIC QUESTION TEMPLATES
 // ============================================================
+
 export const GENERIC_HARD_TEMPLATES: ((s: string) => string)[] = [
   (s) => `Describe a project where your expertise in ${s} was critical to delivering a successful outcome. What was the challenge and how did you approach it?`,
   (s) => `Tell me about a time you had to quickly deepen your knowledge of ${s} to meet a project need. How did you manage the learning curve while delivering results?`,
@@ -358,8 +225,9 @@ export const GENERIC_SOFT_LISTEN = (s: string): string[] => [
 ];
 
 // ============================================================
-// FALLBACK QUESTIONS
+// FALLBACK QUESTIONS — 10 universal behavioral questions
 // ============================================================
+
 interface FallbackQuestion {
   skill: string;
   type: 'general';
@@ -469,12 +337,3 @@ export const FALLBACK_QUESTIONS: FallbackQuestion[] = [
     ]
   }
 ];
-
-// ============================================================
-// CONFIG
-// ============================================================
-export const CONFIG = {
-  MIN_INPUT: 15,
-  GEN_DELAY: 700,
-  MAX_QUESTIONS: 10
-};
