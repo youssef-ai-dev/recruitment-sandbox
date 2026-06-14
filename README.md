@@ -137,7 +137,7 @@ Plus 50+ soft skills including leadership, communication, stakeholder management
 
 ### 📄 LinkedIn-Ready Job Descriptions
 
-- Professional section formatting (About, Responsibilities, Requirements, Benefits)
+- Professional section formatting (About the Role, What You'll Do, What You'll Bring, Nice to Have, Key Skills, What We Offer)
 - Experience level auto-detection (years of experience, seniority)
 - Skill pills with visual tags
 - Equal Opportunity Employer statement
@@ -163,10 +163,10 @@ Plus 50+ soft skills including leadership, communication, stakeholder management
 
 ### ⚡ Client-Side Processing
 
-- No backend — all parsing and generation happens in the browser
-- No API calls, no data leaves your machine
+- Core features run entirely in the browser — no server processing for JD & interview guide generation
+- No API calls for document generation — your role notes never leave your device
 - Instant results with zero network latency
-- Privacy-first — your role notes never leave your device
+- Privacy-first — all parsing and generation is client-side JavaScript
 
 ---
 
@@ -182,7 +182,7 @@ recruitment-sandbox/
 │   │   ├── layout.tsx            # Root layout with fonts & metadata
 │   │   ├── globals.css           # Custom properties, noise texture, animations, components
 │   │   └── api/
-│   │       └── route.ts          # API route (reserved for future server features)
+│   │       └── route.ts          # API route (placeholder — not used by core features)
 │   │
 │   ├── lib/
 │   │   ├── skills.ts             # Data layer — skill databases & question banks
@@ -205,19 +205,34 @@ recruitment-sandbox/
 │   │   │   ├── extract*()        #   Responsibilities, qualifications, nice-to-haves
 │   │   │   └── generateSummary() #   Auto-generated role summary
 │   │   │
-│   │   └── generator.ts          # Document builders
-│   │       ├── generateJD()      #   Builds structured JD HTML
-│   │       ├── generateGuide()   #   Builds 10-question interview guide
-│   │       ├── renderGuide()     #   Converts guide data → styled HTML
-│   │       └── *ToPlainText()    #   Copy-friendly plain text versions
+│   │   ├── generator.ts          # Document builders
+│   │   │   ├── generateJD()      #   Builds structured JD HTML
+│   │   │   ├── generateGuide()   #   Builds 10-question interview guide
+│   │   │   ├── renderGuide()     #   Converts guide data → styled HTML
+│   │   │   ├── jdToPlainText()   #   JD copy-friendly plain text version
+│   │   │   ├── guideToPlainText()#   Guide copy-friendly plain text version
+│   │   │   └── simpleHash()      #   Deterministic hash for template selection
+│   │   │
+│   │   ├── utils.ts              # Tailwind merge utility (cn function)
+│   │   └── db.ts                  # Prisma client (template file, not used by core features)
 │   │
 │   ├── components/ui/            # shadcn/ui components (Radix + Tailwind)
-│   └── hooks/                    # Custom React hooks
+│   ├── hooks/
+│   │   ├── use-mobile.ts         # Responsive breakpoint hook
+│   │   └── use-toast.ts          # Toast notification hook
+│   │
+│   └── (many other shadcn/ui components in components/ui/)
 │
-├── public/                       # Static assets (logo, robots.txt)
+├── public/
+│   ├── logo.svg                  # App logo
+│   └── robots.txt                # Crawler rules
+├── prisma/
+│   └── schema.prisma             # Database schema (template, not used by core features)
 ├── tailwind.config.ts            # Tailwind CSS configuration
 ├── next.config.ts                # Next.js configuration
 ├── tsconfig.json                 # TypeScript configuration
+├── eslint.config.mjs             # ESLint configuration
+├── postcss.config.mjs            # PostCSS configuration
 └── package.json                  # Dependencies & scripts
 ```
 
@@ -315,7 +330,7 @@ SQL, A/B Testing, Product Management, Stakeholder Management, Communication, Lea
 | Styling | Tailwind CSS 4 + CSS Custom Properties |
 | UI Components | shadcn/ui (Radix primitives) |
 | Runtime | Bun |
-| Backend | None — client-side only |
+| Backend | None for core features — JD & guide generation is 100% client-side |
 | Fonts | Instrument Serif, Source Serif 4, JetBrains Mono |
 
 ---
