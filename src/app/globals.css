@@ -938,44 +938,88 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    SETTINGS PANEL
    ═══════════════════════════════════════════════════════════════════════════ */
-.rs-settings-toggle {
-  padding: 0 22px;
+/* ─── Header actions (settings gear) ────────────────────────────────── */
+.rs-header-actions {
+  position: relative;
 }
 
-.rs-settings-btn {
+.rs-header-settings-btn {
   display: flex;
   align-items: center;
-  gap: 7px;
-  background: none;
-  border: none;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: var(--rs-surface);
+  border: 1px solid var(--rs-border);
   color: var(--rs-text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  padding: 8px 0;
   cursor: pointer;
-  transition: color 0.2s ease;
-  letter-spacing: 0.02em;
+  transition: all 0.25s ease;
 }
 
-.rs-settings-btn:hover,
-.rs-settings-btn.active {
+.rs-header-settings-btn:hover {
+  border-color: var(--rs-accent);
   color: var(--rs-accent);
+  background: var(--rs-accent-soft);
 }
 
-.rs-chevron {
-  transition: transform 0.25s ease;
+.rs-header-settings-btn.active {
+  border-color: var(--rs-accent);
+  color: var(--rs-accent);
+  background: var(--rs-accent-soft);
 }
 
-.rs-chevron.open {
-  transform: rotate(180deg);
+.rs-header-settings-btn.active svg {
+  transform: rotate(45deg);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.rs-settings-panel {
-  padding: 14px 22px 18px;
-  border-top: 1px solid var(--rs-border);
+.rs-header-settings-btn svg {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Settings dropdown ────────────────────────────────────────────── */
+.rs-settings-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  background: var(--rs-surface);
+  border: 1px solid var(--rs-border);
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(200, 155, 60, 0.05);
+  z-index: 1000;
+  animation: settingsFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes settingsFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.rs-settings-dropdown-header {
+  padding: 14px 18px 12px;
   border-bottom: 1px solid var(--rs-border);
-  background: var(--rs-bg-subtle);
-  animation: fadeUp 0.3s ease-out;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--rs-text);
+}
+
+.rs-settings-dropdown .rs-setting-row {
+  padding: 0 18px;
+  margin-bottom: 14px;
+  margin-top: 14px;
+}
+
+.rs-settings-dropdown .rs-setting-row:last-child {
+  margin-bottom: 16px;
 }
 
 .rs-setting-row {
@@ -1004,7 +1048,7 @@
 }
 
 .rs-locale-pill {
-  background: var(--rs-surface);
+  background: var(--rs-bg-subtle);
   border: 1px solid var(--rs-border);
   color: var(--rs-text-secondary);
   font-family: var(--font-mono);
@@ -1051,7 +1095,7 @@
   border-radius: 50%;
   background: var(--rs-accent);
   cursor: pointer;
-  border: 2px solid var(--rs-bg);
+  border: 2px solid var(--rs-surface);
   box-shadow: 0 0 0 3px var(--rs-accent-soft);
   transition: transform 0.15s ease;
 }
@@ -1066,7 +1110,7 @@
   border-radius: 50%;
   background: var(--rs-accent);
   cursor: pointer;
-  border: 2px solid var(--rs-bg);
+  border: 2px solid var(--rs-surface);
   box-shadow: 0 0 0 3px var(--rs-accent-soft);
 }
 
@@ -1188,12 +1232,16 @@
 
 /* ─── Settings responsive ─────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .rs-settings-toggle {
-    padding: 0 16px;
-  }
-
-  .rs-settings-panel {
-    padding: 12px 16px 16px;
+  .rs-settings-dropdown {
+    position: fixed;
+    top: auto;
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+    width: auto;
+    border-radius: 14px;
+    max-height: 70vh;
+    overflow-y: auto;
   }
 
   .rs-locale-pills {

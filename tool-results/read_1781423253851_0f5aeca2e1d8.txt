@@ -1,0 +1,1208 @@
+     1→@import "tailwindcss";
+     2→@import "tw-animate-css";
+     3→
+     4→@custom-variant dark (&:is(.dark *));
+     5→
+     6→/* Fonts are loaded via next/font/google in layout.tsx */
+     7→
+     8→/* ─── Theme Tokens (for shadcn) ─────────────────────────────────────────── */
+     9→@theme inline {
+    10→  --color-background: var(--background);
+    11→  --color-foreground: var(--foreground);
+    12→  --font-sans: var(--font-geist-sans);
+    13→  --font-mono: var(--font-geist-mono);
+    14→  --color-sidebar-ring: var(--sidebar-ring);
+    15→  --color-sidebar-border: var(--sidebar-border);
+    16→  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    17→  --color-sidebar-accent: var(--sidebar-accent);
+    18→  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    19→  --color-sidebar-primary: var(--sidebar-primary);
+    20→  --color-sidebar-foreground: var(--sidebar-foreground);
+    21→  --color-sidebar: var(--sidebar);
+    22→  --color-chart-5: var(--chart-5);
+    23→  --color-chart-4: var(--chart-4);
+    24→  --color-chart-3: var(--chart-3);
+    25→  --color-chart-2: var(--chart-2);
+    26→  --color-chart-1: var(--chart-1);
+    27→  --color-ring: var(--ring);
+    28→  --color-input: var(--input);
+    29→  --color-border: var(--border);
+    30→  --color-destructive: var(--destructive);
+    31→  --color-accent-foreground: var(--accent-foreground);
+    32→  --color-accent: var(--accent);
+    33→  --color-muted-foreground: var(--muted-foreground);
+    34→  --color-muted: var(--muted);
+    35→  --color-secondary-foreground: var(--secondary-foreground);
+    36→  --color-secondary: var(--secondary);
+    37→  --color-primary-foreground: var(--primary-foreground);
+    38→  --color-primary: var(--primary);
+    39→  --color-popover-foreground: var(--popover-foreground);
+    40→  --color-popover: var(--popover);
+    41→  --color-card-foreground: var(--card-foreground);
+    42→  --color-card: var(--card);
+    43→  --radius-sm: calc(var(--radius) - 4px);
+    44→  --radius-md: calc(var(--radius) - 2px);
+    45→  --radius-lg: var(--radius);
+    46→  --radius-xl: calc(var(--radius) + 4px);
+    47→}
+    48→
+    49→:root {
+    50→  --radius: 0.625rem;
+    51→  --background: #09090c;
+    52→  --foreground: #e8e4db;
+    53→  --card: #131318;
+    54→  --card-foreground: #e8e4db;
+    55→  --popover: #131318;
+    56→  --popover-foreground: #e8e4db;
+    57→  --primary: #c89b3c;
+    58→  --primary-foreground: #09090c;
+    59→  --secondary: #1a1a21;
+    60→  --secondary-foreground: #e8e4db;
+    61→  --muted: #1a1a21;
+    62→  --muted-foreground: #6b655b;
+    63→  --accent: #c89b3c;
+    64→  --accent-foreground: #09090c;
+    65→  --destructive: #c85050;
+    66→  --border: #2a2a35;
+    67→  --input: #2a2a35;
+    68→  --ring: #c89b3c;
+    69→  --chart-1: #c89b3c;
+    70→  --chart-2: #4caf6a;
+    71→  --chart-3: #5b8def;
+    72→  --chart-4: #c85050;
+    73→  --chart-5: #a78bfa;
+    74→  --sidebar: #131318;
+    75→  --sidebar-foreground: #e8e4db;
+    76→  --sidebar-primary: #c89b3c;
+    77→  --sidebar-primary-foreground: #09090c;
+    78→  --sidebar-accent: #1a1a21;
+    79→  --sidebar-accent-foreground: #e8e4db;
+    80→  --sidebar-border: #2a2a35;
+    81→  --sidebar-ring: #c89b3c;
+    82→
+    83→  /* Recruitment Sandbox custom tokens */
+    84→  --rs-bg: #09090c;
+    85→  --rs-bg-subtle: #0d0d12;
+    86→  --rs-surface: #131318;
+    87→  --rs-surface-raised: #1a1a21;
+    88→  --rs-surface-hover: #212129;
+    89→  --rs-border: #2a2a35;
+    90→  --rs-border-light: #3a3a4a;
+    91→  --rs-accent: #c89b3c;
+    92→  --rs-accent-soft: rgba(200, 155, 60, 0.12);
+    93→  --rs-accent-hover: #dbb04a;
+    94→  --rs-text: #e8e4db;
+    95→  --rs-text-secondary: #a09a8f;
+    96→  --rs-text-muted: #6b655b;
+    97→  --rs-danger: #c85050;
+    98→  --rs-success: #4caf6a;
+    99→
+   100→  --font-display: 'Instrument Serif', serif;
+   101→  --font-body: 'Source Serif 4', serif;
+   102→  --font-mono: 'JetBrains Mono', monospace;
+   103→}
+   104→
+   105→/* ─── Base ──────────────────────────────────────────────────────────────── */
+   106→@layer base {
+   107→  * {
+   108→    @apply border-border outline-ring/50;
+   109→  }
+   110→  body {
+   111→    @apply bg-background text-foreground;
+   112→  }
+   113→}
+   114→
+   115→::selection {
+   116→  background: rgba(200, 155, 60, 0.35);
+   117→  color: #e8e4db;
+   118→}
+   119→
+   120→/* ─── Custom Scrollbar ──────────────────────────────────────────────────── */
+   121→::-webkit-scrollbar {
+   122→  width: 6px;
+   123→  height: 6px;
+   124→}
+   125→::-webkit-scrollbar-track {
+   126→  background: transparent;
+   127→}
+   128→::-webkit-scrollbar-thumb {
+   129→  background: var(--rs-border);
+   130→  border-radius: 3px;
+   131→}
+   132→::-webkit-scrollbar-thumb:hover {
+   133→  background: var(--rs-border-light);
+   134→}
+   135→
+   136→/* ─── Animations ────────────────────────────────────────────────────────── */
+   137→@keyframes fadeUp {
+   138→  from {
+   139→    opacity: 0;
+   140→    transform: translateY(14px);
+   141→  }
+   142→  to {
+   143→    opacity: 1;
+   144→    transform: translateY(0);
+   145→  }
+   146→}
+   147→
+   148→@keyframes fadeIn {
+   149→  from { opacity: 0; }
+   150→  to { opacity: 1; }
+   151→}
+   152→
+   153→@keyframes spin {
+   154→  from { transform: rotate(0deg); }
+   155→  to { transform: rotate(360deg); }
+   156→}
+   157→
+   158→/* ═══════════════════════════════════════════════════════════════════════════
+   159→   APP LAYOUT
+   160→   ═══════════════════════════════════════════════════════════════════════════ */
+   161→
+   162→.rs-root {
+   163→  position: relative;
+   164→  min-height: 100vh;
+   165→  background: var(--rs-bg);
+   166→  color: var(--rs-text);
+   167→  font-family: var(--font-body);
+   168→  font-weight: 400;
+   169→  line-height: 1.6;
+   170→  overflow-x: hidden;
+   171→  -webkit-font-smoothing: antialiased;
+   172→}
+   173→
+   174→/* Noise texture overlay */
+   175→.rs-noise {
+   176→  position: fixed;
+   177→  inset: 0;
+   178→  z-index: 10000;
+   179→  pointer-events: none;
+   180→  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+   181→}
+   182→
+   183→/* Container */
+   184→.rs-container {
+   185→  position: relative;
+   186→  z-index: 1;
+   187→  max-width: 1480px;
+   188→  margin: 0 auto;
+   189→  padding: 0 24px;
+   190→  min-height: 100vh;
+   191→  display: flex;
+   192→  flex-direction: column;
+   193→}
+   194→
+   195→/* ─── Header ───────────────────────────────────────────────────────────── */
+   196→.rs-header {
+   197→  display: flex;
+   198→  align-items: center;
+   199→  justify-content: space-between;
+   200→  padding: 24px 0;
+   201→  border-bottom: 1px solid var(--rs-border);
+   202→  flex-shrink: 0;
+   203→  animation: fadeUp 0.5s ease-out;
+   204→}
+   205→
+   206→.rs-brand {
+   207→  display: flex;
+   208→  align-items: center;
+   209→  gap: 14px;
+   210→}
+   211→
+   212→.rs-brand-icon-wrap {
+   213→  width: 40px;
+   214→  height: 40px;
+   215→  background: var(--rs-accent-soft);
+   216→  border: 1px solid var(--rs-accent);
+   217→  border-radius: 6px;
+   218→  display: flex;
+   219→  align-items: center;
+   220→  justify-content: center;
+   221→  color: var(--rs-accent);
+   222→  flex-shrink: 0;
+   223→}
+   224→
+   225→.rs-brand-icon-wrap svg {
+   226→  width: 22px;
+   227→  height: 22px;
+   228→}
+   229→
+   230→.rs-brand-title {
+   231→  font-family: var(--font-display);
+   232→  font-size: 1.35rem;
+   233→  font-weight: 400;
+   234→  line-height: 1.2;
+   235→  color: var(--rs-text);
+   236→  letter-spacing: -0.01em;
+   237→  margin: 0;
+   238→}
+   239→
+   240→.rs-tagline {
+   241→  font-family: var(--font-mono);
+   242→  font-size: 0.7rem;
+   243→  color: var(--rs-text-muted);
+   244→  letter-spacing: 0.04em;
+   245→  margin: 0;
+   246→}
+   247→
+   248→.rs-tagline span {
+   249→  color: var(--rs-accent);
+   250→}
+   251→
+   252→/* ─── Workspace (two-column) ───────────────────────────────────────────── */
+   253→.rs-workspace {
+   254→  flex: 1;
+   255→  display: grid;
+   256→  grid-template-columns: 420px 1fr;
+   257→  gap: 24px;
+   258→  padding: 24px 0 40px;
+   259→  align-items: start;
+   260→}
+   261→
+   262→@media (max-width: 960px) {
+   263→  .rs-workspace {
+   264→    grid-template-columns: 1fr;
+   265→  }
+   266→}
+   267→
+   268→/* ─── Panel base ───────────────────────────────────────────────────────── */
+   269→.rs-panel {
+   270→  background: var(--rs-surface);
+   271→  border: 1px solid var(--rs-border);
+   272→  border-radius: 14px;
+   273→  overflow: hidden;
+   274→}
+   275→
+   276→.rs-panel-header {
+   277→  padding: 18px 22px 14px;
+   278→  border-bottom: 1px solid var(--rs-border);
+   279→  display: flex;
+   280→  align-items: baseline;
+   281→  justify-content: space-between;
+   282→}
+   283→
+   284→.rs-panel-label {
+   285→  font-family: var(--font-display);
+   286→  font-size: 1.15rem;
+   287→  font-weight: 400;
+   288→  color: var(--rs-text);
+   289→}
+   290→
+   291→.rs-panel-hint {
+   292→  font-family: var(--font-mono);
+   293→  font-size: 0.68rem;
+   294→  color: var(--rs-text-muted);
+   295→  letter-spacing: 0.03em;
+   296→}
+   297→
+   298→/* ─── Input section ────────────────────────────────────────────────────── */
+   299→.rs-input-body {
+   300→  padding: 18px 22px;
+   301→}
+   302→
+   303→.rs-textarea {
+   304→  width: 100%;
+   305→  min-height: 380px;
+   306→  background: var(--rs-bg-subtle);
+   307→  border: 1px solid var(--rs-border);
+   308→  border-radius: 10px;
+   309→  padding: 16px 18px;
+   310→  font-family: var(--font-body);
+   311→  font-size: 0.9rem;
+   312→  line-height: 1.65;
+   313→  color: var(--rs-text);
+   314→  resize: vertical;
+   315→  outline: none;
+   316→  transition: border-color 0.2s ease;
+   317→}
+   318→
+   319→.rs-textarea::placeholder {
+   320→  color: var(--rs-text-muted);
+   321→  font-style: italic;
+   322→}
+   323→
+   324→.rs-textarea:focus {
+   325→  border-color: var(--rs-accent);
+   326→  box-shadow: 0 0 0 3px var(--rs-accent-soft);
+   327→}
+   328→
+   329→.rs-input-footer {
+   330→  display: flex;
+   331→  align-items: center;
+   332→  justify-content: space-between;
+   333→  margin-top: 10px;
+   334→  padding: 0 2px;
+   335→}
+   336→
+   337→.rs-char-count {
+   338→  font-family: var(--font-mono);
+   339→  font-size: 0.68rem;
+   340→  color: var(--rs-text-muted);
+   341→}
+   342→
+   343→.rs-sample-btn {
+   344→  background: none;
+   345→  border: 1px solid var(--rs-border);
+   346→  color: var(--rs-text-secondary);
+   347→  font-family: var(--font-mono);
+   348→  font-size: 0.7rem;
+   349→  padding: 5px 12px;
+   350→  border-radius: 6px;
+   351→  cursor: pointer;
+   352→  transition: all 0.2s ease;
+   353→  letter-spacing: 0.02em;
+   354→}
+   355→
+   356→.rs-sample-btn:hover {
+   357→  border-color: var(--rs-accent);
+   358→  color: var(--rs-accent);
+   359→}
+   360→
+   361→/* ─── Error message ────────────────────────────────────────────────────── */
+   362→.rs-error {
+   363→  background: rgba(200, 80, 80, 0.08);
+   364→  border: 1px solid rgba(200, 80, 80, 0.2);
+   365→  color: var(--rs-danger);
+   366→  font-size: 0.82rem;
+   367→  padding: 12px 16px;
+   368→  border-radius: 6px;
+   369→  margin-top: 12px;
+   370→  animation: fadeUp 0.3s ease;
+   371→}
+   372→
+   373→/* ─── Input actions ────────────────────────────────────────────────────── */
+   374→.rs-input-actions {
+   375→  padding: 16px 22px 20px;
+   376→}
+   377→
+   378→/* ─── Generate button ──────────────────────────────────────────────────── */
+   379→.rs-generate-btn {
+   380→  width: 100%;
+   381→  padding: 14px 24px;
+   382→  background: var(--rs-accent);
+   383→  color: var(--rs-bg);
+   384→  border: none;
+   385→  border-radius: 10px;
+   386→  font-family: var(--font-body);
+   387→  font-size: 0.95rem;
+   388→  font-weight: 600;
+   389→  cursor: pointer;
+   390→  transition: all 0.25s ease;
+   391→  position: relative;
+   392→  overflow: hidden;
+   393→  display: flex;
+   394→  align-items: center;
+   395→  justify-content: center;
+   396→  gap: 10px;
+   397→}
+   398→
+   399→.rs-generate-btn:hover:not(:disabled) {
+   400→  background: var(--rs-accent-hover);
+   401→  transform: translateY(-1px);
+   402→  box-shadow: 0 4px 20px rgba(200, 155, 60, 0.25);
+   403→}
+   404→
+   405→.rs-generate-btn:active {
+   406→  transform: translateY(0);
+   407→}
+   408→
+   409→.rs-generate-btn:disabled {
+   410→  opacity: 0.6;
+   411→  cursor: not-allowed;
+   412→  transform: none;
+   413→  box-shadow: none;
+   414→}
+   415→
+   416→.rs-spinner {
+   417→  display: inline-block;
+   418→  width: 16px;
+   419→  height: 16px;
+   420→  border: 2px solid rgba(0,0,0,0.2);
+   421→  border-top-color: var(--rs-bg);
+   422→  border-radius: 50%;
+   423→  animation: spin 0.7s linear infinite;
+   424→}
+   425→
+   426→/* ─── Output panel ─────────────────────────────────────────────────────── */
+   427→.rs-output-panel {
+   428→  position: sticky;
+   429→  top: 24px;
+   430→  min-height: 500px;
+   431→  display: flex;
+   432→  flex-direction: column;
+   433→}
+   434→
+   435→.rs-output-card {
+   436→  display: flex;
+   437→  flex-direction: column;
+   438→  min-height: 500px;
+   439→}
+   440→
+   441→/* ─── Tab bar ──────────────────────────────────────────────────────────── */
+   442→.rs-tab-bar {
+   443→  display: flex;
+   444→  align-items: center;
+   445→  justify-content: space-between;
+   446→  padding: 0 22px;
+   447→  position: relative;
+   448→}
+   449→
+   450→.rs-tab-buttons {
+   451→  display: flex;
+   452→  gap: 0;
+   453→  position: relative;
+   454→}
+   455→
+   456→.rs-tab-btn {
+   457→  background: none;
+   458→  border: none;
+   459→  padding: 16px 18px;
+   460→  color: var(--rs-text-muted);
+   461→  font-family: var(--font-body);
+   462→  font-size: 0.88rem;
+   463→  cursor: pointer;
+   464→  transition: color 0.2s ease;
+   465→  position: relative;
+   466→  white-space: nowrap;
+   467→}
+   468→
+   469→.rs-tab-btn:hover {
+   470→  color: var(--rs-text-secondary);
+   471→}
+   472→
+   473→.rs-tab-btn.active {
+   474→  color: var(--rs-text);
+   475→}
+   476→
+   477→.rs-tab-indicator {
+   478→  position: absolute;
+   479→  bottom: 0;
+   480→  height: 2px;
+   481→  background: var(--rs-accent);
+   482→  border-radius: 1px;
+   483→  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+   484→}
+   485→
+   486→/* ─── Copy button ──────────────────────────────────────────────────────── */
+   487→.rs-copy-btn {
+   488→  background: none;
+   489→  border: 1px solid var(--rs-border);
+   490→  color: var(--rs-text-secondary);
+   491→  font-family: var(--font-mono);
+   492→  font-size: 0.68rem;
+   493→  padding: 5px 12px;
+   494→  border-radius: 6px;
+   495→  cursor: pointer;
+   496→  transition: all 0.2s ease;
+   497→  display: flex;
+   498→  align-items: center;
+   499→  gap: 5px;
+   500→  letter-spacing: 0.02em;
+   501→}
+   502→
+   503→.rs-copy-btn:hover {
+   504→  border-color: var(--rs-accent);
+   505→  color: var(--rs-accent);
+   506→}
+   507→
+   508→.rs-copy-btn.copied {
+   509→  border-color: var(--rs-success);
+   510→  color: var(--rs-success);
+   511→}
+   512→
+   513→/* ─── Tab content ──────────────────────────────────────────────────────── */
+   514→.rs-output-body-wrap {
+   515→  flex: 1;
+   516→  padding: 24px;
+   517→  overflow-y: auto;
+   518→}
+   519→
+   520→.rs-tab-content {
+   521→  display: none;
+   522→}
+   523→
+   524→.rs-tab-content.visible {
+   525→  display: block;
+   526→  animation: fadeIn 0.35s ease-out;
+   527→}
+   528→
+   529→/* ─── Placeholder state ────────────────────────────────────────────────── */
+   530→.rs-placeholder {
+   531→  display: flex;
+   532→  flex-direction: column;
+   533→  align-items: center;
+   534→  justify-content: center;
+   535→  min-height: 360px;
+   536→  text-align: center;
+   537→  padding: 40px;
+   538→}
+   539→
+   540→.rs-placeholder-icon {
+   541→  width: 64px;
+   542→  height: 64px;
+   543→  background: var(--rs-accent-soft);
+   544→  border-radius: 50%;
+   545→  display: flex;
+   546→  align-items: center;
+   547→  justify-content: center;
+   548→  margin-bottom: 20px;
+   549→  color: var(--rs-accent);
+   550→}
+   551→
+   552→.rs-placeholder-icon svg {
+   553→  width: 28px;
+   554→  height: 28px;
+   555→}
+   556→
+   557→.rs-placeholder-text {
+   558→  font-family: var(--font-display);
+   559→  font-size: 1.15rem;
+   560→  color: var(--rs-text-secondary);
+   561→  margin: 0 0 8px;
+   562→}
+   563→
+   564→.rs-placeholder-sub {
+   565→  font-size: 0.85rem;
+   566→  color: var(--rs-text-muted);
+   567→  margin: 0;
+   568→  max-width: 300px;
+   569→}
+   570→
+   571→/* ═══════════════════════════════════════════════════════════════════════════
+   572→   JD DOCUMENT STYLES (matching generator output)
+   573→   ═══════════════════════════════════════════════════════════════════════════ */
+   574→.jd-doc {
+   575→  animation: fadeUp 0.5s ease forwards;
+   576→}
+   577→
+   578→.jd-doc .doc-title {
+   579→  font-family: var(--font-display);
+   580→  font-size: 1.65rem;
+   581→  font-weight: 400;
+   582→  color: var(--rs-text);
+   583→  margin-bottom: 4px;
+   584→  line-height: 1.25;
+   585→}
+   586→
+   587→.jd-doc .doc-meta {
+   588→  font-family: var(--font-mono);
+   589→  font-size: 0.72rem;
+   590→  color: var(--rs-text-muted);
+   591→  letter-spacing: 0.03em;
+   592→  margin-bottom: 24px;
+   593→  display: flex;
+   594→  flex-wrap: wrap;
+   595→  gap: 6px 16px;
+   596→}
+   597→
+   598→.jd-doc .doc-meta span {
+   599→  display: inline-flex;
+   600→  align-items: center;
+   601→  gap: 4px;
+   602→}
+   603→
+   604→.jd-section {
+   605→  margin-bottom: 26px;
+   606→  animation: fadeUp 0.5s ease forwards;
+   607→  opacity: 0;
+   608→}
+   609→
+   610→.jd-section:nth-child(2) { animation-delay: 0.08s; }
+   611→.jd-section:nth-child(3) { animation-delay: 0.14s; }
+   612→.jd-section:nth-child(4) { animation-delay: 0.20s; }
+   613→.jd-section:nth-child(5) { animation-delay: 0.26s; }
+   614→.jd-section:nth-child(6) { animation-delay: 0.32s; }
+   615→
+   616→.jd-section h3 {
+   617→  font-size: 1.05rem;
+   618→  color: var(--rs-accent);
+   619→  margin-bottom: 12px;
+   620→  padding-bottom: 8px;
+   621→  border-bottom: 1px solid var(--rs-border);
+   622→  font-family: var(--font-display);
+   623→  font-weight: 400;
+   624→}
+   625→
+   626→.jd-section p {
+   627→  font-size: 0.88rem;
+   628→  color: var(--rs-text-secondary);
+   629→  line-height: 1.7;
+   630→}
+   631→
+   632→.jd-section ul {
+   633→  list-style: none;
+   634→  display: flex;
+   635→  flex-direction: column;
+   636→  gap: 8px;
+   637→}
+   638→
+   639→.jd-section li {
+   640→  font-size: 0.88rem;
+   641→  color: var(--rs-text-secondary);
+   642→  padding-left: 20px;
+   643→  position: relative;
+   644→  line-height: 1.55;
+   645→}
+   646→
+   647→.jd-section li::before {
+   648→  content: '';
+   649→  position: absolute;
+   650→  left: 0;
+   651→  top: 9px;
+   652→  width: 6px;
+   653→  height: 6px;
+   654→  border-radius: 50%;
+   655→  background: var(--rs-accent);
+   656→  opacity: 0.6;
+   657→}
+   658→
+   659→.jd-section .skill-pills {
+   660→  display: flex;
+   661→  flex-wrap: wrap;
+   662→  gap: 6px;
+   663→  margin-top: 4px;
+   664→}
+   665→
+   666→.skill-pill {
+   667→  display: inline-block;
+   668→  font-family: var(--font-mono);
+   669→  font-size: 0.7rem;
+   670→  padding: 4px 10px;
+   671→  background: var(--rs-accent-soft);
+   672→  color: var(--rs-accent);
+   673→  border-radius: 20px;
+   674→  border: 1px solid rgba(200, 155, 60, 0.2);
+   675→}
+   676→
+   677→.jd-doc .divider {
+   678→  height: 1px;
+   679→  background: var(--rs-border);
+   680→  margin: 28px 0;
+   681→}
+   682→
+   683→.jd-doc .eoe {
+   684→  font-size: 0.78rem;
+   685→  color: var(--rs-text-muted);
+   686→  font-style: italic;
+   687→  line-height: 1.6;
+   688→}
+   689→
+   690→/* ═══════════════════════════════════════════════════════════════════════════
+   691→   INTERVIEW GUIDE STYLES (matching generator output)
+   692→   ═══════════════════════════════════════════════════════════════════════════ */
+   693→.guide-doc {
+   694→  animation: fadeUp 0.5s ease forwards;
+   695→}
+   696→
+   697→.guide-doc .guide-header {
+   698→  margin-bottom: 24px;
+   699→}
+   700→
+   701→.guide-doc .guide-header h2 {
+   702→  font-family: var(--font-display);
+   703→  font-size: 1.4rem;
+   704→  font-weight: 400;
+   705→  color: var(--rs-text);
+   706→  margin-bottom: 4px;
+   707→}
+   708→
+   709→.guide-doc .guide-header p {
+   710→  font-size: 0.82rem;
+   711→  color: var(--rs-text-muted);
+   712→  font-family: var(--font-mono);
+   713→}
+   714→
+   715→.guide-doc .guide-stats {
+   716→  display: flex;
+   717→  gap: 16px;
+   718→  margin-top: 14px;
+   719→}
+   720→
+   721→.stat-badge {
+   722→  font-family: var(--font-mono);
+   723→  font-size: 0.7rem;
+   724→  padding: 5px 12px;
+   725→  border-radius: 20px;
+   726→  letter-spacing: 0.02em;
+   727→}
+   728→
+   729→.stat-badge.hard {
+   730→  background: rgba(76, 175, 106, 0.1);
+   731→  color: var(--rs-success);
+   732→  border: 1px solid rgba(76, 175, 106, 0.2);
+   733→}
+   734→
+   735→.stat-badge.soft {
+   736→  background: rgba(100, 140, 230, 0.1);
+   737→  color: #7a9ee6;
+   738→  border: 1px solid rgba(100, 140, 230, 0.2);
+   739→}
+   740→
+   741→.stat-badge.general {
+   742→  background: var(--rs-accent-soft);
+   743→  color: var(--rs-accent);
+   744→  border: 1px solid rgba(200, 155, 60, 0.2);
+   745→}
+   746→
+   747→/* ─── Question cards ───────────────────────────────────────────────────── */
+   748→.question-card {
+   749→  background: var(--rs-surface-raised);
+   750→  border: 1px solid var(--rs-border);
+   751→  border-radius: 10px;
+   752→  padding: 20px 22px;
+   753→  margin-bottom: 14px;
+   754→  transition: border-color 0.2s ease, transform 0.2s ease;
+   755→  opacity: 0;
+   756→  animation: fadeUp 0.45s ease forwards;
+   757→}
+   758→
+   759→.question-card:nth-child(1) { animation-delay: 0.05s; }
+   760→.question-card:nth-child(2) { animation-delay: 0.1s; }
+   761→.question-card:nth-child(3) { animation-delay: 0.15s; }
+   762→.question-card:nth-child(4) { animation-delay: 0.2s; }
+   763→.question-card:nth-child(5) { animation-delay: 0.25s; }
+   764→.question-card:nth-child(6) { animation-delay: 0.3s; }
+   765→.question-card:nth-child(7) { animation-delay: 0.35s; }
+   766→.question-card:nth-child(8) { animation-delay: 0.4s; }
+   767→.question-card:nth-child(9) { animation-delay: 0.45s; }
+   768→.question-card:nth-child(10) { animation-delay: 0.5s; }
+   769→
+   770→.question-card:hover {
+   771→  border-color: var(--rs-border-light);
+   772→  transform: translateY(-1px);
+   773→}
+   774→
+   775→.question-top {
+   776→  display: flex;
+   777→  align-items: center;
+   778→  gap: 10px;
+   779→  margin-bottom: 12px;
+   780→  flex-wrap: wrap;
+   781→}
+   782→
+   783→.q-number {
+   784→  font-family: var(--font-mono);
+   785→  font-size: 0.72rem;
+   786→  font-weight: 500;
+   787→  color: var(--rs-accent);
+   788→  min-width: 24px;
+   789→}
+   790→
+   791→.q-skill-tag {
+   792→  font-family: var(--font-mono);
+   793→  font-size: 0.65rem;
+   794→  padding: 3px 9px;
+   795→  border-radius: 20px;
+   796→  letter-spacing: 0.03em;
+   797→}
+   798→
+   799→.q-skill-tag.hard {
+   800→  background: rgba(76, 175, 106, 0.1);
+   801→  color: var(--rs-success);
+   802→  border: 1px solid rgba(76, 175, 106, 0.15);
+   803→}
+   804→
+   805→.q-skill-tag.soft {
+   806→  background: rgba(100, 140, 230, 0.1);
+   807→  color: #7a9ee6;
+   808→  border: 1px solid rgba(100, 140, 230, 0.15);
+   809→}
+   810→
+   811→.q-skill-tag.general {
+   812→  background: var(--rs-accent-soft);
+   813→  color: var(--rs-accent);
+   814→  border: 1px solid rgba(200, 155, 60, 0.15);
+   815→}
+   816→
+   817→.question-text {
+   818→  font-size: 1.02rem;
+   819→  color: var(--rs-text);
+   820→  line-height: 1.6;
+   821→  margin-bottom: 14px;
+   822→  font-style: italic;
+   823→  font-family: var(--font-display);
+   824→}
+   825→
+   826→.listen-guide {
+   827→  background: var(--rs-bg-subtle);
+   828→  border-radius: 6px;
+   829→  padding: 14px 16px;
+   830→  border-left: 2px solid var(--rs-accent);
+   831→}
+   832→
+   833→.listen-guide h4 {
+   834→  font-family: var(--font-mono);
+   835→  font-size: 0.68rem;
+   836→  color: var(--rs-text-muted);
+   837→  text-transform: uppercase;
+   838→  letter-spacing: 0.08em;
+   839→  margin-bottom: 8px;
+   840→  font-weight: 400;
+   841→}
+   842→
+   843→.listen-guide ul {
+   844→  list-style: none;
+   845→  display: flex;
+   846→  flex-direction: column;
+   847→  gap: 5px;
+   848→}
+   849→
+   850→.listen-guide li {
+   851→  font-size: 0.8rem;
+   852→  color: var(--rs-text-secondary);
+   853→  padding-left: 14px;
+   854→  position: relative;
+   855→  line-height: 1.5;
+   856→}
+   857→
+   858→.listen-guide li::before {
+   859→  content: '\2192';
+   860→  position: absolute;
+   861→  left: 0;
+   862→  color: var(--rs-accent);
+   863→  font-size: 0.75rem;
+   864→}
+   865→
+   866→/* ─── Responsive ───────────────────────────────────────────────────────── */
+   867→@media (max-width: 960px) {
+   868→  .rs-output-panel {
+   869→    position: static;
+   870→  }
+   871→  .rs-header {
+   872→    padding: 18px 0;
+   873→  }
+   874→}
+   875→
+   876→@media (max-width: 600px) {
+   877→  .rs-container {
+   878→    padding: 0 14px;
+   879→  }
+   880→
+   881→  .rs-textarea {
+   882→    min-height: 240px;
+   883→  }
+   884→
+   885→  .rs-panel-header {
+   886→    padding: 14px 16px 12px;
+   887→  }
+   888→
+   889→  .rs-input-body {
+   890→    padding: 14px 16px;
+   891→  }
+   892→
+   893→  .rs-input-actions {
+   894→    padding: 14px 16px 16px;
+   895→  }
+   896→
+   897→  .rs-output-body-wrap {
+   898→    padding: 18px 16px;
+   899→  }
+   900→
+   901→  .jd-doc .doc-title {
+   902→    font-size: 1.3rem;
+   903→  }
+   904→
+   905→  .guide-doc .guide-header h2 {
+   906→    font-size: 1.15rem;
+   907→  }
+   908→
+   909→  .question-card {
+   910→    padding: 16px 18px;
+   911→  }
+   912→
+   913→  .rs-tab-bar {
+   914→    padding: 0 14px;
+   915→  }
+   916→
+   917→  .rs-tab-btn {
+   918→    padding: 14px 12px;
+   919→    font-size: 0.82rem;
+   920→  }
+   921→}
+   922→
+   923→/* ─── Output body scrollbar ────────────────────────────────────────────── */
+   924→.rs-output-body-wrap::-webkit-scrollbar {
+   925→  width: 6px;
+   926→}
+   927→.rs-output-body-wrap::-webkit-scrollbar-track {
+   928→  background: transparent;
+   929→}
+   930→.rs-output-body-wrap::-webkit-scrollbar-thumb {
+   931→  background: var(--rs-border);
+   932→  border-radius: 3px;
+   933→}
+   934→.rs-output-body-wrap::-webkit-scrollbar-thumb:hover {
+   935→  background: var(--rs-border-light);
+   936→}
+   937→
+   938→/* ═══════════════════════════════════════════════════════════════════════════
+   939→   SETTINGS PANEL
+   940→   ═══════════════════════════════════════════════════════════════════════════ */
+   941→.rs-settings-toggle {
+   942→  padding: 0 22px;
+   943→}
+   944→
+   945→.rs-settings-btn {
+   946→  display: flex;
+   947→  align-items: center;
+   948→  gap: 7px;
+   949→  background: none;
+   950→  border: none;
+   951→  color: var(--rs-text-muted);
+   952→  font-family: var(--font-mono);
+   953→  font-size: 0.7rem;
+   954→  padding: 8px 0;
+   955→  cursor: pointer;
+   956→  transition: color 0.2s ease;
+   957→  letter-spacing: 0.02em;
+   958→}
+   959→
+   960→.rs-settings-btn:hover,
+   961→.rs-settings-btn.active {
+   962→  color: var(--rs-accent);
+   963→}
+   964→
+   965→.rs-chevron {
+   966→  transition: transform 0.25s ease;
+   967→}
+   968→
+   969→.rs-chevron.open {
+   970→  transform: rotate(180deg);
+   971→}
+   972→
+   973→.rs-settings-panel {
+   974→  padding: 14px 22px 18px;
+   975→  border-top: 1px solid var(--rs-border);
+   976→  border-bottom: 1px solid var(--rs-border);
+   977→  background: var(--rs-bg-subtle);
+   978→  animation: fadeUp 0.3s ease-out;
+   979→}
+   980→
+   981→.rs-setting-row {
+   982→  margin-bottom: 14px;
+   983→}
+   984→
+   985→.rs-setting-row:last-child {
+   986→  margin-bottom: 0;
+   987→}
+   988→
+   989→.rs-setting-label {
+   990→  display: block;
+   991→  font-family: var(--font-mono);
+   992→  font-size: 0.65rem;
+   993→  color: var(--rs-text-muted);
+   994→  text-transform: uppercase;
+   995→  letter-spacing: 0.08em;
+   996→  margin-bottom: 8px;
+   997→}
+   998→
+   999→/* ─── Locale pills ────────────────────────────────────────────────────── */
+  1000→.rs-locale-pills {
+  1001→  display: flex;
+  1002→  gap: 6px;
+  1003→  flex-wrap: wrap;
+  1004→}
+  1005→
+  1006→.rs-locale-pill {
+  1007→  background: var(--rs-surface);
+  1008→  border: 1px solid var(--rs-border);
+  1009→  color: var(--rs-text-secondary);
+  1010→  font-family: var(--font-mono);
+  1011→  font-size: 0.7rem;
+  1012→  padding: 5px 14px;
+  1013→  border-radius: 20px;
+  1014→  cursor: pointer;
+  1015→  transition: all 0.2s ease;
+  1016→  letter-spacing: 0.01em;
+  1017→}
+  1018→
+  1019→.rs-locale-pill:hover {
+  1020→  border-color: var(--rs-accent);
+  1021→  color: var(--rs-accent);
+  1022→}
+  1023→
+  1024→.rs-locale-pill.active {
+  1025→  background: var(--rs-accent-soft);
+  1026→  border-color: var(--rs-accent);
+  1027→  color: var(--rs-accent);
+  1028→}
+  1029→
+  1030→/* ─── Question count slider ───────────────────────────────────────────── */
+  1031→.rs-question-slider-wrap {
+  1032→  width: 100%;
+  1033→}
+  1034→
+  1035→.rs-question-slider {
+  1036→  -webkit-appearance: none;
+  1037→  appearance: none;
+  1038→  width: 100%;
+  1039→  height: 4px;
+  1040→  background: var(--rs-border);
+  1041→  border-radius: 2px;
+  1042→  outline: none;
+  1043→  cursor: pointer;
+  1044→}
+  1045→
+  1046→.rs-question-slider::-webkit-slider-thumb {
+  1047→  -webkit-appearance: none;
+  1048→  appearance: none;
+  1049→  width: 18px;
+  1050→  height: 18px;
+  1051→  border-radius: 50%;
+  1052→  background: var(--rs-accent);
+  1053→  cursor: pointer;
+  1054→  border: 2px solid var(--rs-bg);
+  1055→  box-shadow: 0 0 0 3px var(--rs-accent-soft);
+  1056→  transition: transform 0.15s ease;
+  1057→}
+  1058→
+  1059→.rs-question-slider::-webkit-slider-thumb:hover {
+  1060→  transform: scale(1.15);
+  1061→}
+  1062→
+  1063→.rs-question-slider::-moz-range-thumb {
+  1064→  width: 18px;
+  1065→  height: 18px;
+  1066→  border-radius: 50%;
+  1067→  background: var(--rs-accent);
+  1068→  cursor: pointer;
+  1069→  border: 2px solid var(--rs-bg);
+  1070→  box-shadow: 0 0 0 3px var(--rs-accent-soft);
+  1071→}
+  1072→
+  1073→.rs-slider-labels {
+  1074→  display: flex;
+  1075→  justify-content: space-between;
+  1076→  margin-top: 8px;
+  1077→  padding: 0 2px;
+  1078→}
+  1079→
+  1080→.rs-slider-label {
+  1081→  font-family: var(--font-mono);
+  1082→  font-size: 0.68rem;
+  1083→  color: var(--rs-text-muted);
+  1084→  cursor: pointer;
+  1085→  transition: color 0.2s ease;
+  1086→  padding: 2px 6px;
+  1087→  border-radius: 4px;
+  1088→}
+  1089→
+  1090→.rs-slider-label:hover {
+  1091→  color: var(--rs-text-secondary);
+  1092→}
+  1093→
+  1094→.rs-slider-label.active {
+  1095→  color: var(--rs-accent);
+  1096→  background: var(--rs-accent-soft);
+  1097→}
+  1098→
+  1099→/* ═══════════════════════════════════════════════════════════════════════════
+  1100→   ACTION BUTTONS (Copy + PDF in tab bar)
+  1101→   ═══════════════════════════════════════════════════════════════════════════ */
+  1102→.rs-action-btns {
+  1103→  display: flex;
+  1104→  gap: 8px;
+  1105→  align-items: center;
+  1106→}
+  1107→
+  1108→.rs-action-btn {
+  1109→  background: none;
+  1110→  border: 1px solid var(--rs-border);
+  1111→  color: var(--rs-text-secondary);
+  1112→  font-family: var(--font-mono);
+  1113→  font-size: 0.68rem;
+  1114→  padding: 5px 12px;
+  1115→  border-radius: 6px;
+  1116→  cursor: pointer;
+  1117→  transition: all 0.2s ease;
+  1118→  display: flex;
+  1119→  align-items: center;
+  1120→  gap: 5px;
+  1121→  letter-spacing: 0.02em;
+  1122→}
+  1123→
+  1124→.rs-action-btn:hover {
+  1125→  border-color: var(--rs-accent);
+  1126→  color: var(--rs-accent);
+  1127→}
+  1128→
+  1129→.rs-action-btn.copied {
+  1130→  border-color: var(--rs-success);
+  1131→  color: var(--rs-success);
+  1132→}
+  1133→
+  1134→.rs-action-btn:disabled {
+  1135→  opacity: 0.5;
+  1136→  cursor: not-allowed;
+  1137→}
+  1138→
+  1139→/* ═══════════════════════════════════════════════════════════════════════════
+  1140→   FORMAT TAG (Indeed/Glassdoor/Workable indicator)
+  1141→   ═══════════════════════════════════════════════════════════════════════════ */
+  1142→.format-tag {
+  1143→  display: inline-block;
+  1144→  font-family: var(--font-mono);
+  1145→  font-size: 0.62rem;
+  1146→  padding: 3px 10px;
+  1147→  border-radius: 20px;
+  1148→  background: rgba(91, 141, 239, 0.1);
+  1149→  color: #7a9ee6;
+  1150→  border: 1px solid rgba(91, 141, 239, 0.2);
+  1151→  text-transform: uppercase;
+  1152→  letter-spacing: 0.06em;
+  1153→  margin-bottom: 12px;
+  1154→}
+  1155→
+  1156→/* ─── RTL Support for Arabic ───────────────────────────────────────────── */
+  1157→[dir="rtl"] .jd-section li {
+  1158→  padding-left: 0;
+  1159→  padding-right: 20px;
+  1160→}
+  1161→
+  1162→[dir="rtl"] .jd-section li::before {
+  1163→  left: auto;
+  1164→  right: 0;
+  1165→}
+  1166→
+  1167→[dir="rtl"] .listen-guide li {
+  1168→  padding-left: 0;
+  1169→  padding-right: 14px;
+  1170→}
+  1171→
+  1172→[dir="rtl"] .listen-guide li::before {
+  1173→  left: auto;
+  1174→  right: 0;
+  1175→}
+  1176→
+  1177→[dir="rtl"] .guide-doc .guide-stats {
+  1178→  flex-direction: row-reverse;
+  1179→}
+  1180→
+  1181→[dir="rtl"] .question-top {
+  1182→  flex-direction: row-reverse;
+  1183→}
+  1184→
+  1185→[dir="rtl"] .jd-doc .doc-meta {
+  1186→  flex-direction: row-reverse;
+  1187→}
+  1188→
+  1189→/* ─── Settings responsive ─────────────────────────────────────────────── */
+  1190→@media (max-width: 600px) {
+  1191→  .rs-settings-toggle {
+  1192→    padding: 0 16px;
+  1193→  }
+  1194→
+  1195→  .rs-settings-panel {
+  1196→    padding: 12px 16px 16px;
+  1197→  }
+  1198→
+  1199→  .rs-locale-pills {
+  1200→    gap: 4px;
+  1201→  }
+  1202→
+  1203→  .rs-locale-pill {
+  1204→    padding: 4px 10px;
+  1205→    font-size: 0.65rem;
+  1206→  }
+  1207→}
+  1208→

@@ -16,6 +16,23 @@ import type { ParsedNotes } from '@/lib/parser';
 import { CONFIG } from '@/lib/skills';
 import { LOCALES, type Locale } from '@/lib/i18n';
 
+// ─── Click-outside hook ──────────────────────────────────────────────────────
+
+function useClickOutside(ref: React.RefObject<HTMLElement | null>, handler: () => void) {
+  useEffect(() => {
+    const listener = (event: MouseEvent | TouchEvent) => {
+      if (!ref.current || ref.current.contains(event.target as Node)) return;
+      handler();
+    };
+    document.addEventListener('mousedown', listener);
+    document.addEventListener('touchstart', listener);
+    return () => {
+      document.removeEventListener('mousedown', listener);
+      document.removeEventListener('touchstart', listener);
+    };
+  }, [ref, handler]);
+}
+
 // ─── Sample text ────────────────────────────────────────────────────────────
 
 const SAMPLE_TEXT = `Senior Product Manager - Growth Team
@@ -82,6 +99,10 @@ export default function Home() {
   const [questionCount, setQuestionCount] = useState(10);
   const [showSettings, setShowSettings] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
+
+  // Close settings dropdown on click outside
+  useClickOutside(settingsRef, () => setShowSettings(false));
 
   // ─── Tab indicator animation ────────────────────────────────────────────
 
@@ -208,61 +229,27 @@ export default function Home() {
               <p className="rs-tagline">raw notes <span>→</span> polished JD + interview guide</p>
             </div>
           </div>
-        </header>
 
-        {/* ── Workspace ───────────────────────────────────────────────── */}
-        <main className="rs-workspace">
-          {/* ── Input Panel ──────────────────────────────────────────── */}
-          <div className="rs-panel">
-            <div className="rs-panel-header">
-              <span className="rs-panel-label">Raw Notes</span>
-              <span className="rs-panel-hint">paste anything</span>
-            </div>
-
-            <div className="rs-input-body">
-              <div className="textarea-wrap">
-                <textarea
-                  className="rs-textarea"
-                  value={input}
-                  onChange={handleInputChange}
-                  placeholder={`Drop your rough notes here...\n\ne.g. "Looking for a senior PM to lead growth. Needs SQL, A/B testing experience.\nShould be a strong communicator and data-driven leader..."`}
-                  spellCheck={false}
-                />
-              </div>
-              <div className="rs-input-footer">
-                <span className="rs-char-count">{input.length} character{input.length !== 1 ? 's' : ''}</span>
-                <button type="button" className="rs-sample-btn" onClick={handleLoadSample}>
-                  Load sample
-                </button>
-              </div>
-
-              {error && (
-                <div className="rs-error" role="alert">
-                  {error}
-                </div>
-              )}
-            </div>
-
-            {/* ── Settings Panel ──────────────────────────────────────── */}
-            <div className="rs-settings-toggle">
-              <button
-                type="button"
-                className={`rs-settings-btn ${showSettings ? 'active' : ''}`}
-                onClick={() => setShowSettings(!showSettings)}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
-                </svg>
-                <span>Settings</span>
-                <svg className={`rs-chevron ${showSettings ? 'open' : ''}`} width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </button>
-            </div>
+          {/* ── Settings (Header) ────────────────────────────────────── */}
+          <div className="rs-header-actions" ref={settingsRef}>
+            <button
+              type="button"
+              className={`rs-header-settings-btn ${showSettings ? 'active' : ''}`}
+              onClick={() => setShowSettings(!showSettings)}
+              aria-label="Settings"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
+              </svg>
+            </button>
 
             {showSettings && (
-              <div className="rs-settings-panel">
+              <div className="rs-settings-dropdown">
+                <div className="rs-settings-dropdown-header">
+                  <span>Settings</span>
+                </div>
+
                 {/* Language */}
                 <div className="rs-setting-row">
                   <label className="rs-setting-label">Language</label>
@@ -325,6 +312,41 @@ export default function Home() {
                 </div>
               </div>
             )}
+          </div>
+        </header>
+
+        {/* ── Workspace ───────────────────────────────────────────────── */}
+        <main className="rs-workspace">
+          {/* ── Input Panel ──────────────────────────────────────────── */}
+          <div className="rs-panel">
+            <div className="rs-panel-header">
+              <span className="rs-panel-label">Raw Notes</span>
+              <span className="rs-panel-hint">paste anything</span>
+            </div>
+
+            <div className="rs-input-body">
+              <div className="textarea-wrap">
+                <textarea
+                  className="rs-textarea"
+                  value={input}
+                  onChange={handleInputChange}
+                  placeholder={`Drop your rough notes here...\n\ne.g. "Looking for a senior PM to lead growth. Needs SQL, A/B testing experience.\nShould be a strong communicator and data-driven leader..."`}
+                  spellCheck={false}
+                />
+              </div>
+              <div className="rs-input-footer">
+                <span className="rs-char-count">{input.length} character{input.length !== 1 ? 's' : ''}</span>
+                <button type="button" className="rs-sample-btn" onClick={handleLoadSample}>
+                  Load sample
+                </button>
+              </div>
+
+              {error && (
+                <div className="rs-error" role="alert">
+                  {error}
+                </div>
+              )}
+            </div>
 
             <div className="rs-input-actions">
               <button
