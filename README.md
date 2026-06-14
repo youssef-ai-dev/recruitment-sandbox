@@ -161,6 +161,35 @@ Plus 50+ soft skills including leadership, communication, stakeholder management
 - Animated tab UI with gold underline indicator
 - Accessible color contrast and focus states
 
+### 📥 PDF Export
+
+- One-click PDF export for both Job Description and Interview Guide
+- Professionally formatted PDF with gold accents and typography
+- Automatic pagination with page numbers and footer branding
+- Filenames based on role title (e.g. `Senior_Product_Manager_JD.pdf`)
+
+### 🏢 Job Board Formats
+
+- **LinkedIn** — Full format with benefits section and EOE statement
+- **Indeed** — Optimized format, benefits section omitted (Indeed has its own)
+- **Glassdoor** — Streamlined format for Glassdoor's job listing structure
+- **Workable** — ATS-friendly format with benefits included
+
+### 🌍 Multilingual Support
+
+- **English** — Default language
+- **العربية (Arabic)** — Full RTL support with proper text direction
+- **Español (Spanish)** — Complete Spanish translations for all sections
+- **Français (French)** — Complete French translations for all sections
+- All section headings, meta info, and boilerplate text translated
+- Settings panel with language pill selector
+
+### 🔢 Custom Question Count
+
+- Slider to choose 5, 10, or 15 interview questions
+- Dynamic question generation based on selected count
+- Priority system ensures most relevant skills are covered first
+
 ### ⚡ Client-Side Processing
 
 - Core features run entirely in the browser — no server processing for JD & interview guide generation
@@ -350,10 +379,10 @@ SQL, A/B Testing, Product Management, Stakeholder Management, Communication, Lea
 
 ## 🛣️ Roadmap
 
-- [ ] **Export to PDF** — Generate downloadable PDF documents
-- [ ] **Multiple output formats** — Job board variants (Indeed, Glassdoor, Workable)
-- [ ] **Custom question count** — Slider to choose 5, 10, or 15 questions
-- [ ] **Language support** — Arabic, Spanish, French job descriptions
+- [x] ~~**Export to PDF** — Generate downloadable PDF documents~~ ✅
+- [x] ~~**Multiple output formats** — Job board variants (Indeed, Glassdoor, Workable)~~ ✅
+- [x] ~~**Custom question count** — Slider to choose 5, 10, or 15 questions~~ ✅
+- [x] ~~**Language support** — Arabic, Spanish, French job descriptions~~ ✅
 - [ ] **Save history** — LocalStorage-based session persistence
 - [ ] **Dark/Light theme toggle**
 - [ ] **Bulk mode** — Process multiple roles at once

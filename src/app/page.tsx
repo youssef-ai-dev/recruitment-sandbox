@@ -8,10 +8,13 @@ import {
   renderGuide,
   jdToPlainText,
   guideToPlainText,
+  exportToPDF,
 } from '@/lib/generator';
 import type { GuideData } from '@/lib/generator';
+import type { OutputFormat } from '@/lib/generator';
 import type { ParsedNotes } from '@/lib/parser';
 import { CONFIG } from '@/lib/skills';
+import { LOCALES, type Locale } from '@/lib/i18n';
 
 // ─── Sample text ────────────────────────────────────────────────────────────
 
@@ -44,9 +47,18 @@ Nice to have:
 
 We need someone who is a strong leader but also collaborative. They should be able to think strategically while being hands-on with data. Strong presentation skills are important since they'll be presenting to the C-suite regularly.`;
 
-// ─── Tab type ───────────────────────────────────────────────────────────────
+// ─── Types ──────────────────────────────────────────────────────────────────
 
 type TabKey = 'jd' | 'guide';
+
+const OUTPUT_FORMATS: { value: OutputFormat; label: string }[] = [
+  { value: 'linkedin', label: 'LinkedIn' },
+  { value: 'indeed', label: 'Indeed' },
+  { value: 'glassdoor', label: 'Glassdoor' },
+  { value: 'workable', label: 'Workable' },
+];
+
+const QUESTION_OPTIONS = [5, 10, 15] as const;
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
@@ -63,6 +75,13 @@ export default function Home() {
   const [genKey, setGenKey] = useState(0);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+
+  // ─── New feature states ───────────────────────────────────────────────
+  const [locale, setLocale] = useState<Locale>('en');
+  const [outputFormat, setOutputFormat] = useState<OutputFormat>('linkedin');
+  const [questionCount, setQuestionCount] = useState(10);
+  const [showSettings, setShowSettings] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   // ─── Tab indicator animation ────────────────────────────────────────────
 
@@ -107,8 +126,8 @@ export default function Home() {
     setTimeout(() => {
       try {
         const parsed = parseNotes(input);
-        const jd = generateJD(parsed);
-        const guide = generateGuide(parsed);
+        const jd = generateJD(parsed, locale, outputFormat);
+        const guide = generateGuide(parsed, questionCount, locale);
         const guideRendered = renderGuide(guide);
 
         setParsedRef(parsed);
@@ -124,12 +143,12 @@ export default function Home() {
         setLoading(false);
       }
     }, CONFIG.GEN_DELAY);
-  }, [input, error]);
+  }, [input, error, locale, outputFormat, questionCount]);
 
   const handleCopy = useCallback(async () => {
     let text = '';
     if (activeTab === 'jd' && parsedRef) {
-      text = jdToPlainText(parsedRef);
+      text = jdToPlainText(parsedRef, locale);
     } else if (activeTab === 'guide' && guideData) {
       text = guideToPlainText(guideData);
     }
@@ -151,7 +170,19 @@ export default function Home() {
         setTimeout(() => setCopied(false), 2000);
       }
     }
-  }, [activeTab, parsedRef, guideData]);
+  }, [activeTab, parsedRef, guideData, locale]);
+
+  const handleExportPDF = useCallback(async () => {
+    if (!parsedRef || !guideData) return;
+    setExporting(true);
+    try {
+      await exportToPDF(parsedRef, guideData, activeTab, locale);
+    } catch (err) {
+      console.error('PDF export failed:', err);
+    } finally {
+      setExporting(false);
+    }
+  }, [parsedRef, guideData, activeTab, locale]);
 
   const hasOutput = jdHtml !== null;
 
@@ -212,6 +243,89 @@ export default function Home() {
               )}
             </div>
 
+            {/* ── Settings Panel ──────────────────────────────────────── */}
+            <div className="rs-settings-toggle">
+              <button
+                type="button"
+                className={`rs-settings-btn ${showSettings ? 'active' : ''}`}
+                onClick={() => setShowSettings(!showSettings)}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
+                </svg>
+                <span>Settings</span>
+                <svg className={`rs-chevron ${showSettings ? 'open' : ''}`} width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+            </div>
+
+            {showSettings && (
+              <div className="rs-settings-panel">
+                {/* Language */}
+                <div className="rs-setting-row">
+                  <label className="rs-setting-label">Language</label>
+                  <div className="rs-locale-pills">
+                    {LOCALES.map(l => (
+                      <button
+                        key={l.code}
+                        type="button"
+                        className={`rs-locale-pill ${locale === l.code ? 'active' : ''}`}
+                        onClick={() => setLocale(l.code)}
+                      >
+                        {l.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Output Format */}
+                <div className="rs-setting-row">
+                  <label className="rs-setting-label">JD Format</label>
+                  <div className="rs-locale-pills">
+                    {OUTPUT_FORMATS.map(f => (
+                      <button
+                        key={f.value}
+                        type="button"
+                        className={`rs-locale-pill ${outputFormat === f.value ? 'active' : ''}`}
+                        onClick={() => setOutputFormat(f.value)}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Question Count */}
+                <div className="rs-setting-row">
+                  <label className="rs-setting-label">Questions</label>
+                  <div className="rs-question-slider-wrap">
+                    <input
+                      type="range"
+                      min={5}
+                      max={15}
+                      step={5}
+                      value={questionCount}
+                      onChange={(e) => setQuestionCount(Number(e.target.value))}
+                      className="rs-question-slider"
+                    />
+                    <div className="rs-slider-labels">
+                      {QUESTION_OPTIONS.map(n => (
+                        <span
+                          key={n}
+                          className={`rs-slider-label ${questionCount === n ? 'active' : ''}`}
+                          onClick={() => setQuestionCount(n)}
+                        >
+                          {n}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="rs-input-actions">
               <button
                 type="button"
@@ -262,18 +376,34 @@ export default function Home() {
               </div>
 
               {hasOutput && (
-                <button
-                  type="button"
-                  className={`rs-copy-btn ${copied ? 'copied' : ''}`}
-                  onClick={handleCopy}
-                  title="Copy to clipboard"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-                  </svg>
-                  <span>{copied ? 'Copied!' : 'Copy'}</span>
-                </button>
+                <div className="rs-action-btns">
+                  <button
+                    type="button"
+                    className="rs-action-btn"
+                    onClick={handleExportPDF}
+                    disabled={exporting}
+                    title="Export as PDF"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    <span>{exporting ? '…' : 'PDF'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`rs-action-btn ${copied ? 'copied' : ''}`}
+                    onClick={handleCopy}
+                    title="Copy to clipboard"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                    </svg>
+                    <span>{copied ? 'Copied!' : 'Copy'}</span>
+                  </button>
+                </div>
               )}
             </div>
 
@@ -313,7 +443,7 @@ export default function Home() {
                       </svg>
                     </div>
                     <p className="rs-placeholder-text">Interview Guide</p>
-                    <p className="rs-placeholder-sub">10 behavioral interview questions will appear here, tailored to the skills in your JD.</p>
+                    <p className="rs-placeholder-sub">Behavioral interview questions will appear here, tailored to the skills in your JD.</p>
                   </div>
                 )}
               </div>

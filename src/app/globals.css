@@ -934,3 +934,274 @@
 .rs-output-body-wrap::-webkit-scrollbar-thumb:hover {
   background: var(--rs-border-light);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SETTINGS PANEL
+   ═══════════════════════════════════════════════════════════════════════════ */
+.rs-settings-toggle {
+  padding: 0 22px;
+}
+
+.rs-settings-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: none;
+  color: var(--rs-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 8px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  letter-spacing: 0.02em;
+}
+
+.rs-settings-btn:hover,
+.rs-settings-btn.active {
+  color: var(--rs-accent);
+}
+
+.rs-chevron {
+  transition: transform 0.25s ease;
+}
+
+.rs-chevron.open {
+  transform: rotate(180deg);
+}
+
+.rs-settings-panel {
+  padding: 14px 22px 18px;
+  border-top: 1px solid var(--rs-border);
+  border-bottom: 1px solid var(--rs-border);
+  background: var(--rs-bg-subtle);
+  animation: fadeUp 0.3s ease-out;
+}
+
+.rs-setting-row {
+  margin-bottom: 14px;
+}
+
+.rs-setting-row:last-child {
+  margin-bottom: 0;
+}
+
+.rs-setting-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--rs-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+/* ─── Locale pills ────────────────────────────────────────────────────── */
+.rs-locale-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.rs-locale-pill {
+  background: var(--rs-surface);
+  border: 1px solid var(--rs-border);
+  color: var(--rs-text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 5px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
+}
+
+.rs-locale-pill:hover {
+  border-color: var(--rs-accent);
+  color: var(--rs-accent);
+}
+
+.rs-locale-pill.active {
+  background: var(--rs-accent-soft);
+  border-color: var(--rs-accent);
+  color: var(--rs-accent);
+}
+
+/* ─── Question count slider ───────────────────────────────────────────── */
+.rs-question-slider-wrap {
+  width: 100%;
+}
+
+.rs-question-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--rs-border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.rs-question-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--rs-accent);
+  cursor: pointer;
+  border: 2px solid var(--rs-bg);
+  box-shadow: 0 0 0 3px var(--rs-accent-soft);
+  transition: transform 0.15s ease;
+}
+
+.rs-question-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.rs-question-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--rs-accent);
+  cursor: pointer;
+  border: 2px solid var(--rs-bg);
+  box-shadow: 0 0 0 3px var(--rs-accent-soft);
+}
+
+.rs-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding: 0 2px;
+}
+
+.rs-slider-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--rs-text-muted);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.rs-slider-label:hover {
+  color: var(--rs-text-secondary);
+}
+
+.rs-slider-label.active {
+  color: var(--rs-accent);
+  background: var(--rs-accent-soft);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ACTION BUTTONS (Copy + PDF in tab bar)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.rs-action-btns {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.rs-action-btn {
+  background: none;
+  border: 1px solid var(--rs-border);
+  color: var(--rs-text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  letter-spacing: 0.02em;
+}
+
+.rs-action-btn:hover {
+  border-color: var(--rs-accent);
+  color: var(--rs-accent);
+}
+
+.rs-action-btn.copied {
+  border-color: var(--rs-success);
+  color: var(--rs-success);
+}
+
+.rs-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FORMAT TAG (Indeed/Glassdoor/Workable indicator)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.format-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(91, 141, 239, 0.1);
+  color: #7a9ee6;
+  border: 1px solid rgba(91, 141, 239, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+
+/* ─── RTL Support for Arabic ───────────────────────────────────────────── */
+[dir="rtl"] .jd-section li {
+  padding-left: 0;
+  padding-right: 20px;
+}
+
+[dir="rtl"] .jd-section li::before {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .listen-guide li {
+  padding-left: 0;
+  padding-right: 14px;
+}
+
+[dir="rtl"] .listen-guide li::before {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .guide-doc .guide-stats {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .question-top {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .jd-doc .doc-meta {
+  flex-direction: row-reverse;
+}
+
+/* ─── Settings responsive ─────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .rs-settings-toggle {
+    padding: 0 16px;
+  }
+
+  .rs-settings-panel {
+    padding: 12px 16px 16px;
+  }
+
+  .rs-locale-pills {
+    gap: 4px;
+  }
+
+  .rs-locale-pill {
+    padding: 4px 10px;
+    font-size: 0.65rem;
+  }
+}
