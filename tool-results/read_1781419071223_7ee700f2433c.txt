@@ -1,0 +1,502 @@
+   800→    <div class="app">
+   801→        <!-- ========== HEADER ========== -->
+   802→        <header class="header">
+   803→            <div class="brand">
+   804→                <div class="brand-icon">
+   805→                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+   806→                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+   807→                        <path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/>
+   808→                    </svg>
+   809→                </div>
+   810→                <div class="brand-text">
+   811→                    <h1>Recruitment Sandbox</h1>
+   812→                    <div class="brand-tagline">raw notes <span>→</span> polished JD + interview guide</div>
+   813→                </div>
+   814→            </div>
+   815→        </header>
+   816→
+   817→        <!-- ========== WORKSPACE ========== -->
+   818→        <main class="workspace">
+   819→            <!-- Input Panel -->
+   820→            <div class="panel input-panel">
+   821→                <div class="panel-head">
+   822→                    <h2>Raw Notes</h2>
+   823→                    <span class="hint">paste anything</span>
+   824→                </div>
+   825→                <div class="input-body">
+   826→                    <div class="textarea-wrap">
+   827→                        <textarea id="notesInput" placeholder="Drop your rough notes here...&#10;&#10;e.g. &quot;Looking for a senior PM to lead growth. Needs SQL, A/B testing experience.&#10;Should be a strong communicator and data-driven leader...&quot;"></textarea>
+   828→                    </div>
+   829→                    <div class="input-footer">
+   830→                        <span class="char-count" id="charCount">0 characters</span>
+   831→                        <button class="sample-btn" id="sampleBtn">Load sample</button>
+   832→                    </div>
+   833→                    <div class="error-msg" id="errorMsg"></div>
+   834→                </div>
+   835→                <div class="input-actions">
+   836→                    <button class="generate-btn" id="generateBtn">
+   837→                        <span class="btn-label">Generate Documents</span>
+   838→                        <span class="btn-loading"><span class="spinner"></span> Generating…</span>
+   839→                    </button>
+   840→                </div>
+   841→            </div>
+   842→
+   843→            <!-- Output Panel -->
+   844→            <div class="panel output-panel">
+   845→                <div class="tabs-row">
+   846→                    <div class="tabs" id="tabs">
+   847→                        <button class="tab-btn active" data-tab="jd">Job Description</button>
+   848→                        <button class="tab-btn" data-tab="guide">Interview Guide</button>
+   849→                        <div class="tab-indicator" id="tabIndicator"></div>
+   850→                    </div>
+   851→                    <button class="copy-btn" id="copyBtn" style="display:none;">
+   852→                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+   853→                        <span>Copy</span>
+   854→                    </button>
+   855→                </div>
+   856→                <div class="output-body" id="outputBody">
+   857→                    <!-- JD Tab -->
+   858→                    <div class="tab-content active" id="jdTab">
+   859→                        <div class="placeholder-state" id="jdPlaceholder">
+   860→                            <div class="placeholder-icon">
+   861→                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+   862→                            </div>
+   863→                            <h3>Job Description</h3>
+   864→                            <p>Enter your raw role notes and click Generate to create a LinkedIn-ready job description.</p>
+   865→                        </div>
+   866→                        <div id="jdOutput"></div>
+   867→                    </div>
+   868→                    <!-- Guide Tab -->
+   869→                    <div class="tab-content" id="guideTab">
+   870→                        <div class="placeholder-state" id="guidePlaceholder">
+   871→                            <div class="placeholder-icon">
+   872→                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+   873→                            </div>
+   874→                            <h3>Interview Guide</h3>
+   875→                            <p>10 behavioral interview questions will appear here, tailored to the skills in your JD.</p>
+   876→                        </div>
+   877→                        <div id="guideOutput"></div>
+   878→                    </div>
+   879→                </div>
+   880→            </div>
+   881→        </main>
+   882→    </div>
+   883→
+   884→    <script>
+   885→    // ============================================================
+   886→    // CONFIGURATION
+   887→    // ============================================================
+   888→    const CONFIG = {
+   889→        MAX_QUESTIONS: 10,
+   890→        MIN_INPUT: 15,
+   891→        GEN_DELAY: 700
+   892→    };
+   893→
+   894→    // ============================================================
+   895→    // SKILL DATABASES
+   896→    // ============================================================
+   897→    const HARD_SKILLS = {
+   898→        'Software Engineering': ['python','java','javascript','typescript','c++','c#','go','rust','ruby','php','swift','kotlin','scala','r programming','perl'],
+   899→        'Web Development': ['react','angular','vue','next.js','nuxt','node.js','express','django','flask','spring boot','rails','laravel','fastapi','html','css','sass','rest api','graphql','webpack'],
+   900→        'Data & Databases': ['sql','postgresql','mysql','mongodb','redis','elasticsearch','cassandra','dynamodb','neo4j','oracle','sqlite','pandas','numpy','spark','hadoop','airflow','dbt','etl','data pipeline','data warehouse','data modeling'],
+   901→        'Cloud & DevOps': ['aws','azure','gcp','google cloud','docker','kubernetes','terraform','ansible','jenkins','ci/cd','circleci','gitlab','cloudformation','ecs','lambda','s3'],
+   902→        'AI & Machine Learning': ['machine learning','deep learning','tensorflow','pytorch','keras','nlp','natural language processing','computer vision','neural networks','llm','generative ai','hugging face','openai','scikit-learn','data science'],
+   903→        'Design': ['figma','sketch','adobe xd','photoshop','illustrator','indesign','ux design','ui design','wireframing','prototyping','user research','design thinking','design system','canva'],
+   904→        'Analytics & BI': ['tableau','power bi','looker','google analytics','mixpanel','amplitude','snowflake','bigquery','redshift','databricks','data analysis','data visualization','excel','spreadsheet'],
+   905→        'Product Management': ['product management','product strategy','roadmap','a/b testing','user stories','requirements gathering','agile','scrum','kanban','sprint planning','backlog','jira','asana','product analytics'],
+   906→        'Marketing': ['seo','sem','ppc','google ads','facebook ads','content marketing','social media marketing','email marketing','marketing automation','hubspot','marketo','google tag manager','growth marketing','demand generation'],
+   907→        'Sales': ['salesforce','hubspot crm','crm','pipeline management','lead generation','account management','b2b sales','b2c sales','saas sales','cold outreach','sales strategy','quota attainment'],
+   908→        'Finance & Accounting': ['financial modeling','financial analysis','budgeting','forecasting','p&l','gaap','ifrs','valuation','quickbooks','sap','erp','accounting','audit','tax'],
+   909→        'Human Resources': ['recruitment','talent acquisition','performance management','employee engagement','onboarding','compensation','benefits','hrbp','learning and development','diversity','inclusion','workforce planning'],
+   910→        'Operations': ['supply chain','logistics','process improvement','lean','six sigma','project management','vendor management','procurement','quality assurance','qa','inventory management'],
+   911→        'Legal & Compliance': ['compliance','gdpr','hipaa','sox','regulatory','contracts','legal research','intellectual property','risk management','internal audit']
+   912→    };
+   913→
+   914→    const SOFT_SKILLS = [
+   915→        'communication','leadership','teamwork','collaboration','problem-solving','problem solving',
+   916→        'critical thinking','creativity','innovation','adaptability','flexibility','time management',
+   917→        'organization','attention to detail','analytical thinking','strategic thinking',
+   918→        'decision-making','decision making','conflict resolution','negotiation','presentation',
+   919→        'mentoring','coaching','emotional intelligence','empathy','resilience','initiative',
+   920→        'self-motivated','self motivated','stakeholder management','cross-functional','cross functional',
+   921→        'interpersonal','active listening','persuasion','influence','public speaking','facilitation',
+   922→        'delegation','accountability','ownership','growth mindset','curiosity','proactive',
+   923→        'detail-oriented','detail oriented','results-driven','results driven','data-driven','data driven',
+   924→        'customer-centric','customer centric','verbal communication','written communication',
+   925→        'relationship building','networking','client management','customer-facing'
+   926→    ];
+   927→
+   928→    const ACTION_VERBS = [
+   929→        'manage','lead','develop','create','build','design','implement','oversee','coordinate',
+   930→        'drive','establish','define','own','deliver','execute','analyze','optimize','improve',
+   931→        'maintain','support','collaborate','partner','mentor','train','hire','scale','launch',
+   932→        'plan','research','evaluate','assess','identify','recommend','present','report',
+   933→        'document','ensure','facilitate','negotiate','resolve','architect','engineer',
+   934→        'test','deploy','monitor','configure','automate','streamline','cultivate','foster',
+   935→        'champion','spearhead','orchestrate','synthesize','translate','liaise'
+   936→    ];
+   937→
+   938→    const ROLE_KEYWORDS = [
+   939→        'manager','director','engineer','developer','analyst','designer','architect',
+   940→        'specialist','coordinator','lead','head','vp','chief','officer','associate',
+   941→        'senior','junior','principal','staff','consultant','strategist','scientist',
+   942→        'administrator','representative','executive','advisor','technician','examiner',
+   943→        'intern','fellow','contractor','freelancer'
+   944→    ];
+   945→
+   946→    const SECTION_HEADERS = [
+   947→        'responsibilities','duties','what you','what we','requirements','qualifications',
+   948→        'skills','experience','about','overview','summary','role','position','nice to',
+   949→        'preferred','required','must have','good to','bonus','plus','we offer','benefits',
+   950→        'compensation','salary','location','team','company','ideal candidate','who you are'
+   951→    ];
+   952→
+   953→    // ============================================================
+   954→    // QUESTION BANK
+   955→    // ============================================================
+   956→    const SPECIFIC_QUESTIONS = {
+   957→        'sql': {
+   958→            q: 'Describe a time when your SQL and data analysis skills helped uncover a critical insight that changed the direction of a project or business decision.',
+   959→            listen: ['Ability to write complex queries and work with large datasets','Translation of raw data into actionable business recommendations','Measurable impact on outcomes driven by their analysis']
+   960→        },
+   961→        'python': {
+   962→            q: 'Walk me through a complex problem you solved using Python where you had to balance code quality, performance, and delivery timelines.',
+   963→            listen: ['Structured problem-solving approach and technical depth','Awareness of code quality, testing, and maintainability','Ability to handle ambiguity and make pragmatic trade-offs']
+   964→        },
+   965→        'leadership': {
+   966→            q: 'Tell me about a time you led a team through a significant change or challenge. How did you maintain morale and keep the team focused on results?',
+   967→            listen: ['Concrete leadership actions — not just holding the title','Ability to communicate vision and handle resistance empathetically','Measurable outcome that shows their leadership made a difference']
+   968→        },
+   969→        'communication': {
+   970→            q: 'Give an example of when you had to convey a complex or unpopular message to a diverse audience. How did you tailor your approach?',
+   971→            listen: ['Adaptability in communication style based on the audience','Active listening and checking for understanding','Positive outcome or successful alignment that resulted']
+   972→        },
+   973→        'product management': {
+   974→            q: 'Tell me about a product decision you made that involved significant trade-offs. How did you evaluate options and communicate your rationale to stakeholders?',
+   975→            listen: ['Framework for decision-making (data, user research, business goals)','Ability to say no and manage stakeholder expectations','Outcome of the decision and lessons learned']
+   976→        },
+   977→        'agile': {
+   978→            q: 'Describe a situation where an Agile process you were part of broke down. What went wrong, and what did you do to get things back on track?',
+   979→            listen: ['Deep understanding of Agile principles, not just ceremonies','Proactive problem-solving and team facilitation skills','Continuous improvement mindset and concrete changes implemented']
+   980→        },
+   981→        'machine learning': {
+   982→            q: 'Tell me about a machine learning project where the initial approach didn\'t work. How did you diagnose the problem and iterate toward a solution?',
+   983→            listen: ['Methodical experimentation and debugging approach','Ability to communicate technical challenges to non-technical stakeholders','Persistence and creativity in finding alternative approaches']
+   984→        },
+   985→        'financial analysis': {
+   986→            q: 'Describe a time your financial analysis directly influenced a major business decision. How did you present your findings to ensure they were acted upon?',
+   987→            listen: ['Analytical rigor and attention to detail in the analysis','Storytelling ability — turning numbers into a compelling narrative','Tangible business impact from their recommendation']
+   988→        },
+   989→        'stakeholder management': {
+   990→            q: 'Tell me about a time you had to manage conflicting priorities or expectations from multiple stakeholders. How did you find alignment?',
+   991→            listen: ['Structured approach to understanding each stakeholder\'s needs','Negotiation and prioritization skills','Win-win outcome or clear rationale for the final decision']
+   992→        },
+   993→        'problem-solving': {
+   994→            q: 'Walk me through the most complex problem you\'ve faced in the last year. What was your systematic approach to solving it?',
+   995→            listen: ['Clear, structured thinking process — not just jumping to solutions','Ability to break down complexity into manageable parts','Quality and impact of the solution they arrived at']
+   996→        },
+   997→        'data-driven': {
+   998→            q: 'Give an example of a time when data contradicted your intuition or a popular opinion. What did you do?',
+   999→            listen: ['Intellectual honesty and willingness to change course','Ability to interrogate data quality and methodology','How they communicated the counterintuitive finding to others']
+  1000→        },
+  1001→        'collaboration': {
+  1002→            q: 'Describe a cross-functional project where you had to work closely with people from very different disciplines. What made the collaboration successful?',
+  1003→            listen: ['Genuine respect for other disciplines and willingness to learn','Clear communication across functional boundaries','Shared ownership and how they navigated disagreements']
+  1004→        },
+  1005→        'time management': {
+  1006→            q: 'Tell me about a period when you had multiple high-priority deadlines competing for your time. How did you decide what to focus on first?',
+  1007→            listen: ['Prioritization framework (impact, urgency, dependencies)','Proactive communication about trade-offs and expectations','Outcome — did they meet the deadlines, and at what quality?']
+  1008→        },
+  1009→        'a/b testing': {
+  1010→            q: 'Describe an A/B test you designed that yielded surprising or inconclusive results. What did you do next?',
+  1011→            listen: ['Understanding of experimental design and statistical significance','Intellectual curiosity — not just accepting results at face value','Follow-through: how they used the learning to inform next steps']
+  1012→        },
+  1013→        'creativity': {
+  1014→            q: 'Tell me about a time you proposed a creative or unconventional solution to a problem. How did you get buy-in for your idea?',
+  1015→            listen: ['Genuine originality in their thinking, not just incremental improvement','Courage to challenge the status quo with evidence','Ability to prototype or validate ideas before committing resources']
+  1016→        },
+  1017→        'adaptability': {
+  1018→            q: 'Describe a situation where your priorities or scope changed significantly mid-project. How did you adapt without losing momentum?',
+  1019→            listen: ['Emotional resilience — frustration is fine, but they should recover','Speed and effectiveness of their pivot','How they helped others on the team adjust as well']
+  1020→        },
+  1021→        'mentoring': {
+  1022→            q: 'Tell me about someone you mentored or developed. What was your approach, and how did that person grow as a result?',
+  1023→            listen: ['Genuine investment in the other person\'s growth, not just delegation','Tailored approach based on the mentee\'s needs and learning style','Concrete evidence of the mentee\'s progress or promotion']
+  1024→        },
+  1025→        'negotiation': {
+  1026→            q: 'Describe a negotiation you led where the stakes were high. How did you prepare, and what was the outcome?',
+  1027→            listen: ['Thorough preparation and understanding of the other party\'s needs','Creative deal-making — looking for value beyond just price','Ability to maintain the relationship while advocating firmly']
+  1028→        },
+  1029→        'attention to detail': {
+  1030→            q: 'Tell me about a time when your attention to detail caught something critical that others had missed. What was the impact?',
+  1031→            listen: ['Systematic quality-checking habits, not just luck','Clear articulation of the risk or consequence if it had been missed','How they communicated the finding without alienating colleagues']
+  1032→        },
+  1033→        'strategic thinking': {
+  1034→            q: 'Give an example of when you stepped back from day-to-day work to identify a longer-term strategic opportunity. What did you do about it?',
+  1035→            listen: ['Ability to zoom out and see the bigger picture','Data or insight that informed their strategic perspective','Concrete actions taken to turn strategy into execution']
+  1036→        },
+  1037→        'resilience': {
+  1038→            q: 'Tell me about a significant professional setback or failure. How did you handle it, and what did you learn?',
+  1039→            listen: ['Honesty and self-awareness about what went wrong','Constructive response — learning, adapting, not just recovering','Growth demonstrated in subsequent work']
+  1040→        },
+  1041→        'innovation': {
+  1042→            q: 'Describe a time you introduced a new process, tool, or idea that meaningfully improved how your team worked.',
+  1043→            listen: ['Proactive identification of the opportunity for improvement','Evidence of testing and iterating before full rollout','Measurable improvement in efficiency, quality, or outcomes']
+  1044→        },
+  1045→        'customer-centric': {
+  1046→            q: 'Tell me about a time you advocated for the customer or user when it was difficult or unpopular to do so.',
+  1047→            listen: ['Deep understanding of customer needs backed by evidence','Courage to push back internally on behalf of the customer','Positive outcome for both the customer and the business']
+  1048→        }
+  1049→    };
+  1050→
+  1051→    // Generic question templates for skills not in the specific bank
+  1052→    const GENERIC_HARD_TEMPLATES = [
+  1053→        (s) => `Describe a project where your expertise in ${s} was critical to delivering a successful outcome. What was the challenge and how did you approach it?`,
+  1054→        (s) => `Tell me about a time you had to quickly deepen your knowledge of ${s} to meet a project need. How did you manage the learning curve while delivering results?`,
+  1055→        (s) => `Walk me through a situation where your ${s} skills helped you solve a problem that would have been significantly harder otherwise. What made the difference?`,
+  1056→        (s) => `Can you share an example of how you've used ${s} to drive a measurable impact on a team or business outcome?`
+  1057→    ];
+  1058→
+  1059→    const GENERIC_SOFT_TEMPLATES = [
+  1060→        (s) => `Tell me about a time your ${s} was tested in a high-pressure situation. How did you handle it and what was the outcome?`,
+  1061→        (s) => `Describe a situation where your ability to demonstrate ${s} directly contributed to the success of a project or team.`,
+  1062→        (s) => `Give an example of when you had to use strong ${s} to navigate a challenging interpersonal or organizational dynamic.`,
+  1063→        (s) => `Can you share a time when you intentionally worked to improve your ${s}? What steps did you take and what changed?`
+  1064→    ];
+  1065→
+  1066→    const GENERIC_HARD_LISTEN = (s) => [
+  1067→        `Specific, demonstrated experience with ${s} — not just theoretical knowledge`,
+  1068→        `Clear articulation of the problem-solving process and their specific contribution`,
+  1069→        `Tangible results or impact from applying ${s}`
+  1070→    ];
+  1071→
+  1072→    const GENERIC_SOFT_LISTEN = (s) => [
+  1073→        `Self-awareness and intentionality in how they apply ${s}`,
+  1074→        `Specific examples with concrete details rather than vague generalizations`,
+  1075→        `Evidence of growth or learning from the experience`
+  1076→    ];
+  1077→
+  1078→    // Fallback questions when few skills are detected
+  1079→    const FALLBACK_QUESTIONS = [
+  1080→        {
+  1081→            skill: 'Problem Solving',
+  1082→            type: 'general',
+  1083→            q: 'Walk me through the most complex problem you\'ve faced professionally in the last year. What was your systematic approach to solving it?',
+  1084→            listen: ['Structured thinking — breaking complex problems into parts','Ability to identify root causes vs. symptoms','Quality and creativity of the solution']
+  1085→        },
+  1086→        {
+  1087→            skill: 'Leadership',
+  1088→            type: 'general',
+  1089→            q: 'Tell me about a time you took ownership of something outside your defined responsibilities. What motivated you, and what happened?',
+  1090→            listen: ['Proactive initiative and sense of ownership','Ability to influence without formal authority','Positive impact on the team or project']
+  1091→        },
+  1092→        {
+  1093→            skill: 'Collaboration',
+  1094→            type: 'general',
+  1095→            q: 'Describe a situation where you had to work with someone whose working style was very different from yours. How did you make it work?',
+  1096→            listen: ['Empathy and adaptability in working with different styles','Focus on shared goals rather than personal preferences','Successful outcome from the collaboration']
+  1097→        },
+  1098→        {
+  1099→            skill: 'Communication',
+  1100→            type: 'general',
+  1101→            q: 'Give an example of a time you had to persuade a skeptical audience to support your idea or proposal. How did you build your case?',
+  1102→            listen: ['Preparation and understanding of the audience\'s concerns','Use of data, logic, and storytelling','Ability to handle objections gracefully']
+  1103→        },
+  1104→        {
+  1105→            skill: 'Adaptability',
+  1106→            type: 'general',
+  1107→            q: 'Tell me about a time when something you were working on changed dramatically mid-course — a pivot, a reorg, a shift in strategy. How did you handle it?',
+  1108→            listen: ['Resilience and ability to stay productive during uncertainty','Speed of adaptation and proactive communication','Positive framing of the change and lessons learned']
+  1109→        },
+  1110→        {
+  1111→            skill: 'Decision Making',
+  1112→            type: 'general',
+  1113→            q: 'Describe a difficult decision you made with incomplete information. What was your framework and how did it play out?',
+  1114→            listen: ['Clear decision-making framework, even under ambiguity','Willingness to make a call and take responsibility','Honest reflection on what they\'d do differently']
+  1115→        },
+  1116→        {
+  1117→            skill: 'Impact',
+  1118→            type: 'general',
+  1119→            q: 'What accomplishment in your career are you most proud of, and why? Walk me through what made it significant.',
+  1120→            listen: ['Connection between their work and meaningful outcomes','Evidence of going beyond expectations','Passion and self-awareness about what drives them']
+  1121→        },
+  1122→        {
+  1123→            skill: 'Growth',
+  1124→            type: 'general',
+  1125→            q: 'Tell me about a piece of critical feedback you received that was hard to hear. How did you respond to it?',
+  1126→            listen: ['Genuine openness to feedback — not defensive','Concrete changes in behavior or approach after the feedback','Self-awareness about areas for improvement']
+  1127→        },
+  1128→        {
+  1129→            skill: 'Prioritization',
+  1130→            type: 'general',
+  1131→            q: 'How do you decide what to say no to? Give me a specific example of a time you declined or deprioritized a request and why.',
+  1132→            listen: ['Clear prioritization criteria (impact, alignment, capacity)','Courage and tact in communicating the no','Positive outcome from maintaining focus']
+  1133→        },
+  1134→        {
+  1135→            skill: 'Teamwork',
+  1136→            type: 'general',
+  1137→            q: 'Describe a team you were part of that was exceptionally high-performing. What do you think made it work, and what was your specific role in that?',
+  1138→            listen: ['Attribution of success to team dynamics, not just individual brilliance','Self-awareness about their role and contribution','Insight into what makes teams function well']
+  1139→        }
+  1140→    ];
+  1141→
+  1142→    // ============================================================
+  1143→    // PARSER
+  1144→    // ============================================================
+  1145→    function parseNotes(text) {
+  1146→        const result = {
+  1147→            title: '',
+  1148→            summary: '',
+  1149→            responsibilities: [],
+  1150→            hardSkills: [],
+  1151→            softSkills: [],
+  1152→            qualifications: [],
+  1153→            experienceLevel: '',
+  1154→            niceToHaves: [],
+  1155→            rawLines: []
+  1156→        };
+  1157→
+  1158→        const clean = text.replace(/\r\n/g, '\n').trim();
+  1159→        const lines = clean.split('\n')
+  1160→            .map(l => l.replace(/^[-•*◦▪]\s*/, '').replace(/^\d+[.)]\s*/, '').trim())
+  1161→            .filter(l => l.length > 0);
+  1162→
+  1163→        result.rawLines = lines;
+  1164→
+  1165→        // --- Extract title ---
+  1166→        result.title = extractTitle(lines, clean);
+  1167→
+  1168→        // --- Extract experience level ---
+  1169→        result.experienceLevel = extractExperience(clean);
+  1170→
+  1171→        // --- Detect section boundaries ---
+  1172→        const sections = detectSections(lines);
+  1173→
+  1174→        // --- Extract skills from full text ---
+  1175→        const lowerClean = clean.toLowerCase();
+  1176→        result.hardSkills = extractHardSkills(lowerClean);
+  1177→        result.softSkills = extractSoftSkills(lowerClean);
+  1178→
+  1179→        // --- Extract responsibilities ---
+  1180→        result.responsibilities = extractResponsibilities(lines, sections);
+  1181→
+  1182→        // --- Extract qualifications ---
+  1183→        result.qualifications = extractQualifications(lines, sections);
+  1184→
+  1185→        // --- Extract nice-to-haves ---
+  1186→        result.niceToHaves = extractNiceToHaves(lines, sections);
+  1187→
+  1188→        // --- Generate summary if not found ---
+  1189→        result.summary = generateSummary(result);
+  1190→
+  1191→        return result;
+  1192→    }
+  1193→
+  1194→    function extractTitle(lines, fullText) {
+  1195→        // Strategy 1: Look for role-like first line
+  1196→        if (lines.length > 0) {
+  1197→            const first = lines[0].replace(/[:\-–—]+$/, '').trim();
+  1198→            if (first.length < 80) {
+  1199→                const lower = first.toLowerCase();
+  1200→                // Check if it contains role keywords
+  1201→                if (ROLE_KEYWORDS.some(k => lower.includes(k))) {
+  1202→                    return first;
+  1203→                }
+  1204→                // Check if first line is short and looks like a title
+  1205→                if (first.length < 50 && !first.includes('.') && lines.length > 1) {
+  1206→                    return first;
+  1207→                }
+  1208→            }
+  1209→        }
+  1210→
+  1211→        // Strategy 2: Search for role pattern in text
+  1212→        const rolePattern = /(?:looking for|seeking|hire|hiring)\s+(?:a|an)\s+(.+?)(?:\.|,|\n|$)/i;
+  1213→        const match = fullText.match(rolePattern);
+  1214→        if (match) {
+  1215→            let candidate = match[1].trim();
+  1216→            // Clean up
+  1217→            candidate = candidate.replace(/\s+(?:to|who|that|for)\b.*$/i, '').trim();
+  1218→            if (candidate.length < 60) return capitalizeTitle(candidate);
+  1219→        }
+  1220→
+  1221→        // Strategy 3: Find a line with role keywords
+  1222→        for (const line of lines.slice(0, 5)) {
+  1223→            const lower = line.toLowerCase();
+  1224→            const hasRole = ROLE_KEYWORDS.some(k => lower.includes(k));
+  1225→            if (hasRole && line.length < 70) {
+  1226→                return line.replace(/[:\-–—]+$/, '').trim();
+  1227→            }
+  1228→        }
+  1229→
+  1230→        return 'Untitled Role';
+  1231→    }
+  1232→
+  1233→    function extractExperience(text) {
+  1234→        const patterns = [
+  1235→            /(\d+)\+?\s*years?\s+(?:of\s+)?(?:experience|exp)/i,
+  1236→            /(?:senior|sr\.?|lead|principal|staff)\s/i,
+  1237→            /(?:junior|jr\.?|entry.?level|associate)\s/i,
+  1238→            /(?:mid.?level|mid.?senior)\s/i
+  1239→        ];
+  1240→
+  1241→        const yearMatch = text.match(patterns[0]);
+  1242→        if (yearMatch) return `${yearMatch[1]}+ years`;
+  1243→
+  1244→        if (patterns[1].test(text)) return 'Senior-level';
+  1245→        if (patterns[2].test(text)) return 'Junior-level';
+  1246→        if (patterns[3].test(text)) return 'Mid-level';
+  1247→
+  1248→        return '';
+  1249→    }
+  1250→
+  1251→    function detectSections(lines) {
+  1252→        const sections = {};
+  1253→        let currentSection = 'top';
+  1254→
+  1255→        for (let i = 0; i < lines.length; i++) {
+  1256→            const lower = lines[i].toLowerCase().replace(/[:\-–—]+$/, '').trim();
+  1257→
+  1258→            if (SECTION_HEADERS.some(h => lower.startsWith(h) || lower === h) && lines[i].length < 60) {
+  1259→                currentSection = lower;
+  1260→                sections[currentSection] = [];
+  1261→            } else {
+  1262→                if (!sections[currentSection]) sections[currentSection] = [];
+  1263→                sections[currentSection].push(i);
+  1264→            }
+  1265→        }
+  1266→
+  1267→        return sections;
+  1268→    }
+  1269→
+  1270→    function extractHardSkills(text) {
+  1271→        const found = [];
+  1272→        for (const [category, skills] of Object.entries(HARD_SKILLS)) {
+  1273→            for (const skill of skills) {
+  1274→                const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  1275→                const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+  1276→                if (regex.test(text)) {
+  1277→                    found.push(skill);
+  1278→                }
+  1279→            }
+  1280→        }
+  1281→        return [...new Set(found)];
+  1282→    }
+  1283→
+  1284→    function extractSoftSkills(text) {
+  1285→        const found = [];
+  1286→        for (const skill of SOFT_SKILLS) {
+  1287→            const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  1288→            const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+  1289→            if (regex.test(text)) {
+  1290→                // Normalize the name
+  1291→                let normalized = skill.replace(/-/g, ' ');
+  1292→                normalized = normalized.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  1293→                if (!found.some(f => f.toLowerCase() === normalized.toLowerCase())) {
+  1294→                    found.push(normalized);
+  1295→                }
+  1296→            }
+  1297→        }
+  1298→        return found;
+  1299→    }
+
+[showing lines 800-1299 of 4900; use offset=1300 with limit to continue reading]

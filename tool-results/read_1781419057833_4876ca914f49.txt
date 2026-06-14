@@ -1,0 +1,2002 @@
+     1→Xiaomi MiMo Studio
+     2→
+     3→
+     4→MiMo Claw
+     5→Free Trial
+     6→
+     7→MiMo Chat
+     8→
+     9→
+    10→Xiaomi MiMo-V2.5 Now Available: MiMo-V2.5-Pro with significantly enhanced long-horizon reasoning & Agent; MiMo-V2.5 full-modality 1M context; MiMo-V2.5-TTS series now with voice cloning & fine-grained control
+    11→
+    12→
+    13→
+    14→
+    15→ Create a Recruitment Sandbox. User inputs raw notes about a desired role. The app generates two distinct outputs: 1) A polished, correctly formatted Job Description tailored for LinkedIn, and 2) An Interview Guide containing 10 behavioral questions specifically targeting the soft and hard skills mentioned in that new JD.
+    16→
+    17→html
+    18→html
+    19→<!DOCTYPE html>
+    20→<html lang="en">
+    21→<head>
+    22→    <meta charset="UTF-8">
+    23→    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    24→    <title>Recruitment Sandbox</title>
+    25→    <link rel="preconnect" href="https://fonts.googleapis.com">
+    26→    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    27→    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    28→    <style>
+    29→        /* ==========================================
+    30→           1. CUSTOM PROPERTIES
+    31→           ========================================== */
+    32→        :root {
+    33→            --bg: #09090c;
+    34→            --bg-subtle: #0d0d12;
+    35→            --surface: #131318;
+    36→            --surface-raised: #1a1a21;
+    37→            --surface-hover: #212129;
+    38→            --border: #2a2a35;
+    39→            --border-light: #3a3a4a;
+    40→            --accent: #c89b3c;
+    41→            --accent-soft: rgba(200, 155, 60, 0.12);
+    42→            --accent-hover: #dbb04a;
+    43→            --text: #e8e4db;
+    44→            --text-secondary: #a09a8f;
+    45→            --text-muted: #6b655b;
+    46→            --danger: #c85050;
+    47→            --success: #4caf6a;
+    48→            --radius-sm: 6px;
+    49→            --radius-md: 10px;
+    50→            --radius-lg: 14px;
+    51→            --font-display: 'Instrument Serif', serif;
+    52→            --font-body: 'Source Serif 4', serif;
+    53→            --font-mono: 'JetBrains Mono', monospace;
+    54→        }
+    55→
+    56→        /* ==========================================
+    57→           2. RESET & BASE
+    58→           ========================================== */
+    59→        *, *::before, *::after {
+    60→            box-sizing: border-box;
+    61→            margin: 0;
+    62→            padding: 0;
+    63→        }
+    64→
+    65→        html { font-size: 16px; }
+    66→
+    67→        body {
+    68→            background: var(--bg);
+    69→            color: var(--text);
+    70→            font-family: var(--font-body);
+    71→            font-weight: 400;
+    72→            line-height: 1.6;
+    73→            min-height: 100vh;
+    74→            overflow-x: hidden;
+    75→            -webkit-font-smoothing: antialiased;
+    76→        }
+    77→
+    78→        body::before {
+    79→            content: '';
+    80→            position: fixed;
+    81→            inset: 0;
+    82→            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    83→            pointer-events: none;
+    84→            z-index: 10000;
+    85→        }
+    86→
+    87→        ::selection {
+    88→            background: var(--accent);
+    89→            color: var(--bg);
+    90→        }
+    91→
+    92→        /* ==========================================
+    93→           3. TYPOGRAPHY
+    94→           ========================================== */
+    95→        h1, h2, h3 { font-family: var(--font-display); font-weight: 400; }
+    96→        code, .mono { font-family: var(--font-mono); }
+    97→
+    98→        /* ==========================================
+    99→           4. APP LAYOUT
+   100→           ========================================== */
+   101→        .app {
+   102→            max-width: 1480px;
+   103→            margin: 0 auto;
+   104→            padding: 0 24px;
+   105→            min-height: 100vh;
+   106→            display: flex;
+   107→            flex-direction: column;
+   108→        }
+   109→
+   110→        /* ==========================================
+   111→           5. HEADER
+   112→           ========================================== */
+   113→        .header {
+   114→            display: flex;
+   115→            align-items: center;
+   116→            justify-content: space-between;
+   117→            padding: 24px 0;
+   118→            border-bottom: 1px solid var(--border);
+   119→            flex-shrink: 0;
+   120→        }
+   121→
+   122→        .brand {
+   123→            display: flex;
+   124→            align-items: center;
+   125→            gap: 14px;
+   126→        }
+   127→
+   128→        .brand-icon {
+   129→            width: 40px;
+   130→            height: 40px;
+   131→            background: var(--accent-soft);
+   132→            border: 1px solid var(--accent);
+   133→            border-radius: var(--radius-sm);
+   134→            display: flex;
+   135→            align-items: center;
+   136→            justify-content: center;
+   137→            color: var(--accent);
+   138→        }
+   139→
+   140→        .brand-icon svg { width: 22px; height: 22px; }
+   141→
+   142→        .brand-text h1 {
+   143→            font-size: 1.35rem;
+   144→            line-height: 1.2;
+   145→            color: var(--text);
+   146→            letter-spacing: -0.01em;
+   147→        }
+   148→
+   149→        .brand-tagline {
+   150→            font-family: var(--font-mono);
+   151→            font-size: 0.7rem;
+   152→            color: var(--text-muted);
+   153→            letter-spacing: 0.04em;
+   154→        }
+   155→
+   156→        .brand-tagline span { color: var(--accent); }
+   157→
+   158→        /* ==========================================
+   159→           6. WORKSPACE
+   160→           ========================================== */
+   161→        .workspace {
+   162→            flex: 1;
+   163→            display: grid;
+   164→            grid-template-columns: 420px 1fr;
+   165→            gap: 24px;
+   166→            padding: 24px 0 40px;
+   167→            align-items: start;
+   168→        }
+   169→
+   170→        /* ==========================================
+   171→           7. PANELS
+   172→           ========================================== */
+   173→        .panel {
+   174→            background: var(--surface);
+   175→            border: 1px solid var(--border);
+   176→            border-radius: var(--radius-lg);
+   177→            overflow: hidden;
+   178→        }
+   179→
+   180→        .panel-head {
+   181→            padding: 18px 22px 14px;
+   182→            border-bottom: 1px solid var(--border);
+   183→            display: flex;
+   184→            align-items: baseline;
+   185→            justify-content: space-between;
+   186→        }
+   187→
+   188→        .panel-head h2 {
+   189→            font-size: 1.15rem;
+   190→            color: var(--text);
+   191→        }
+   192→
+   193→        .panel-head .hint {
+   194→            font-family: var(--font-mono);
+   195→            font-size: 0.68rem;
+   196→            color: var(--text-muted);
+   197→            letter-spacing: 0.03em;
+   198→        }
+   199→
+   200→        /* ==========================================
+   201→           8. INPUT SECTION
+   202→           ========================================== */
+   203→        .input-body { padding: 18px 22px; }
+   204→
+   205→        .textarea-wrap textarea {
+   206→            width: 100%;
+   207→            min-height: 380px;
+   208→            background: var(--bg-subtle);
+   209→            border: 1px solid var(--border);
+   210→            border-radius: var(--radius-md);
+   211→            padding: 16px 18px;
+   212→            color: var(--text);
+   213→            font-family: var(--font-body);
+   214→            font-size: 0.9rem;
+   215→            line-height: 1.65;
+   216→            resize: vertical;
+   217→            transition: border-color 0.2s ease;
+   218→            outline: none;
+   219→        }
+   220→
+   221→        .textarea-wrap textarea::placeholder {
+   222→            color: var(--text-muted);
+   223→            font-style: italic;
+   224→        }
+   225→
+   226→        .textarea-wrap textarea:focus {
+   227→            border-color: var(--accent);
+   228→            box-shadow: 0 0 0 3px var(--accent-soft);
+   229→        }
+   230→
+   231→        .input-footer {
+   232→            display: flex;
+   233→            align-items: center;
+   234→            justify-content: space-between;
+   235→            margin-top: 10px;
+   236→            padding: 0 2px;
+   237→        }
+   238→
+   239→        .char-count {
+   240→            font-family: var(--font-mono);
+   241→            font-size: 0.68rem;
+   242→            color: var(--text-muted);
+   243→        }
+   244→
+   245→        .sample-btn {
+   246→            background: none;
+   247→            border: 1px solid var(--border);
+   248→            color: var(--text-secondary);
+   249→            font-family: var(--font-mono);
+   250→            font-size: 0.7rem;
+   251→            padding: 5px 12px;
+   252→            border-radius: var(--radius-sm);
+   253→            cursor: pointer;
+   254→            transition: all 0.2s ease;
+   255→            letter-spacing: 0.02em;
+   256→        }
+   257→
+   258→        .sample-btn:hover {
+   259→            border-color: var(--accent);
+   260→            color: var(--accent);
+   261→        }
+   262→
+   263→        .input-actions {
+   264→            padding: 16px 22px 20px;
+   265→        }
+   266→
+   267→        /* ==========================================
+   268→           9. BUTTONS
+   269→           ========================================== */
+   270→        .generate-btn {
+   271→            width: 100%;
+   272→            padding: 14px 24px;
+   273→            background: var(--accent);
+   274→            color: var(--bg);
+   275→            border: none;
+   276→            border-radius: var(--radius-md);
+   277→            font-family: var(--font-body);
+   278→            font-size: 0.95rem;
+   279→            font-weight: 600;
+   280→            cursor: pointer;
+   281→            transition: all 0.25s ease;
+   282→            position: relative;
+   283→            overflow: hidden;
+   284→        }
+   285→
+   286→        .generate-btn:hover {
+   287→            background: var(--accent-hover);
+   288→            transform: translateY(-1px);
+   289→            box-shadow: 0 4px 20px rgba(200, 155, 60, 0.25);
+   290→        }
+   291→
+   292→        .generate-btn:active { transform: translateY(0); }
+   293→
+   294→        .generate-btn:disabled {
+   295→            opacity: 0.6;
+   296→            cursor: not-allowed;
+   297→            transform: none;
+   298→            box-shadow: none;
+   299→        }
+   300→
+   301→        .generate-btn .btn-loading {
+   302→            display: none;
+   303→            align-items: center;
+   304→            justify-content: center;
+   305→            gap: 10px;
+   306→        }
+   307→
+   308→        .generate-btn.loading .btn-label { display: none; }
+   309→        .generate-btn.loading .btn-loading { display: flex; }
+   310→
+   311→        .spinner {
+   312→            width: 16px;
+   313→            height: 16px;
+   314→            border: 2px solid rgba(0,0,0,0.2);
+   315→            border-top-color: var(--bg);
+   316→            border-radius: 50%;
+   317→            animation: spin 0.7s linear infinite;
+   318→        }
+   319→
+   320→        @keyframes spin { to { transform: rotate(360deg); } }
+   321→
+   322→        /* ==========================================
+   323→           10. OUTPUT SECTION
+   324→           ========================================== */
+   325→        .output-panel {
+   326→            position: sticky;
+   327→            top: 24px;
+   328→            min-height: 500px;
+   329→            display: flex;
+   330→            flex-direction: column;
+   331→        }
+   332→
+   333→        .tabs-row {
+   334→            display: flex;
+   335→            align-items: center;
+   336→            justify-content: space-between;
+   337→            padding: 0 22px;
+   338→            position: relative;
+   339→        }
+   340→
+   341→        .tabs {
+   342→            display: flex;
+   343→            gap: 0;
+   344→            position: relative;
+   345→        }
+   346→
+   347→        .tab-btn {
+   348→            background: none;
+   349→            border: none;
+   350→            padding: 16px 18px;
+   351→            color: var(--text-muted);
+   352→            font-family: var(--font-body);
+   353→            font-size: 0.88rem;
+   354→            cursor: pointer;
+   355→            transition: color 0.2s ease;
+   356→            position: relative;
+   357→        }
+   358→
+   359→        .tab-btn:hover { color: var(--text-secondary); }
+   360→        .tab-btn.active { color: var(--text); }
+   361→
+   362→        .tab-indicator {
+   363→            position: absolute;
+   364→            bottom: 0;
+   365→            height: 2px;
+   366→            background: var(--accent);
+   367→            border-radius: 1px;
+   368→            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+   369→        }
+   370→
+   371→        .copy-btn {
+   372→            background: none;
+   373→            border: 1px solid var(--border);
+   374→            color: var(--text-secondary);
+   375→            font-family: var(--font-mono);
+   376→            font-size: 0.68rem;
+   377→            padding: 5px 12px;
+   378→            border-radius: var(--radius-sm);
+   379→            cursor: pointer;
+   380→            transition: all 0.2s ease;
+   381→            display: flex;
+   382→            align-items: center;
+   383→            gap: 5px;
+   384→            letter-spacing: 0.02em;
+   385→        }
+   386→
+   387→        .copy-btn:hover {
+   388→            border-color: var(--accent);
+   389→            color: var(--accent);
+   390→        }
+   391→
+   392→        .copy-btn.copied {
+   393→            border-color: var(--success);
+   394→            color: var(--success);
+   395→        }
+   396→
+   397→        .copy-btn svg { width: 13px; height: 13px; }
+   398→
+   399→        .output-body {
+   400→            flex: 1;
+   401→            padding: 24px;
+   402→            overflow-y: auto;
+   403→        }
+   404→
+   405→        .tab-content { display: none; }
+   406→        .tab-content.active { display: block; }
+   407→
+   408→        /* ==========================================
+   409→           11. PLACEHOLDER STATE
+   410→           ========================================== */
+   411→        .placeholder-state {
+   412→            display: flex;
+   413→            flex-direction: column;
+   414→            align-items: center;
+   415→            justify-content: center;
+   416→            min-height: 360px;
+   417→            text-align: center;
+   418→            padding: 40px;
+   419→        }
+   420→
+   421→        .placeholder-icon {
+   422→            width: 64px;
+   423→            height: 64px;
+   424→            background: var(--accent-soft);
+   425→            border-radius: 50%;
+   426→            display: flex;
+   427→            align-items: center;
+   428→            justify-content: center;
+   429→            margin-bottom: 20px;
+   430→            color: var(--accent);
+   431→        }
+   432→
+   433→        .placeholder-icon svg { width: 28px; height: 28px; }
+   434→
+   435→        .placeholder-state h3 {
+   436→            font-size: 1.15rem;
+   437→            color: var(--text-secondary);
+   438→            margin-bottom: 8px;
+   439→        }
+   440→
+   441→        .placeholder-state p {
+   442→            font-size: 0.85rem;
+   443→            color: var(--text-muted);
+   444→            max-width: 300px;
+   445→        }
+   446→
+   447→        /* ==========================================
+   448→           12. JD DOCUMENT STYLING
+   449→           ========================================== */
+   450→        .jd-doc { animation: fadeUp 0.5s ease forwards; }
+   451→
+   452→        .jd-doc .doc-title {
+   453→            font-family: var(--font-display);
+   454→            font-size: 1.65rem;
+   455→            color: var(--text);
+   456→            margin-bottom: 4px;
+   457→            line-height: 1.25;
+   458→        }
+   459→
+   460→        .jd-doc .doc-meta {
+   461→            font-family: var(--font-mono);
+   462→            font-size: 0.72rem;
+   463→            color: var(--text-muted);
+   464→            letter-spacing: 0.03em;
+   465→            margin-bottom: 24px;
+   466→            display: flex;
+   467→            flex-wrap: wrap;
+   468→            gap: 6px 16px;
+   469→        }
+   470→
+   471→        .jd-doc .doc-meta span {
+   472→            display: inline-flex;
+   473→            align-items: center;
+   474→            gap: 4px;
+   475→        }
+   476→
+   477→        .jd-section {
+   478→            margin-bottom: 26px;
+   479→            animation: fadeUp 0.5s ease forwards;
+   480→            opacity: 0;
+   481→        }
+   482→
+   483→        .jd-section:nth-child(2) { animation-delay: 0.08s; }
+   484→        .jd-section:nth-child(3) { animation-delay: 0.14s; }
+   485→        .jd-section:nth-child(4) { animation-delay: 0.20s; }
+   486→        .jd-section:nth-child(5) { animation-delay: 0.26s; }
+   487→        .jd-section:nth-child(6) { animation-delay: 0.32s; }
+   488→
+   489→        .jd-section h3 {
+   490→            font-size: 1.05rem;
+   491→            color: var(--accent);
+   492→            margin-bottom: 12px;
+   493→            padding-bottom: 8px;
+   494→            border-bottom: 1px solid var(--border);
+   495→            font-family: var(--font-display);
+   496→        }
+   497→
+   498→        .jd-section p {
+   499→            font-size: 0.88rem;
+   500→            color: var(--text-secondary);
+   501→            line-height: 1.7;
+   502→        }
+   503→
+   504→        .jd-section ul {
+   505→            list-style: none;
+   506→            display: flex;
+   507→            flex-direction: column;
+   508→            gap: 8px;
+   509→        }
+   510→
+   511→        .jd-section li {
+   512→            font-size: 0.88rem;
+   513→            color: var(--text-secondary);
+   514→            padding-left: 20px;
+   515→            position: relative;
+   516→            line-height: 1.55;
+   517→        }
+   518→
+   519→        .jd-section li::before {
+   520→            content: '';
+   521→            position: absolute;
+   522→            left: 0;
+   523→            top: 9px;
+   524→            width: 6px;
+   525→            height: 6px;
+   526→            border-radius: 50%;
+   527→            background: var(--accent);
+   528→            opacity: 0.6;
+   529→        }
+   530→
+   531→        .jd-section .skill-pills {
+   532→            display: flex;
+   533→            flex-wrap: wrap;
+   534→            gap: 6px;
+   535→            margin-top: 4px;
+   536→        }
+   537→
+   538→        .skill-pill {
+   539→            display: inline-block;
+   540→            font-family: var(--font-mono);
+   541→            font-size: 0.7rem;
+   542→            padding: 4px 10px;
+   543→            background: var(--accent-soft);
+   544→            color: var(--accent);
+   545→            border-radius: 20px;
+   546→            border: 1px solid rgba(200, 155, 60, 0.2);
+   547→        }
+   548→
+   549→        .jd-doc .divider {
+   550→            height: 1px;
+   551→            background: var(--border);
+   552→            margin: 28px 0;
+   553→        }
+   554→
+   555→        .jd-doc .eoe {
+   556→            font-size: 0.78rem;
+   557→            color: var(--text-muted);
+   558→            font-style: italic;
+   559→            line-height: 1.6;
+   560→        }
+   561→
+   562→        /* ==========================================
+   563→           13. INTERVIEW GUIDE STYLING
+   564→           ========================================== */
+   565→        .guide-doc { animation: fadeUp 0.5s ease forwards; }
+   566→
+   567→        .guide-doc .guide-header {
+   568→            margin-bottom: 24px;
+   569→        }
+   570→
+   571→        .guide-doc .guide-header h2 {
+   572→            font-size: 1.4rem;
+   573→            color: var(--text);
+   574→            margin-bottom: 4px;
+   575→        }
+   576→
+   577→        .guide-doc .guide-header p {
+   578→            font-size: 0.82rem;
+   579→            color: var(--text-muted);
+   580→            font-family: var(--font-mono);
+   581→        }
+   582→
+   583→        .guide-doc .guide-stats {
+   584→            display: flex;
+   585→            gap: 16px;
+   586→            margin-top: 14px;
+   587→        }
+   588→
+   589→        .stat-badge {
+   590→            font-family: var(--font-mono);
+   591→            font-size: 0.7rem;
+   592→            padding: 5px 12px;
+   593→            border-radius: 20px;
+   594→            letter-spacing: 0.02em;
+   595→        }
+   596→
+   597→        .stat-badge.hard {
+   598→            background: rgba(76, 175, 106, 0.1);
+   599→            color: var(--success);
+   600→            border: 1px solid rgba(76, 175, 106, 0.2);
+   601→        }
+   602→
+   603→        .stat-badge.soft {
+   604→            background: rgba(100, 140, 230, 0.1);
+   605→            color: #7a9ee6;
+   606→            border: 1px solid rgba(100, 140, 230, 0.2);
+   607→        }
+   608→
+   609→        .question-card {
+   610→            background: var(--surface-raised);
+   611→            border: 1px solid var(--border);
+   612→            border-radius: var(--radius-md);
+   613→            padding: 20px 22px;
+   614→            margin-bottom: 14px;
+   615→            transition: border-color 0.2s ease, transform 0.2s ease;
+   616→            opacity: 0;
+   617→            animation: fadeUp 0.45s ease forwards;
+   618→        }
+   619→
+   620→        .question-card:nth-child(1) { animation-delay: 0.05s; }
+   621→        .question-card:nth-child(2) { animation-delay: 0.1s; }
+   622→        .question-card:nth-child(3) { animation-delay: 0.15s; }
+   623→        .question-card:nth-child(4) { animation-delay: 0.2s; }
+   624→        .question-card:nth-child(5) { animation-delay: 0.25s; }
+   625→        .question-card:nth-child(6) { animation-delay: 0.3s; }
+   626→        .question-card:nth-child(7) { animation-delay: 0.35s; }
+   627→        .question-card:nth-child(8) { animation-delay: 0.4s; }
+   628→        .question-card:nth-child(9) { animation-delay: 0.45s; }
+   629→        .question-card:nth-child(10) { animation-delay: 0.5s; }
+   630→
+   631→        .question-card:hover {
+   632→            border-color: var(--border-light);
+   633→            transform: translateY(-1px);
+   634→        }
+   635→
+   636→        .question-top {
+   637→            display: flex;
+   638→            align-items: center;
+   639→            gap: 10px;
+   640→            margin-bottom: 12px;
+   641→            flex-wrap: wrap;
+   642→        }
+   643→
+   644→        .q-number {
+   645→            font-family: var(--font-mono);
+   646→            font-size: 0.72rem;
+   647→            font-weight: 500;
+   648→            color: var(--accent);
+   649→            min-width: 24px;
+   650→        }
+   651→
+   652→        .q-skill-tag {
+   653→            font-family: var(--font-mono);
+   654→            font-size: 0.65rem;
+   655→            padding: 3px 9px;
+   656→            border-radius: 20px;
+   657→            letter-spacing: 0.03em;
+   658→        }
+   659→
+   660→        .q-skill-tag.hard {
+   661→            background: rgba(76, 175, 106, 0.1);
+   662→            color: var(--success);
+   663→            border: 1px solid rgba(76, 175, 106, 0.15);
+   664→        }
+   665→
+   666→        .q-skill-tag.soft {
+   667→            background: rgba(100, 140, 230, 0.1);
+   668→            color: #7a9ee6;
+   669→            border: 1px solid rgba(100, 140, 230, 0.15);
+   670→        }
+   671→
+   672→        .q-skill-tag.general {
+   673→            background: var(--accent-soft);
+   674→            color: var(--accent);
+   675→            border: 1px solid rgba(200, 155, 60, 0.15);
+   676→        }
+   677→
+   678→        .question-text {
+   679→            font-size: 0.92rem;
+   680→            color: var(--text);
+   681→            line-height: 1.6;
+   682→            margin-bottom: 14px;
+   683→            font-style: italic;
+   684→            font-family: var(--font-display);
+   685→            font-size: 1.02rem;
+   686→        }
+   687→
+   688→        .listen-guide {
+   689→            background: var(--bg-subtle);
+   690→            border-radius: var(--radius-sm);
+   691→            padding: 14px 16px;
+   692→            border-left: 2px solid var(--accent);
+   693→        }
+   694→
+   695→        .listen-guide h4 {
+   696→            font-family: var(--font-mono);
+   697→            font-size: 0.68rem;
+   698→            color: var(--text-muted);
+   699→            text-transform: uppercase;
+   700→            letter-spacing: 0.08em;
+   701→            margin-bottom: 8px;
+   702→        }
+   703→
+   704→        .listen-guide ul {
+   705→            list-style: none;
+   706→            display: flex;
+   707→            flex-direction: column;
+   708→            gap: 5px;
+   709→        }
+   710→
+   711→        .listen-guide li {
+   712→            font-size: 0.8rem;
+   713→            color: var(--text-secondary);
+   714→            padding-left: 14px;
+   715→            position: relative;
+   716→            line-height: 1.5;
+   717→        }
+   718→
+   719→        .listen-guide li::before {
+   720→            content: '→';
+   721→            position: absolute;
+   722→            left: 0;
+   723→            color: var(--accent);
+   724→            font-size: 0.75rem;
+   725→        }
+   726→
+   727→        /* ==========================================
+   728→           14. ERROR STATE
+   729→           ========================================== */
+   730→        .error-msg {
+   731→            background: rgba(200, 80, 80, 0.08);
+   732→            border: 1px solid rgba(200, 80, 80, 0.2);
+   733→            color: var(--danger);
+   734→            font-size: 0.82rem;
+   735→            padding: 12px 16px;
+   736→            border-radius: var(--radius-sm);
+   737→            margin-top: 12px;
+   738→            display: none;
+   739→            animation: fadeUp 0.3s ease;
+   740→        }
+   741→
+   742→        .error-msg.show { display: block; }
+   743→
+   744→        /* ==========================================
+   745→           15. ANIMATIONS
+   746→           ========================================== */
+   747→        @keyframes fadeUp {
+   748→            from { opacity: 0; transform: translateY(14px); }
+   749→            to   { opacity: 1; transform: translateY(0); }
+   750→        }
+   751→
+   752→        @keyframes fadeIn {
+   753→            from { opacity: 0; }
+   754→            to   { opacity: 1; }
+   755→        }
+   756→
+   757→        /* ==========================================
+   758→           16. RESPONSIVE
+   759→           ========================================== */
+   760→        @media (max-width: 960px) {
+   761→            .workspace {
+   762→                grid-template-columns: 1fr;
+   763→            }
+   764→
+   765→            .output-panel {
+   766→                position: static;
+   767→            }
+   768→
+   769→            .header { padding: 18px 0; }
+   770→        }
+   771→
+   772→        @media (max-width: 600px) {
+   773→            .app { padding: 0 14px; }
+   774→
+   775→            .textarea-wrap textarea { min-height: 240px; }
+   776→
+   777→            .panel-head { padding: 14px 16px 12px; }
+   778→            .input-body { padding: 14px 16px; }
+   779→            .input-actions { padding: 14px 16px 16px; }
+   780→            .output-body { padding: 18px 16px; }
+   781→
+   782→            .jd-doc .doc-title { font-size: 1.3rem; }
+   783→            .guide-doc .guide-header h2 { font-size: 1.15rem; }
+   784→            .question-card { padding: 16px 18px; }
+   785→
+   786→            .tabs-row { padding: 0 14px; }
+   787→            .tab-btn { padding: 14px 12px; font-size: 0.82rem; }
+   788→        }
+   789→
+   790→        /* ==========================================
+   791→           17. SCROLLBAR
+   792→           ========================================== */
+   793→        .output-body::-webkit-scrollbar { width: 6px; }
+   794→        .output-body::-webkit-scrollbar-track { background: transparent; }
+   795→        .output-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+   796→        .output-body::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+   797→    </style>
+   798→</head>
+   799→<body>
+   800→    <div class="app">
+   801→        <!-- ========== HEADER ========== -->
+   802→        <header class="header">
+   803→            <div class="brand">
+   804→                <div class="brand-icon">
+   805→                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+   806→                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+   807→                        <path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/>
+   808→                    </svg>
+   809→                </div>
+   810→                <div class="brand-text">
+   811→                    <h1>Recruitment Sandbox</h1>
+   812→                    <div class="brand-tagline">raw notes <span>→</span> polished JD + interview guide</div>
+   813→                </div>
+   814→            </div>
+   815→        </header>
+   816→
+   817→        <!-- ========== WORKSPACE ========== -->
+   818→        <main class="workspace">
+   819→            <!-- Input Panel -->
+   820→            <div class="panel input-panel">
+   821→                <div class="panel-head">
+   822→                    <h2>Raw Notes</h2>
+   823→                    <span class="hint">paste anything</span>
+   824→                </div>
+   825→                <div class="input-body">
+   826→                    <div class="textarea-wrap">
+   827→                        <textarea id="notesInput" placeholder="Drop your rough notes here...&#10;&#10;e.g. &quot;Looking for a senior PM to lead growth. Needs SQL, A/B testing experience.&#10;Should be a strong communicator and data-driven leader...&quot;"></textarea>
+   828→                    </div>
+   829→                    <div class="input-footer">
+   830→                        <span class="char-count" id="charCount">0 characters</span>
+   831→                        <button class="sample-btn" id="sampleBtn">Load sample</button>
+   832→                    </div>
+   833→                    <div class="error-msg" id="errorMsg"></div>
+   834→                </div>
+   835→                <div class="input-actions">
+   836→                    <button class="generate-btn" id="generateBtn">
+   837→                        <span class="btn-label">Generate Documents</span>
+   838→                        <span class="btn-loading"><span class="spinner"></span> Generating…</span>
+   839→                    </button>
+   840→                </div>
+   841→            </div>
+   842→
+   843→            <!-- Output Panel -->
+   844→            <div class="panel output-panel">
+   845→                <div class="tabs-row">
+   846→                    <div class="tabs" id="tabs">
+   847→                        <button class="tab-btn active" data-tab="jd">Job Description</button>
+   848→                        <button class="tab-btn" data-tab="guide">Interview Guide</button>
+   849→                        <div class="tab-indicator" id="tabIndicator"></div>
+   850→                    </div>
+   851→                    <button class="copy-btn" id="copyBtn" style="display:none;">
+   852→                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+   853→                        <span>Copy</span>
+   854→                    </button>
+   855→                </div>
+   856→                <div class="output-body" id="outputBody">
+   857→                    <!-- JD Tab -->
+   858→                    <div class="tab-content active" id="jdTab">
+   859→                        <div class="placeholder-state" id="jdPlaceholder">
+   860→                            <div class="placeholder-icon">
+   861→                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+   862→                            </div>
+   863→                            <h3>Job Description</h3>
+   864→                            <p>Enter your raw role notes and click Generate to create a LinkedIn-ready job description.</p>
+   865→                        </div>
+   866→                        <div id="jdOutput"></div>
+   867→                    </div>
+   868→                    <!-- Guide Tab -->
+   869→                    <div class="tab-content" id="guideTab">
+   870→                        <div class="placeholder-state" id="guidePlaceholder">
+   871→                            <div class="placeholder-icon">
+   872→                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+   873→                            </div>
+   874→                            <h3>Interview Guide</h3>
+   875→                            <p>10 behavioral interview questions will appear here, tailored to the skills in your JD.</p>
+   876→                        </div>
+   877→                        <div id="guideOutput"></div>
+   878→                    </div>
+   879→                </div>
+   880→            </div>
+   881→        </main>
+   882→    </div>
+   883→
+   884→    <script>
+   885→    // ============================================================
+   886→    // CONFIGURATION
+   887→    // ============================================================
+   888→    const CONFIG = {
+   889→        MAX_QUESTIONS: 10,
+   890→        MIN_INPUT: 15,
+   891→        GEN_DELAY: 700
+   892→    };
+   893→
+   894→    // ============================================================
+   895→    // SKILL DATABASES
+   896→    // ============================================================
+   897→    const HARD_SKILLS = {
+   898→        'Software Engineering': ['python','java','javascript','typescript','c++','c#','go','rust','ruby','php','swift','kotlin','scala','r programming','perl'],
+   899→        'Web Development': ['react','angular','vue','next.js','nuxt','node.js','express','django','flask','spring boot','rails','laravel','fastapi','html','css','sass','rest api','graphql','webpack'],
+   900→        'Data & Databases': ['sql','postgresql','mysql','mongodb','redis','elasticsearch','cassandra','dynamodb','neo4j','oracle','sqlite','pandas','numpy','spark','hadoop','airflow','dbt','etl','data pipeline','data warehouse','data modeling'],
+   901→        'Cloud & DevOps': ['aws','azure','gcp','google cloud','docker','kubernetes','terraform','ansible','jenkins','ci/cd','circleci','gitlab','cloudformation','ecs','lambda','s3'],
+   902→        'AI & Machine Learning': ['machine learning','deep learning','tensorflow','pytorch','keras','nlp','natural language processing','computer vision','neural networks','llm','generative ai','hugging face','openai','scikit-learn','data science'],
+   903→        'Design': ['figma','sketch','adobe xd','photoshop','illustrator','indesign','ux design','ui design','wireframing','prototyping','user research','design thinking','design system','canva'],
+   904→        'Analytics & BI': ['tableau','power bi','looker','google analytics','mixpanel','amplitude','snowflake','bigquery','redshift','databricks','data analysis','data visualization','excel','spreadsheet'],
+   905→        'Product Management': ['product management','product strategy','roadmap','a/b testing','user stories','requirements gathering','agile','scrum','kanban','sprint planning','backlog','jira','asana','product analytics'],
+   906→        'Marketing': ['seo','sem','ppc','google ads','facebook ads','content marketing','social media marketing','email marketing','marketing automation','hubspot','marketo','google tag manager','growth marketing','demand generation'],
+   907→        'Sales': ['salesforce','hubspot crm','crm','pipeline management','lead generation','account management','b2b sales','b2c sales','saas sales','cold outreach','sales strategy','quota attainment'],
+   908→        'Finance & Accounting': ['financial modeling','financial analysis','budgeting','forecasting','p&l','gaap','ifrs','valuation','quickbooks','sap','erp','accounting','audit','tax'],
+   909→        'Human Resources': ['recruitment','talent acquisition','performance management','employee engagement','onboarding','compensation','benefits','hrbp','learning and development','diversity','inclusion','workforce planning'],
+   910→        'Operations': ['supply chain','logistics','process improvement','lean','six sigma','project management','vendor management','procurement','quality assurance','qa','inventory management'],
+   911→        'Legal & Compliance': ['compliance','gdpr','hipaa','sox','regulatory','contracts','legal research','intellectual property','risk management','internal audit']
+   912→    };
+   913→
+   914→    const SOFT_SKILLS = [
+   915→        'communication','leadership','teamwork','collaboration','problem-solving','problem solving',
+   916→        'critical thinking','creativity','innovation','adaptability','flexibility','time management',
+   917→        'organization','attention to detail','analytical thinking','strategic thinking',
+   918→        'decision-making','decision making','conflict resolution','negotiation','presentation',
+   919→        'mentoring','coaching','emotional intelligence','empathy','resilience','initiative',
+   920→        'self-motivated','self motivated','stakeholder management','cross-functional','cross functional',
+   921→        'interpersonal','active listening','persuasion','influence','public speaking','facilitation',
+   922→        'delegation','accountability','ownership','growth mindset','curiosity','proactive',
+   923→        'detail-oriented','detail oriented','results-driven','results driven','data-driven','data driven',
+   924→        'customer-centric','customer centric','verbal communication','written communication',
+   925→        'relationship building','networking','client management','customer-facing'
+   926→    ];
+   927→
+   928→    const ACTION_VERBS = [
+   929→        'manage','lead','develop','create','build','design','implement','oversee','coordinate',
+   930→        'drive','establish','define','own','deliver','execute','analyze','optimize','improve',
+   931→        'maintain','support','collaborate','partner','mentor','train','hire','scale','launch',
+   932→        'plan','research','evaluate','assess','identify','recommend','present','report',
+   933→        'document','ensure','facilitate','negotiate','resolve','architect','engineer',
+   934→        'test','deploy','monitor','configure','automate','streamline','cultivate','foster',
+   935→        'champion','spearhead','orchestrate','synthesize','translate','liaise'
+   936→    ];
+   937→
+   938→    const ROLE_KEYWORDS = [
+   939→        'manager','director','engineer','developer','analyst','designer','architect',
+   940→        'specialist','coordinator','lead','head','vp','chief','officer','associate',
+   941→        'senior','junior','principal','staff','consultant','strategist','scientist',
+   942→        'administrator','representative','executive','advisor','technician','examiner',
+   943→        'intern','fellow','contractor','freelancer'
+   944→    ];
+   945→
+   946→    const SECTION_HEADERS = [
+   947→        'responsibilities','duties','what you','what we','requirements','qualifications',
+   948→        'skills','experience','about','overview','summary','role','position','nice to',
+   949→        'preferred','required','must have','good to','bonus','plus','we offer','benefits',
+   950→        'compensation','salary','location','team','company','ideal candidate','who you are'
+   951→    ];
+   952→
+   953→    // ============================================================
+   954→    // QUESTION BANK
+   955→    // ============================================================
+   956→    const SPECIFIC_QUESTIONS = {
+   957→        'sql': {
+   958→            q: 'Describe a time when your SQL and data analysis skills helped uncover a critical insight that changed the direction of a project or business decision.',
+   959→            listen: ['Ability to write complex queries and work with large datasets','Translation of raw data into actionable business recommendations','Measurable impact on outcomes driven by their analysis']
+   960→        },
+   961→        'python': {
+   962→            q: 'Walk me through a complex problem you solved using Python where you had to balance code quality, performance, and delivery timelines.',
+   963→            listen: ['Structured problem-solving approach and technical depth','Awareness of code quality, testing, and maintainability','Ability to handle ambiguity and make pragmatic trade-offs']
+   964→        },
+   965→        'leadership': {
+   966→            q: 'Tell me about a time you led a team through a significant change or challenge. How did you maintain morale and keep the team focused on results?',
+   967→            listen: ['Concrete leadership actions — not just holding the title','Ability to communicate vision and handle resistance empathetically','Measurable outcome that shows their leadership made a difference']
+   968→        },
+   969→        'communication': {
+   970→            q: 'Give an example of when you had to convey a complex or unpopular message to a diverse audience. How did you tailor your approach?',
+   971→            listen: ['Adaptability in communication style based on the audience','Active listening and checking for understanding','Positive outcome or successful alignment that resulted']
+   972→        },
+   973→        'product management': {
+   974→            q: 'Tell me about a product decision you made that involved significant trade-offs. How did you evaluate options and communicate your rationale to stakeholders?',
+   975→            listen: ['Framework for decision-making (data, user research, business goals)','Ability to say no and manage stakeholder expectations','Outcome of the decision and lessons learned']
+   976→        },
+   977→        'agile': {
+   978→            q: 'Describe a situation where an Agile process you were part of broke down. What went wrong, and what did you do to get things back on track?',
+   979→            listen: ['Deep understanding of Agile principles, not just ceremonies','Proactive problem-solving and team facilitation skills','Continuous improvement mindset and concrete changes implemented']
+   980→        },
+   981→        'machine learning': {
+   982→            q: 'Tell me about a machine learning project where the initial approach didn\'t work. How did you diagnose the problem and iterate toward a solution?',
+   983→            listen: ['Methodical experimentation and debugging approach','Ability to communicate technical challenges to non-technical stakeholders','Persistence and creativity in finding alternative approaches']
+   984→        },
+   985→        'financial analysis': {
+   986→            q: 'Describe a time your financial analysis directly influenced a major business decision. How did you present your findings to ensure they were acted upon?',
+   987→            listen: ['Analytical rigor and attention to detail in the analysis','Storytelling ability — turning numbers into a compelling narrative','Tangible business impact from their recommendation']
+   988→        },
+   989→        'stakeholder management': {
+   990→            q: 'Tell me about a time you had to manage conflicting priorities or expectations from multiple stakeholders. How did you find alignment?',
+   991→            listen: ['Structured approach to understanding each stakeholder\'s needs','Negotiation and prioritization skills','Win-win outcome or clear rationale for the final decision']
+   992→        },
+   993→        'problem-solving': {
+   994→            q: 'Walk me through the most complex problem you\'ve faced in the last year. What was your systematic approach to solving it?',
+   995→            listen: ['Clear, structured thinking process — not just jumping to solutions','Ability to break down complexity into manageable parts','Quality and impact of the solution they arrived at']
+   996→        },
+   997→        'data-driven': {
+   998→            q: 'Give an example of a time when data contradicted your intuition or a popular opinion. What did you do?',
+   999→            listen: ['Intellectual honesty and willingness to change course','Ability to interrogate data quality and methodology','How they communicated the counterintuitive finding to others']
+  1000→        },
+  1001→        'collaboration': {
+  1002→            q: 'Describe a cross-functional project where you had to work closely with people from very different disciplines. What made the collaboration successful?',
+  1003→            listen: ['Genuine respect for other disciplines and willingness to learn','Clear communication across functional boundaries','Shared ownership and how they navigated disagreements']
+  1004→        },
+  1005→        'time management': {
+  1006→            q: 'Tell me about a period when you had multiple high-priority deadlines competing for your time. How did you decide what to focus on first?',
+  1007→            listen: ['Prioritization framework (impact, urgency, dependencies)','Proactive communication about trade-offs and expectations','Outcome — did they meet the deadlines, and at what quality?']
+  1008→        },
+  1009→        'a/b testing': {
+  1010→            q: 'Describe an A/B test you designed that yielded surprising or inconclusive results. What did you do next?',
+  1011→            listen: ['Understanding of experimental design and statistical significance','Intellectual curiosity — not just accepting results at face value','Follow-through: how they used the learning to inform next steps']
+  1012→        },
+  1013→        'creativity': {
+  1014→            q: 'Tell me about a time you proposed a creative or unconventional solution to a problem. How did you get buy-in for your idea?',
+  1015→            listen: ['Genuine originality in their thinking, not just incremental improvement','Courage to challenge the status quo with evidence','Ability to prototype or validate ideas before committing resources']
+  1016→        },
+  1017→        'adaptability': {
+  1018→            q: 'Describe a situation where your priorities or scope changed significantly mid-project. How did you adapt without losing momentum?',
+  1019→            listen: ['Emotional resilience — frustration is fine, but they should recover','Speed and effectiveness of their pivot','How they helped others on the team adjust as well']
+  1020→        },
+  1021→        'mentoring': {
+  1022→            q: 'Tell me about someone you mentored or developed. What was your approach, and how did that person grow as a result?',
+  1023→            listen: ['Genuine investment in the other person\'s growth, not just delegation','Tailored approach based on the mentee\'s needs and learning style','Concrete evidence of the mentee\'s progress or promotion']
+  1024→        },
+  1025→        'negotiation': {
+  1026→            q: 'Describe a negotiation you led where the stakes were high. How did you prepare, and what was the outcome?',
+  1027→            listen: ['Thorough preparation and understanding of the other party\'s needs','Creative deal-making — looking for value beyond just price','Ability to maintain the relationship while advocating firmly']
+  1028→        },
+  1029→        'attention to detail': {
+  1030→            q: 'Tell me about a time when your attention to detail caught something critical that others had missed. What was the impact?',
+  1031→            listen: ['Systematic quality-checking habits, not just luck','Clear articulation of the risk or consequence if it had been missed','How they communicated the finding without alienating colleagues']
+  1032→        },
+  1033→        'strategic thinking': {
+  1034→            q: 'Give an example of when you stepped back from day-to-day work to identify a longer-term strategic opportunity. What did you do about it?',
+  1035→            listen: ['Ability to zoom out and see the bigger picture','Data or insight that informed their strategic perspective','Concrete actions taken to turn strategy into execution']
+  1036→        },
+  1037→        'resilience': {
+  1038→            q: 'Tell me about a significant professional setback or failure. How did you handle it, and what did you learn?',
+  1039→            listen: ['Honesty and self-awareness about what went wrong','Constructive response — learning, adapting, not just recovering','Growth demonstrated in subsequent work']
+  1040→        },
+  1041→        'innovation': {
+  1042→            q: 'Describe a time you introduced a new process, tool, or idea that meaningfully improved how your team worked.',
+  1043→            listen: ['Proactive identification of the opportunity for improvement','Evidence of testing and iterating before full rollout','Measurable improvement in efficiency, quality, or outcomes']
+  1044→        },
+  1045→        'customer-centric': {
+  1046→            q: 'Tell me about a time you advocated for the customer or user when it was difficult or unpopular to do so.',
+  1047→            listen: ['Deep understanding of customer needs backed by evidence','Courage to push back internally on behalf of the customer','Positive outcome for both the customer and the business']
+  1048→        }
+  1049→    };
+  1050→
+  1051→    // Generic question templates for skills not in the specific bank
+  1052→    const GENERIC_HARD_TEMPLATES = [
+  1053→        (s) => `Describe a project where your expertise in ${s} was critical to delivering a successful outcome. What was the challenge and how did you approach it?`,
+  1054→        (s) => `Tell me about a time you had to quickly deepen your knowledge of ${s} to meet a project need. How did you manage the learning curve while delivering results?`,
+  1055→        (s) => `Walk me through a situation where your ${s} skills helped you solve a problem that would have been significantly harder otherwise. What made the difference?`,
+  1056→        (s) => `Can you share an example of how you've used ${s} to drive a measurable impact on a team or business outcome?`
+  1057→    ];
+  1058→
+  1059→    const GENERIC_SOFT_TEMPLATES = [
+  1060→        (s) => `Tell me about a time your ${s} was tested in a high-pressure situation. How did you handle it and what was the outcome?`,
+  1061→        (s) => `Describe a situation where your ability to demonstrate ${s} directly contributed to the success of a project or team.`,
+  1062→        (s) => `Give an example of when you had to use strong ${s} to navigate a challenging interpersonal or organizational dynamic.`,
+  1063→        (s) => `Can you share a time when you intentionally worked to improve your ${s}? What steps did you take and what changed?`
+  1064→    ];
+  1065→
+  1066→    const GENERIC_HARD_LISTEN = (s) => [
+  1067→        `Specific, demonstrated experience with ${s} — not just theoretical knowledge`,
+  1068→        `Clear articulation of the problem-solving process and their specific contribution`,
+  1069→        `Tangible results or impact from applying ${s}`
+  1070→    ];
+  1071→
+  1072→    const GENERIC_SOFT_LISTEN = (s) => [
+  1073→        `Self-awareness and intentionality in how they apply ${s}`,
+  1074→        `Specific examples with concrete details rather than vague generalizations`,
+  1075→        `Evidence of growth or learning from the experience`
+  1076→    ];
+  1077→
+  1078→    // Fallback questions when few skills are detected
+  1079→    const FALLBACK_QUESTIONS = [
+  1080→        {
+  1081→            skill: 'Problem Solving',
+  1082→            type: 'general',
+  1083→            q: 'Walk me through the most complex problem you\'ve faced professionally in the last year. What was your systematic approach to solving it?',
+  1084→            listen: ['Structured thinking — breaking complex problems into parts','Ability to identify root causes vs. symptoms','Quality and creativity of the solution']
+  1085→        },
+  1086→        {
+  1087→            skill: 'Leadership',
+  1088→            type: 'general',
+  1089→            q: 'Tell me about a time you took ownership of something outside your defined responsibilities. What motivated you, and what happened?',
+  1090→            listen: ['Proactive initiative and sense of ownership','Ability to influence without formal authority','Positive impact on the team or project']
+  1091→        },
+  1092→        {
+  1093→            skill: 'Collaboration',
+  1094→            type: 'general',
+  1095→            q: 'Describe a situation where you had to work with someone whose working style was very different from yours. How did you make it work?',
+  1096→            listen: ['Empathy and adaptability in working with different styles','Focus on shared goals rather than personal preferences','Successful outcome from the collaboration']
+  1097→        },
+  1098→        {
+  1099→            skill: 'Communication',
+  1100→            type: 'general',
+  1101→            q: 'Give an example of a time you had to persuade a skeptical audience to support your idea or proposal. How did you build your case?',
+  1102→            listen: ['Preparation and understanding of the audience\'s concerns','Use of data, logic, and storytelling','Ability to handle objections gracefully']
+  1103→        },
+  1104→        {
+  1105→            skill: 'Adaptability',
+  1106→            type: 'general',
+  1107→            q: 'Tell me about a time when something you were working on changed dramatically mid-course — a pivot, a reorg, a shift in strategy. How did you handle it?',
+  1108→            listen: ['Resilience and ability to stay productive during uncertainty','Speed of adaptation and proactive communication','Positive framing of the change and lessons learned']
+  1109→        },
+  1110→        {
+  1111→            skill: 'Decision Making',
+  1112→            type: 'general',
+  1113→            q: 'Describe a difficult decision you made with incomplete information. What was your framework and how did it play out?',
+  1114→            listen: ['Clear decision-making framework, even under ambiguity','Willingness to make a call and take responsibility','Honest reflection on what they\'d do differently']
+  1115→        },
+  1116→        {
+  1117→            skill: 'Impact',
+  1118→            type: 'general',
+  1119→            q: 'What accomplishment in your career are you most proud of, and why? Walk me through what made it significant.',
+  1120→            listen: ['Connection between their work and meaningful outcomes','Evidence of going beyond expectations','Passion and self-awareness about what drives them']
+  1121→        },
+  1122→        {
+  1123→            skill: 'Growth',
+  1124→            type: 'general',
+  1125→            q: 'Tell me about a piece of critical feedback you received that was hard to hear. How did you respond to it?',
+  1126→            listen: ['Genuine openness to feedback — not defensive','Concrete changes in behavior or approach after the feedback','Self-awareness about areas for improvement']
+  1127→        },
+  1128→        {
+  1129→            skill: 'Prioritization',
+  1130→            type: 'general',
+  1131→            q: 'How do you decide what to say no to? Give me a specific example of a time you declined or deprioritized a request and why.',
+  1132→            listen: ['Clear prioritization criteria (impact, alignment, capacity)','Courage and tact in communicating the no','Positive outcome from maintaining focus']
+  1133→        },
+  1134→        {
+  1135→            skill: 'Teamwork',
+  1136→            type: 'general',
+  1137→            q: 'Describe a team you were part of that was exceptionally high-performing. What do you think made it work, and what was your specific role in that?',
+  1138→            listen: ['Attribution of success to team dynamics, not just individual brilliance','Self-awareness about their role and contribution','Insight into what makes teams function well']
+  1139→        }
+  1140→    ];
+  1141→
+  1142→    // ============================================================
+  1143→    // PARSER
+  1144→    // ============================================================
+  1145→    function parseNotes(text) {
+  1146→        const result = {
+  1147→            title: '',
+  1148→            summary: '',
+  1149→            responsibilities: [],
+  1150→            hardSkills: [],
+  1151→            softSkills: [],
+  1152→            qualifications: [],
+  1153→            experienceLevel: '',
+  1154→            niceToHaves: [],
+  1155→            rawLines: []
+  1156→        };
+  1157→
+  1158→        const clean = text.replace(/\r\n/g, '\n').trim();
+  1159→        const lines = clean.split('\n')
+  1160→            .map(l => l.replace(/^[-•*◦▪]\s*/, '').replace(/^\d+[.)]\s*/, '').trim())
+  1161→            .filter(l => l.length > 0);
+  1162→
+  1163→        result.rawLines = lines;
+  1164→
+  1165→        // --- Extract title ---
+  1166→        result.title = extractTitle(lines, clean);
+  1167→
+  1168→        // --- Extract experience level ---
+  1169→        result.experienceLevel = extractExperience(clean);
+  1170→
+  1171→        // --- Detect section boundaries ---
+  1172→        const sections = detectSections(lines);
+  1173→
+  1174→        // --- Extract skills from full text ---
+  1175→        const lowerClean = clean.toLowerCase();
+  1176→        result.hardSkills = extractHardSkills(lowerClean);
+  1177→        result.softSkills = extractSoftSkills(lowerClean);
+  1178→
+  1179→        // --- Extract responsibilities ---
+  1180→        result.responsibilities = extractResponsibilities(lines, sections);
+  1181→
+  1182→        // --- Extract qualifications ---
+  1183→        result.qualifications = extractQualifications(lines, sections);
+  1184→
+  1185→        // --- Extract nice-to-haves ---
+  1186→        result.niceToHaves = extractNiceToHaves(lines, sections);
+  1187→
+  1188→        // --- Generate summary if not found ---
+  1189→        result.summary = generateSummary(result);
+  1190→
+  1191→        return result;
+  1192→    }
+  1193→
+  1194→    function extractTitle(lines, fullText) {
+  1195→        // Strategy 1: Look for role-like first line
+  1196→        if (lines.length > 0) {
+  1197→            const first = lines[0].replace(/[:\-–—]+$/, '').trim();
+  1198→            if (first.length < 80) {
+  1199→                const lower = first.toLowerCase();
+  1200→                // Check if it contains role keywords
+  1201→                if (ROLE_KEYWORDS.some(k => lower.includes(k))) {
+  1202→                    return first;
+  1203→                }
+  1204→                // Check if first line is short and looks like a title
+  1205→                if (first.length < 50 && !first.includes('.') && lines.length > 1) {
+  1206→                    return first;
+  1207→                }
+  1208→            }
+  1209→        }
+  1210→
+  1211→        // Strategy 2: Search for role pattern in text
+  1212→        const rolePattern = /(?:looking for|seeking|hire|hiring)\s+(?:a|an)\s+(.+?)(?:\.|,|\n|$)/i;
+  1213→        const match = fullText.match(rolePattern);
+  1214→        if (match) {
+  1215→            let candidate = match[1].trim();
+  1216→            // Clean up
+  1217→            candidate = candidate.replace(/\s+(?:to|who|that|for)\b.*$/i, '').trim();
+  1218→            if (candidate.length < 60) return capitalizeTitle(candidate);
+  1219→        }
+  1220→
+  1221→        // Strategy 3: Find a line with role keywords
+  1222→        for (const line of lines.slice(0, 5)) {
+  1223→            const lower = line.toLowerCase();
+  1224→            const hasRole = ROLE_KEYWORDS.some(k => lower.includes(k));
+  1225→            if (hasRole && line.length < 70) {
+  1226→                return line.replace(/[:\-–—]+$/, '').trim();
+  1227→            }
+  1228→        }
+  1229→
+  1230→        return 'Untitled Role';
+  1231→    }
+  1232→
+  1233→    function extractExperience(text) {
+  1234→        const patterns = [
+  1235→            /(\d+)\+?\s*years?\s+(?:of\s+)?(?:experience|exp)/i,
+  1236→            /(?:senior|sr\.?|lead|principal|staff)\s/i,
+  1237→            /(?:junior|jr\.?|entry.?level|associate)\s/i,
+  1238→            /(?:mid.?level|mid.?senior)\s/i
+  1239→        ];
+  1240→
+  1241→        const yearMatch = text.match(patterns[0]);
+  1242→        if (yearMatch) return `${yearMatch[1]}+ years`;
+  1243→
+  1244→        if (patterns[1].test(text)) return 'Senior-level';
+  1245→        if (patterns[2].test(text)) return 'Junior-level';
+  1246→        if (patterns[3].test(text)) return 'Mid-level';
+  1247→
+  1248→        return '';
+  1249→    }
+  1250→
+  1251→    function detectSections(lines) {
+  1252→        const sections = {};
+  1253→        let currentSection = 'top';
+  1254→
+  1255→        for (let i = 0; i < lines.length; i++) {
+  1256→            const lower = lines[i].toLowerCase().replace(/[:\-–—]+$/, '').trim();
+  1257→
+  1258→            if (SECTION_HEADERS.some(h => lower.startsWith(h) || lower === h) && lines[i].length < 60) {
+  1259→                currentSection = lower;
+  1260→                sections[currentSection] = [];
+  1261→            } else {
+  1262→                if (!sections[currentSection]) sections[currentSection] = [];
+  1263→                sections[currentSection].push(i);
+  1264→            }
+  1265→        }
+  1266→
+  1267→        return sections;
+  1268→    }
+  1269→
+  1270→    function extractHardSkills(text) {
+  1271→        const found = [];
+  1272→        for (const [category, skills] of Object.entries(HARD_SKILLS)) {
+  1273→            for (const skill of skills) {
+  1274→                const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  1275→                const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+  1276→                if (regex.test(text)) {
+  1277→                    found.push(skill);
+  1278→                }
+  1279→            }
+  1280→        }
+  1281→        return [...new Set(found)];
+  1282→    }
+  1283→
+  1284→    function extractSoftSkills(text) {
+  1285→        const found = [];
+  1286→        for (const skill of SOFT_SKILLS) {
+  1287→            const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  1288→            const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+  1289→            if (regex.test(text)) {
+  1290→                // Normalize the name
+  1291→                let normalized = skill.replace(/-/g, ' ');
+  1292→                normalized = normalized.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  1293→                if (!found.some(f => f.toLowerCase() === normalized.toLowerCase())) {
+  1294→                    found.push(normalized);
+  1295→                }
+  1296→            }
+  1297→        }
+  1298→        return found;
+  1299→    }
+  1300→
+  1301→    function extractResponsibilities(lines, sections) {
+  1302→        const resps = [];
+  1303→
+  1304→        // Look for responsibilities section
+  1305→        for (const [section, indices] of Object.entries(sections)) {
+  1306→            if (section.includes('responsib') || section.includes('duties') || section.includes('what you') || section.includes('you will') || section.includes('you\'ll')) {
+  1307→                for (const idx of indices) {
+  1308→                    if (lines[idx].length > 10) resps.push(cleanLine(lines[idx]));
+  1309→                }
+  1310→            }
+  1311→        }
+  1312→
+  1313→        // If none found, look for lines with action verbs
+  1314→        if (resps.length === 0) {
+  1315→            for (const line of lines) {
+  1316→                const lower = line.toLowerCase();
+  1317→                if (ACTION_VERBS.some(v => lower.startsWith(v) || lower.match(new RegExp(`\\b${v}\\b`)))) {
+  1318→                    if (line.length > 15 && line.length < 250) {
+  1319→                        resps.push(cleanLine(line));
+  1320→                    }
+  1321→                }
+  1322→            }
+  1323→        }
+  1324→
+  1325→        return [...new Set(resps)].slice(0, 12);
+  1326→    }
+  1327→
+  1328→    function extractQualifications(lines, sections) {
+  1329→        const quals = [];
+  1330→
+  1331→        for (const [section, indices] of Object.entries(sections)) {
+  1332→            if (section.includes('require') || section.includes('qualif') || section.includes('must have') || section.includes('experience')) {
+  1333→                for (const idx of indices) {
+  1334→                    if (lines[idx].length > 10) quals.push(cleanLine(lines[idx]));
+  1335→                }
+  1336→            }
+  1337→        }
+  1338→
+  1339→        return [...new Set(quals)].slice(0, 10);
+  1340→    }
+  1341→
+  1342→    function extractNiceToHaves(lines, sections) {
+  1343→        const nths = [];
+  1344→
+  1345→        for (const [section, indices] of Object.entries(sections)) {
+  1346→            if (section.includes('nice') || section.includes('preferred') || section.includes('bonus') || section.includes('plus') || section.includes('good to')) {
+  1347→                for (const idx of indices) {
+  1348→                    if (lines[idx].length > 10) nths.push(cleanLine(lines[idx]));
+  1349→                }
+  1350→            }
+  1351→        }
+  1352→
+  1353→        return [...new Set(nths)].slice(0, 6);
+  1354→    }
+  1355→
+  1356→    function generateSummary(parsed) {
+  1357→        const parts = [];
+  1358→
+  1359→        const title = parsed.title !== 'Untitled Role' ? parsed.title : 'this role';
+  1360→        const exp = parsed.experienceLevel ? ` with ${parsed.experienceLevel.includes('years') ? parsed.experienceLevel + ' of experience' : parsed.experienceLevel + ' experience'}` : '';
+  1361→
+  1362→        parts.push(`We're looking for a ${title}${exp} to join our team and make an immediate impact.`);
+  1363→
+  1364→        if (parsed.responsibilities.length > 0) {
+  1365→            const topResp = parsed.responsibilities.slice(0, 3).map(r => {
+  1366→                return r.charAt(0).toLowerCase() + r.slice(1);
+  1367→            });
+  1368→            parts.push(`In this role, you'll be responsible for ${topResp[0]}${topResp.length > 1 ? ', ' + topResp[1] : ''}${topResp.length > 2 ? ', and ' + topResp[2] : ''}.`);
+  1369→        }
+  1370→
+  1371→        if (parsed.hardSkills.length > 0 || parsed.softSkills.length > 0) {
+  1372→            const allSkills = [...parsed.hardSkills.slice(0, 3), ...parsed.softSkills.slice(0, 2)];
+  1373→            parts.push(`The ideal candidate brings expertise in ${allSkills.join(', ')} and thrives in a collaborative, fast-paced environment.`);
+  1374→        }
+  1375→
+  1376→        return parts.join(' ');
+  1377→    }
+  1378→
+  1379→    function cleanLine(line) {
+  1380→        return line.replace(/^[-•*◦▪]\s*/, '')
+  1381→            .replace(/^\d+[.)]\s*/, '')
+  1382→            .replace(/[:\-–—]+$/, '')
+  1383→            .trim();
+  1384→    }
+  1385→
+  1386→    function capitalizeTitle(str) {
+  1387→        const small = ['a','an','the','and','but','or','for','nor','in','on','at','to','of','by','with'];
+  1388→        return str.split(' ').map((w, i) => {
+  1389→            if (i === 0 || !small.includes(w.toLowerCase())) {
+  1390→                return w.charAt(0).toUpperCase() + w.slice(1);
+  1391→            }
+  1392→            return w.toLowerCase();
+  1393→        }).join(' ');
+  1394→    }
+  1395→
+  1396→    // ============================================================
+  1397→    // JOB DESCRIPTION GENERATOR
+  1398→    // ============================================================
+  1399→    function generateJD(parsed) {
+  1400→        const title = parsed.title;
+  1401→        const meta = [];
+  1402→        meta.push('Full-time');
+  1403→        if (parsed.experienceLevel) meta.push(parsed.experienceLevel);
+  1404→        meta.push('Remote / Hybrid');
+  1405→
+  1406→        // Build sections
+  1407→        const sections = [];
+  1408→
+  1409→        // About the Role
+  1410→        sections.push({
+  1411→            heading: 'About the Role',
+  1412→            content: `<p>${parsed.summary}</p>`
+  1413→        });
+  1414→
+  1415→        // What You'll Do
+  1416→        if (parsed.responsibilities.length > 0) {
+  1417→            const items = parsed.responsibilities.map(r => `<li>${ensurePeriod(r)}</li>`).join('');
+  1418→            sections.push({
+  1419→                heading: "What You'll Do",
+  1420→                content: `<ul>${items}</ul>`
+  1421→            });
+  1422→        } else {
+  1423→            // Generate generic responsibilities from skills
+  1424→            const generic = generateGenericResponsibilities(parsed);
+  1425→            sections.push({
+  1426→                heading: "What You'll Do",
+  1427→                content: `<ul>${generic.map(r => `<li>${r}</li>`).join('')}</ul>`
+  1428→            });
+  1429→        }
+  1430→
+  1431→        // What You'll Bring
+  1432→        const bringItems = [];
+  1433→        if (parsed.qualifications.length > 0) {
+  1434→            bringItems.push(...parsed.qualifications.map(q => ensurePeriod(q)));
+  1435→        }
+  1436→        if (parsed.hardSkills.length > 0) {
+  1437→            bringItems.push(`Proficiency in ${formatList(parsed.hardSkills.slice(0, 6))}.`);
+  1438→        }
+  1439→        if (parsed.softSkills.length > 0) {
+  1440→            bringItems.push(`Strong ${formatList(parsed.softSkills.slice(0, 4))} skills.`);
+  1441→        }
+  1442→        if (parsed.experienceLevel && parsed.experienceLevel.includes('years')) {
+  1443→            bringItems.push(`${parsed.experienceLevel} of relevant professional experience.`);
+  1444→        }
+  1445→        if (bringItems.length === 0) {
+  1446→            bringItems.push('Relevant professional experience in a similar role.');
+  1447→            bringItems.push('Strong problem-solving and analytical abilities.');
+  1448→            bringItems.push('Excellent communication and collaboration skills.');
+  1449→        }
+  1450→
+  1451→        sections.push({
+  1452→            heading: "What You'll Bring",
+  1453→            content: `<ul>${bringItems.slice(0, 8).map(q => `<li>${q}</li>`).join('')}</ul>`
+  1454→        });
+  1455→
+  1456→        // Nice to Have
+  1457→        if (parsed.niceToHaves.length > 0) {
+  1458→            sections.push({
+  1459→                heading: 'Nice to Have',
+  1460→                content: `<ul>${parsed.niceToHaves.map(n => `<li>${ensurePeriod(n)}</li>`).join('')}</ul>`
+  1461→            });
+  1462→        }
+  1463→
+  1464→        // Skills tags
+  1465→        const allSkills = [...new Set([...parsed.hardSkills, ...parsed.softSkills.map(s => s.toLowerCase())])];
+  1466→        if (allSkills.length > 0) {
+  1467→            sections.push({
+  1468→                heading: 'Key Skills',
+  1469→                content: `<div class="skill-pills">${allSkills.slice(0, 15).map(s => `<span class="skill-pill">${s}</span>`).join('')}</div>`
+  1470→            });
+  1471→        }
+  1472→
+  1473→        // What We Offer
+  1474→        sections.push({
+  1475→            heading: 'What We Offer',
+  1476→            content: `<ul>
+  1477→                <li>Competitive compensation package with equity options.</li>
+  1478→                <li>Comprehensive health, dental, and vision insurance.</li>
+  1479→                <li>Flexible work arrangements — remote-friendly with optional in-office collaboration.</li>
+  1480→                <li>Professional development budget and continuous learning opportunities.</li>
+  1481→                <li>Generous PTO policy and company-wide wellness days.</li>
+  1482→            </ul>`
+  1483→        });
+  1484→
+  1485→        // Build HTML
+  1486→        const metaHTML = meta.map(m => `<span>${m}</span>`).join('');
+  1487→        const sectionsHTML = sections.map(s => `
+  1488→            <div class="jd-section">
+  1489→                <h3>${s.heading}</h3>
+  1490→                ${s.content}
+  1491→            </div>
+  1492→        `).join('');
+  1493→
+  1494→        return `
+  1495→            <div class="jd-doc">
+  1496→                <h2 class="doc-title">${title}</h2>
+  1497→                <div class="doc-meta">${metaHTML}</div>
+  1498→                ${sectionsHTML}
+  1499→                <div class="divider"></div>
+  1500→                <p class="eoe">We are an equal opportunity employer and value diversity. We do not discriminate on the basis of race, religion, color, national origin, gender, sexual orientation, age, marital status, veteran status, or disability status.</p>
+  1501→            </div>
+  1502→        `;
+  1503→    }
+  1504→
+  1505→    function generateGenericResponsibilities(parsed) {
+  1506→        const resps = [
+  1507→            'Define and drive the strategic vision and roadmap for your area of ownership.',
+  1508→            'Collaborate cross-functionally with engineering, design, and business partners to deliver high-impact outcomes.',
+  1509→            'Analyze data and metrics to identify opportunities, inform decisions, and measure success.',
+  1510→            'Communicate progress, insights, and recommendations clearly to stakeholders at all levels.',
+  1511→            'Foster a culture of continuous improvement, experimentation, and accountability within the team.'
+  1512→        ];
+  1513→
+  1514→        if (parsed.hardSkills.some(s => /sql|data|analyt/i.test(s))) {
+  1515→            resps.push('Leverage data analysis tools and techniques to uncover actionable insights.');
+  1516→        }
+  1517→        if (parsed.softSkills.some(s => /lead|mentor/i.test(s))) {
+  1518→            resps.push('Mentor and develop team members, fostering their professional growth.');
+  1519→        }
+  1520→
+  1521→        return resps.slice(0, 7);
+  1522→    }
+  1523→
+  1524→    function ensurePeriod(s) {
+  1525→        s = s.trim();
+  1526→        if (!s.match(/[.!?]$/)) s += '.';
+  1527→        return s.charAt(0).toUpperCase() + s.slice(1);
+  1528→    }
+  1529→
+  1530→    function formatList(items) {
+  1531→        if (items.length === 0) return '';
+  1532→        if (items.length === 1) return items[0];
+  1533→        if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  1534→        return items.slice(0, -1).join(', ') + ', and ' + items[items.length - 1];
+  1535→    }
+  1536→
+  1537→    // ============================================================
+  1538→    // INTERVIEW GUIDE GENERATOR
+  1539→    // ============================================================
+  1540→    function generateGuide(parsed) {
+  1541→        const questions = [];
+  1542→        const usedKeys = new Set();
+  1543→
+  1544→        // 1. Match specific questions for detected hard skills
+  1545→        for (const skill of parsed.hardSkills) {
+  1546→            if (questions.length >= CONFIG.MAX_QUESTIONS) break;
+  1547→            const key = skill.toLowerCase();
+  1548→            if (SPECIFIC_QUESTIONS[key] && !usedKeys.has(key)) {
+  1549→                questions.push({
+  1550→                    number: questions.length + 1,
+  1551→                    skill: skill,
+  1552→                    type: 'hard',
+  1553→                    question: SPECIFIC_QUESTIONS[key].q,
+  1554→                    listenFor: SPECIFIC_QUESTIONS[key].listen
+  1555→                });
+  1556→                usedKeys.add(key);
+  1557→            }
+  1558→        }
+  1559→
+  1560→        // 2. Match specific questions for detected soft skills
+  1561→        for (const skill of parsed.softSkills) {
+  1562→            if (questions.length >= CONFIG.MAX_QUESTIONS) break;
+  1563→            const key = skill.toLowerCase();
+  1564→            if (SPECIFIC_QUESTIONS[key] && !usedKeys.has(key)) {
+  1565→                questions.push({
+  1566→                    number: questions.length + 1,
+  1567→                    skill: skill,
+  1568→                    type: 'soft',
+  1569→                    question: SPECIFIC_QUESTIONS[key].q,
+  1570→                    listenFor: SPECIFIC_QUESTIONS[key].listen
+  1571→                });
+  1572→                usedKeys.add(key);
+  1573→            }
+  1574→        }
+  1575→
+  1576→        // 3. Generate generic questions for remaining hard skills
+  1577→        for (const skill of parsed.hardSkills) {
+  1578→            if (questions.length >= CONFIG.MAX_QUESTIONS) break;
+  1579→            const key = skill.toLowerCase();
+  1580→            if (!usedKeys.has(key)) {
+  1581→                const hash = simpleHash(skill);
+  1582→                const template = GENERIC_HARD_TEMPLATES[hash % GENERIC_HARD_TEMPLATES.length];
+  1583→                questions.push({
+  1584→                    number: questions.length + 1,
+  1585→                    skill: skill,
+  1586→                    type: 'hard',
+  1587→                    question: template(skill),
+  1588→                    listenFor: GENERIC_HARD_LISTEN(skill)
+  1589→                });
+  1590→                usedKeys.add(key);
+  1591→            }
+  1592→        }
+  1593→
+  1594→        // 4. Generate generic questions for remaining soft skills
+  1595→        for (const skill of parsed.softSkills) {
+  1596→            if (questions.length >= CONFIG.MAX_QUESTIONS) break;
+  1597→            const key = skill.toLowerCase();
+  1598→            if (!usedKeys.has(key)) {
+  1599→                const hash = simpleHash(skill);
+  1600→                const template = GENERIC_SOFT_TEMPLATES[hash % GENERIC_SOFT_TEMPLATES.length];
+  1601→                questions.push({
+  1602→                    number: questions.length + 1,
+  1603→                    skill: skill,
+  1604→                    type: 'soft',
+  1605→                    question: template(skill),
+  1606→                    listenFor: GENERIC_SOFT_LISTEN(skill)
+  1607→                });
+  1608→                usedKeys.add(key);
+  1609→            }
+  1610→        }
+  1611→
+  1612→        // 5. Fill remaining slots with fallback questions
+  1613→        for (const fq of FALLBACK_QUESTIONS) {
+  1614→            if (questions.length >= CONFIG.MAX_QUESTIONS) break;
+  1615→            const key = fq.skill.toLowerCase();
+  1616→            if (!usedKeys.has(key)) {
+  1617→                questions.push({
+  1618→                    number: questions.length + 1,
+  1619→                    skill: fq.skill,
+  1620→                    type: fq.type,
+  1621→                    question: fq.q,
+  1622→                    listenFor: fq.listen
+  1623→                });
+  1624→                usedKeys.add(key);
+  1625→            }
+  1626→        }
+  1627→
+  1628→        // Renumber
+  1629→        questions.forEach((q, i) => q.number = i + 1);
+  1630→
+  1631→        // Count types
+  1632→        const hardCount = questions.filter(q => q.type === 'hard').length;
+  1633→        const softCount = questions.filter(q => q.type === 'soft').length;
+  1634→        const genCount = questions.filter(q => q.type === 'general').length;
+  1635→
+  1636→        return { questions, hardCount, softCount, genCount, title: parsed.title };
+  1637→    }
+  1638→
+  1639→    function simpleHash(str) {
+  1640→        let hash = 0;
+  1641→        for (let i = 0; i < str.length; i++) {
+  1642→            hash = ((hash << 5) - hash) + str.charCodeAt(i);
+  1643→            hash |= 0;
+  1644→        }
+  1645→        return Math.abs(hash);
+  1646→    }
+  1647→
+  1648→    function renderGuide(guide) {
+  1649→        const statsHTML = [];
+  1650→        if (guide.hardCount > 0) statsHTML.push(`<span class="stat-badge hard">${guide.hardCount} technical</span>`);
+  1651→        if (guide.softCount > 0) statsHTML.push(`<span class="stat-badge soft">${guide.softCount} soft skill</span>`);
+  1652→        if (guide.genCount > 0) statsHTML.push(`<span class="stat-badge general" style="background:var(--accent-soft);color:var(--accent);border:1px solid rgba(200,155,60,0.2);">${guide.genCount} general</span>`);
+  1653→
+  1654→        const questionsHTML = guide.questions.map(q => {
+  1655→            const typeClass = q.type === 'hard' ? 'hard' : q.type === 'soft' ? 'soft' : 'general';
+  1656→            const typeLabel = q.type === 'hard' ? 'Technical' : q.type === 'soft' ? 'Soft Skill' : 'General';
+  1657→            const listenHTML = q.listenFor.map(l => `<li>${l}</li>`).join('');
+  1658→
+  1659→            return `
+  1660→                <div class="question-card">
+  1661→                    <div class="question-top">
+  1662→                        <span class="q-number">${String(q.number).padStart(2, '0')}</span>
+  1663→                        <span class="q-skill-tag ${typeClass}">${q.skill}</span>
+  1664→                        <span class="q-skill-tag ${typeClass}" style="opacity:0.7">${typeLabel}</span>
+  1665→                    </div>
+  1666→                    <p class="question-text">"${q.question}"</p>
+  1667→                    <div class="listen-guide">
+  1668→                        <h4>What to listen for</h4>
+  1669→                        <ul>${listenHTML}</ul>
+  1670→                    </div>
+  1671→                </div>
+  1672→            `;
+  1673→        }).join('');
+  1674→
+  1675→        return `
+  1676→            <div class="guide-doc">
+  1677→                <div class="guide-header">
+  1678→                    <h2>Interview Guide: ${guide.title}</h2>
+  1679→                    <p>${guide.questions.length} behavioral questions · STAR format recommended</p>
+  1680→                    ${statsHTML.length > 0 ? `<div class="guide-stats">${statsHTML.join('')}</div>` : ''}
+  1681→                </div>
+  1682→                ${questionsHTML}
+  1683→            </div>
+  1684→        `;
+  1685→    }
+  1686→
+  1687→    // ============================================================
+  1688→    // PLAIN TEXT GENERATORS (for copy)
+  1689→    // ============================================================
+  1690→    function jdToPlainText(parsed) {
+  1691→        const lines = [];
+  1692→        lines.push(parsed.title.toUpperCase());
+  1693→        lines.push(`Full-time · ${parsed.experienceLevel || 'All levels'} · Remote / Hybrid`);
+  1694→        lines.push('');
+  1695→        lines.push('ABOUT THE ROLE');
+  1696→        lines.push(stripHTML(parsed.summary));
+  1697→        lines.push('');
+  1698→
+  1699→        if (parsed.responsibilities.length > 0) {
+  1700→            lines.push("WHAT YOU'LL DO");
+  1701→            parsed.responsibilities.forEach(r => lines.push(`• ${ensurePeriod(r)}`));
+  1702→            lines.push('');
+  1703→        }
+  1704→
+  1705→        lines.push("WHAT YOU'LL BRING");
+  1706→        if (parsed.qualifications.length > 0) {
+  1707→            parsed.qualifications.forEach(q => lines.push(`• ${ensurePeriod(q)}`));
+  1708→        }
+  1709→        if (parsed.hardSkills.length > 0) {
+  1710→            lines.push(`• Proficiency in ${formatList(parsed.hardSkills.slice(0, 6))}.`);
+  1711→        }
+  1712→        if (parsed.softSkills.length > 0) {
+  1713→            lines.push(`• Strong ${formatList(parsed.softSkills.slice(0, 4))} skills.`);
+  1714→        }
+  1715→        lines.push('');
+  1716→
+  1717→        if (parsed.niceToHaves.length > 0) {
+  1718→            lines.push('NICE TO HAVE');
+  1719→            parsed.niceToHaves.forEach(n => lines.push(`• ${ensurePeriod(n)}`));
+  1720→            lines.push('');
+  1721→        }
+  1722→
+  1723→        lines.push('We are an equal opportunity employer and value diversity.');
+  1724→        return lines.join('\n');
+  1725→    }
+  1726→
+  1727→    function guideToPlainText(guide) {
+  1728→        const lines = [];
+  1729→        lines.push(`INTERVIEW GUIDE: ${guide.title.toUpperCase()}`);
+  1730→        lines.push(`${guide.questions.length} behavioral questions — STAR format recommended`);
+  1731→        lines.push('');
+  1732→
+  1733→        guide.questions.forEach(q => {
+  1734→            lines.push(`${String(q.number).padStart(2, '0')}. [${q.type === 'hard' ? 'Technical' : q.type === 'soft' ? 'Soft Skill' : 'General'} · ${q.skill}]`);
+  1735→            lines.push(`"${q.question}"`);
+  1736→            lines.push('What to listen for:');
+  1737→            q.listenFor.forEach(l => lines.push(`  → ${l}`));
+  1738→            lines.push('');
+  1739→        });
+  1740→
+  1741→        return lines.join('\n');
+  1742→    }
+  1743→
+  1744→    function stripHTML(html) {
+  1745→        const tmp = document.createElement('div');
+  1746→        tmp.innerHTML = html;
+  1747→        return tmp.textContent || tmp.innerText || '';
+  1748→    }
+  1749→
+  1750→    // ============================================================
+  1751→    // UI CONTROLLER
+  1752→    // ============================================================
+  1753→    let currentParsed = null;
+  1754→    let currentGuide = null;
+  1755→    let currentTab = 'jd';
+  1756→
+  1757→    const DOM = {};
+  1758→
+  1759→    function initUI() {
+  1760→        DOM.input = document.getElementById('notesInput');
+  1761→        DOM.charCount = document.getElementById('charCount');
+  1762→        DOM.sampleBtn = document.getElementById('sampleBtn');
+  1763→        DOM.generateBtn = document.getElementById('generateBtn');
+  1764→        DOM.errorMsg = document.getElementById('errorMsg');
+  1765→        DOM.jdTab = document.getElementById('jdTab');
+  1766→        DOM.guideTab = document.getElementById('guideTab');
+  1767→        DOM.jdOutput = document.getElementById('jdOutput');
+  1768→        DOM.jdPlaceholder = document.getElementById('jdPlaceholder');
+  1769→        DOM.guideOutput = document.getElementById('guideOutput');
+  1770→        DOM.guidePlaceholder = document.getElementById('guidePlaceholder');
+  1771→        DOM.tabIndicator = document.getElementById('tabIndicator');
+  1772→        DOM.copyBtn = document.getElementById('copyBtn');
+  1773→        DOM.outputBody = document.getElementById('outputBody');
+  1774→
+  1775→        // Character count
+  1776→        DOM.input.addEventListener('input', () => {
+  1777→            const len = DOM.input.value.length;
+  1778→            DOM.charCount.textContent = `${len} character${len !== 1 ? 's' : ''}`;
+  1779→            hideError();
+  1780→        });
+  1781→
+  1782→        // Sample button
+  1783→        DOM.sampleBtn.addEventListener('click', loadSample);
+  1784→
+  1785→        // Generate button
+  1786→        DOM.generateBtn.addEventListener('click', handleGenerate);
+  1787→
+  1788→        // Tab switching
+  1789→        document.querySelectorAll('.tab-btn').forEach(btn => {
+  1790→            btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  1791→        });
+  1792→
+  1793→        // Copy button
+  1794→        DOM.copyBtn.addEventListener('click', handleCopy);
+  1795→
+  1796→        // Initial tab indicator
+  1797→        requestAnimationFrame(updateTabIndicator);
+  1798→
+  1799→        // Resize observer for tab indicator
+  1800→        window.addEventListener('resize', updateTabIndicator);
+  1801→    }
+  1802→
+  1803→    function loadSample() {
+  1804→        const sample = `Senior Product Manager - Growth Team
+  1805→
+  1806→Looking for a senior PM to own growth strategy for our B2B SaaS platform.
+  1807→
+  1808→Responsibilities:
+  1809→- Own the product roadmap for growth and activation features
+  1810→- Design and run A/B experiments to improve conversion rates
+  1811→- Partner with engineering, design, and data science teams
+  1812→- Analyze user behavior data using SQL and analytics tools
+  1813→- Define success metrics and track KPIs for the growth team
+  1814→- Present findings and recommendations to executive leadership
+  1815→- Mentor junior product managers on the team
+  1816→
+  1817→Requirements:
+  1818→- 5+ years of product management experience
+  1819→- Strong analytical and data-driven mindset
+  1820→- Proficiency in SQL and data analysis tools (Tableau, Looker)
+  1821→- Excellent communication and stakeholder management skills
+  1822→- Experience with B2B or SaaS products
+  1823→- Track record of driving measurable business outcomes
+  1824→- Ability to thrive in a fast-paced, ambiguous environment
+  1825→
+  1826→Nice to have:
+  1827→- MBA or advanced degree
+  1828→- Experience with machine learning or AI products
+  1829→- Background in growth hacking or marketing technology
+  1830→
+  1831→We need someone who is a strong leader but also collaborative. They should be able to think strategically while being hands-on with data. Strong presentation skills are important since they'll be presenting to the C-suite regularly.`;
+  1832→
+  1833→        DOM.input.value = sample;
+  1834→        DOM.input.dispatchEvent(new Event('input'));
+  1835→        DOM.input.focus();
+  1836→    }
+  1837→
+  1838→    async function handleGenerate() {
+  1839→        const text = DOM.input.value.trim();
+  1840→
+  1841→        // Validate
+  1842→        if (text.length < CONFIG.MIN_INPUT) {
+  1843→            showError(`Please enter at least a few sentences about the role. (${text.length}/${CONFIG.MIN_INPUT} characters)`);
+  1844→            return;
+  1845→        }
+  1846→
+  1847→        // Loading state
+  1848→        DOM.generateBtn.classList.add('loading');
+  1849→        DOM.generateBtn.disabled = true;
+  1850→        hideError();
+  1851→
+  1852→        // Simulate generation delay
+  1853→        await sleep(CONFIG.GEN_DELAY);
+  1854→
+  1855→        try {
+  1856→            // Parse
+  1857→            const parsed = parseNotes(text);
+  1858→            currentParsed = parsed;
+  1859→
+  1860→            // Generate JD
+  1861→            const jdHTML = generateJD(parsed);
+  1862→            DOM.jdPlaceholder.style.display = 'none';
+  1863→            DOM.jdOutput.innerHTML = jdHTML;
+  1864→
+  1865→            // Generate Interview Guide
+  1866→            const guide = generateGuide(parsed);
+  1867→            currentGuide = guide;
+  1868→            DOM.guidePlaceholder.style.display = 'none';
+  1869→            DOM.guideOutput.innerHTML = renderGuide(guide);
+  1870→
+  1871→            // Show copy button
+  1872→            DOM.copyBtn.style.display = 'flex';
+  1873→
+  1874→            // Switch to JD tab if not already there
+  1875→            switchTab('jd');
+  1876→
+  1877→        } catch (err) {
+  1878→            showError('Something went wrong during generation. Please try again.');
+  1879→            console.error(err);
+  1880→        }
+  1881→
+  1882→        // Reset button
+  1883→        DOM.generateBtn.classList.remove('loading');
+  1884→        DOM.generateBtn.disabled = false;
+  1885→    }
+  1886→
+  1887→    function switchTab(tab) {
+  1888→        currentTab = tab;
+  1889→
+  1890→        // Update buttons
+  1891→        document.querySelectorAll('.tab-btn').forEach(btn => {
+  1892→            btn.classList.toggle('active', btn.dataset.tab === tab);
+  1893→        });
+  1894→
+  1895→        // Update content
+  1896→        document.querySelectorAll('.tab-content').forEach(el => {
+  1897→            el.classList.remove('active');
+  1898→        });
+  1899→
+  1900→        if (tab === 'jd') {
+  1901→            DOM.jdTab.classList.add('active');
+  1902→        } else {
+  1903→            DOM.guideTab.classList.add('active');
+  1904→        }
+  1905→
+  1906→        // Scroll to top of output
+  1907→        DOM.outputBody.scrollTop = 0;
+  1908→
+  1909→        // Update indicator
+  1910→        updateTabIndicator();
+  1911→    }
+  1912→
+  1913→    function updateTabIndicator() {
+  1914→        const activeTab = document.querySelector('.tab-btn.active');
+  1915→        if (!activeTab || !DOM.tabIndicator) return;
+  1916→
+  1917→        const tabsContainer = document.getElementById('tabs');
+  1918→        const rect = activeTab.getBoundingClientRect();
+  1919→        const containerRect = tabsContainer.getBoundingClientRect();
+  1920→
+  1921→        DOM.tabIndicator.style.left = (rect.left - containerRect.left) + 'px';
+  1922→        DOM.tabIndicator.style.width = rect.width + 'px';
+  1923→    }
+  1924→
+  1925→    async function handleCopy() {
+  1926→        let text = '';
+  1927→        if (currentTab === 'jd' && currentParsed) {
+  1928→            text = jdToPlainText(currentParsed);
+  1929→        } else if (currentTab === 'guide' && currentGuide) {
+  1930→            text = guideToPlainText(currentGuide);
+  1931→        }
+  1932→
+  1933→        if (!text) return;
+  1934→
+  1935→        try {
+  1936→            await navigator.clipboard.writeText(text);
+  1937→            DOM.copyBtn.classList.add('copied');
+  1938→            DOM.copyBtn.querySelector('span').textContent = 'Copied!';
+  1939→            setTimeout(() => {
+  1940→                DOM.copyBtn.classList.remove('copied');
+  1941→                DOM.copyBtn.querySelector('span').textContent = 'Copy';
+  1942→            }, 2000);
+  1943→        } catch (err) {
+  1944→            // Fallback for older browsers
+  1945→            const ta = document.createElement('textarea');
+  1946→            ta.value = text;
+  1947→            ta.style.position = 'fixed';
+  1948→            ta.style.left = '-9999px';
+  1949→            document.body.appendChild(ta);
+  1950→            ta.select();
+  1951→            document.execCommand('copy');
+  1952→            document.body.removeChild(ta);
+  1953→            DOM.copyBtn.classList.add('copied');
+  1954→            DOM.copyBtn.querySelector('span').textContent = 'Copied!';
+  1955→            setTimeout(() => {
+  1956→                DOM.copyBtn.classList.remove('copied');
+  1957→                DOM.copyBtn.querySelector('span').textContent = 'Copy';
+  1958→            }, 2000);
+  1959→        }
+  1960→    }
+  1961→
+  1962→    function showError(msg) {
+  1963→        DOM.errorMsg.textContent = msg;
+  1964→        DOM.errorMsg.classList.add('show');
+  1965→    }
+  1966→
+  1967→    function hideError() {
+  1968→        DOM.errorMsg.classList.remove('show');
+  1969→    }
+  1970→
+  1971→    function sleep(ms) {
+  1972→        return new Promise(resolve => setTimeout(resolve, ms));
+  1973→    }
+  1974→
+  1975→    // ============================================================
+  1976→    // INIT
+  1977→    // ============================================================
+  1978→    document.addEventListener('DOMContentLoaded', initUI);
+  1979→    </script>
+  1980→</body>
+  1981→</html>
+  1982→انتا عملت اي؟
+  1983→
+  1984→أهلاً! اللي عملته هو تطبيق ويب كامل اسمه Recruitment Sandbox - أداة لتوليد وصف وظيفي ودليل مقابلات من ملاحظات خام. خليني أشرحلك بالتفصيل:
+  1985→
+  1986→
+  1987→
+  1988→الإدخال:
+  1989→
+  1990→بتكتب ملاحظاتك الخام عن أي وظيفة (أي شكل، مش مهم تكون مرتبة)
+  1991→ممكن تضغط "Load sample" عشان تشوف مثال جاهز
+  1992→
+  1993→الإخراج (نتيجتين):
+  1994→
+  1995→
+  1996→١) Job Description (وصف وظيفي)
+  1997→
+  1998→بيقرأ ملاحظاتك ويستخلص منها: العنوان، مستوى الخبرة، المهارات التقنية والشخصية، المسؤوليات، المؤهلات
+  1999→بيولّد وصف وظيفي متنسق بأسلوب LinkedIn جاهز للنشر
+  2000→مقسوم لأقسام: About the Role, What You'll Do, What You'll Bring, Nice to Have, Key Skills, What We Offer
+
+[showing lines 1-2000 of 4900; use offset=2001 with limit to continue reading]

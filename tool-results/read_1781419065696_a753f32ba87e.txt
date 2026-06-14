@@ -1,0 +1,502 @@
+   600→   600→            border: 1px solid rgba(76, 175, 106, 0.2);
+   601→   601→        }
+   602→   602→
+   603→   603→        .stat-badge.soft {
+   604→   604→            background: rgba(100, 140, 230, 0.1);
+   605→   605→            color: #7a9ee6;
+   606→   606→            border: 1px solid rgba(100, 140, 230, 0.2);
+   607→   607→        }
+   608→   608→
+   609→   609→        .question-card {
+   610→   610→            background: var(--surface-raised);
+   611→   611→            border: 1px solid var(--border);
+   612→   612→            border-radius: var(--radius-md);
+   613→   613→            padding: 20px 22px;
+   614→   614→            margin-bottom: 14px;
+   615→   615→            transition: border-color 0.2s ease, transform 0.2s ease;
+   616→   616→            opacity: 0;
+   617→   617→            animation: fadeUp 0.45s ease forwards;
+   618→   618→        }
+   619→   619→
+   620→   620→        .question-card:nth-child(1) { animation-delay: 0.05s; }
+   621→   621→        .question-card:nth-child(2) { animation-delay: 0.1s; }
+   622→   622→        .question-card:nth-child(3) { animation-delay: 0.15s; }
+   623→   623→        .question-card:nth-child(4) { animation-delay: 0.2s; }
+   624→   624→        .question-card:nth-child(5) { animation-delay: 0.25s; }
+   625→   625→        .question-card:nth-child(6) { animation-delay: 0.3s; }
+   626→   626→        .question-card:nth-child(7) { animation-delay: 0.35s; }
+   627→   627→        .question-card:nth-child(8) { animation-delay: 0.4s; }
+   628→   628→        .question-card:nth-child(9) { animation-delay: 0.45s; }
+   629→   629→        .question-card:nth-child(10) { animation-delay: 0.5s; }
+   630→   630→
+   631→   631→        .question-card:hover {
+   632→   632→            border-color: var(--border-light);
+   633→   633→            transform: translateY(-1px);
+   634→   634→        }
+   635→   635→
+   636→   636→        .question-top {
+   637→   637→            display: flex;
+   638→   638→            align-items: center;
+   639→   639→            gap: 10px;
+   640→   640→            margin-bottom: 12px;
+   641→   641→            flex-wrap: wrap;
+   642→   642→        }
+   643→   643→
+   644→   644→        .q-number {
+   645→   645→            font-family: var(--font-mono);
+   646→   646→            font-size: 0.72rem;
+   647→   647→            font-weight: 500;
+   648→   648→            color: var(--accent);
+   649→   649→            min-width: 24px;
+   650→   650→        }
+   651→   651→
+   652→   652→        .q-skill-tag {
+   653→   653→            font-family: var(--font-mono);
+   654→   654→            font-size: 0.65rem;
+   655→   655→            padding: 3px 9px;
+   656→   656→            border-radius: 20px;
+   657→   657→            letter-spacing: 0.03em;
+   658→   658→        }
+   659→   659→
+   660→   660→        .q-skill-tag.hard {
+   661→   661→            background: rgba(76, 175, 106, 0.1);
+   662→   662→            color: var(--success);
+   663→   663→            border: 1px solid rgba(76, 175, 106, 0.15);
+   664→   664→        }
+   665→   665→
+   666→   666→        .q-skill-tag.soft {
+   667→   667→            background: rgba(100, 140, 230, 0.1);
+   668→   668→            color: #7a9ee6;
+   669→   669→            border: 1px solid rgba(100, 140, 230, 0.15);
+   670→   670→        }
+   671→   671→
+   672→   672→        .q-skill-tag.general {
+   673→   673→            background: var(--accent-soft);
+   674→   674→            color: var(--accent);
+   675→   675→            border: 1px solid rgba(200, 155, 60, 0.15);
+   676→   676→        }
+   677→   677→
+   678→   678→        .question-text {
+   679→   679→            font-size: 0.92rem;
+   680→   680→            color: var(--text);
+   681→   681→            line-height: 1.6;
+   682→   682→            margin-bottom: 14px;
+   683→   683→            font-style: italic;
+   684→   684→            font-family: var(--font-display);
+   685→   685→            font-size: 1.02rem;
+   686→   686→        }
+   687→   687→
+   688→   688→        .listen-guide {
+   689→   689→            background: var(--bg-subtle);
+   690→   690→            border-radius: var(--radius-sm);
+   691→   691→            padding: 14px 16px;
+   692→   692→            border-left: 2px solid var(--accent);
+   693→   693→        }
+   694→   694→
+   695→   695→        .listen-guide h4 {
+   696→   696→            font-family: var(--font-mono);
+   697→   697→            font-size: 0.68rem;
+   698→   698→            color: var(--text-muted);
+   699→   699→            text-transform: uppercase;
+   700→   700→            letter-spacing: 0.08em;
+   701→   701→            margin-bottom: 8px;
+   702→   702→        }
+   703→   703→
+   704→   704→        .listen-guide ul {
+   705→   705→            list-style: none;
+   706→   706→            display: flex;
+   707→   707→            flex-direction: column;
+   708→   708→            gap: 5px;
+   709→   709→        }
+   710→   710→
+   711→   711→        .listen-guide li {
+   712→   712→            font-size: 0.8rem;
+   713→   713→            color: var(--text-secondary);
+   714→   714→            padding-left: 14px;
+   715→   715→            position: relative;
+   716→   716→            line-height: 1.5;
+   717→   717→        }
+   718→   718→
+   719→   719→        .listen-guide li::before {
+   720→   720→            content: '→';
+   721→   721→            position: absolute;
+   722→   722→            left: 0;
+   723→   723→            color: var(--accent);
+   724→   724→            font-size: 0.75rem;
+   725→   725→        }
+   726→   726→
+   727→   727→        /* ==========================================
+   728→   728→           14. ERROR STATE
+   729→   729→           ========================================== */
+   730→   730→        .error-msg {
+   731→   731→            background: rgba(200, 80, 80, 0.08);
+   732→   732→            border: 1px solid rgba(200, 80, 80, 0.2);
+   733→   733→            color: var(--danger);
+   734→   734→            font-size: 0.82rem;
+   735→   735→            padding: 12px 16px;
+   736→   736→            border-radius: var(--radius-sm);
+   737→   737→            margin-top: 12px;
+   738→   738→            display: none;
+   739→   739→            animation: fadeUp 0.3s ease;
+   740→   740→        }
+   741→   741→
+   742→   742→        .error-msg.show { display: block; }
+   743→   743→
+   744→   744→        /* ==========================================
+   745→   745→           15. ANIMATIONS
+   746→   746→           ========================================== */
+   747→   747→        @keyframes fadeUp {
+   748→   748→            from { opacity: 0; transform: translateY(14px); }
+   749→   749→            to   { opacity: 1; transform: translateY(0); }
+   750→   750→        }
+   751→   751→
+   752→   752→        @keyframes fadeIn {
+   753→   753→            from { opacity: 0; }
+   754→   754→            to   { opacity: 1; }
+   755→   755→        }
+   756→   756→
+   757→   757→        /* ==========================================
+   758→   758→           16. RESPONSIVE
+   759→   759→           ========================================== */
+   760→   760→        @media (max-width: 960px) {
+   761→   761→            .workspace {
+   762→   762→                grid-template-columns: 1fr;
+   763→   763→            }
+   764→   764→
+   765→   765→            .output-panel {
+   766→   766→                position: static;
+   767→   767→            }
+   768→   768→
+   769→   769→            .header { padding: 18px 0; }
+   770→   770→        }
+   771→   771→
+   772→   772→        @media (max-width: 600px) {
+   773→   773→            .app { padding: 0 14px; }
+   774→   774→
+   775→   775→            .textarea-wrap textarea { min-height: 240px; }
+   776→   776→
+   777→   777→            .panel-head { padding: 14px 16px 12px; }
+   778→   778→            .input-body { padding: 14px 16px; }
+   779→   779→            .input-actions { padding: 14px 16px 16px; }
+   780→   780→            .output-body { padding: 18px 16px; }
+   781→   781→
+   782→   782→            .jd-doc .doc-title { font-size: 1.3rem; }
+   783→   783→            .guide-doc .guide-header h2 { font-size: 1.15rem; }
+   784→   784→            .question-card { padding: 16px 18px; }
+   785→   785→
+   786→   786→            .tabs-row { padding: 0 14px; }
+   787→   787→            .tab-btn { padding: 14px 12px; font-size: 0.82rem; }
+   788→   788→        }
+   789→   789→
+   790→   790→        /* ==========================================
+   791→   791→           17. SCROLLBAR
+   792→   792→           ========================================== */
+   793→   793→        .output-body::-webkit-scrollbar { width: 6px; }
+   794→   794→        .output-body::-webkit-scrollbar-track { background: transparent; }
+   795→   795→        .output-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+   796→   796→        .output-body::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+   797→   797→    </style>
+   798→   798→</head>
+   799→   799→<body>
+   800→   800→    <div class="app">
+   801→   801→        <!-- ========== HEADER ========== -->
+   802→   802→        <header class="header">
+   803→   803→            <div class="brand">
+   804→   804→                <div class="brand-icon">
+   805→   805→                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+   806→   806→                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+   807→   807→                        <path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/>
+   808→   808→                    </svg>
+   809→   809→                </div>
+   810→   810→                <div class="brand-text">
+   811→   811→                    <h1>Recruitment Sandbox</h1>
+   812→   812→                    <div class="brand-tagline">raw notes <span>→</span> polished JD + interview guide</div>
+   813→   813→                </div>
+   814→   814→            </div>
+   815→   815→        </header>
+   816→   816→
+   817→   817→        <!-- ========== WORKSPACE ========== -->
+   818→   818→        <main class="workspace">
+   819→   819→            <!-- Input Panel -->
+   820→   820→            <div class="panel input-panel">
+   821→   821→                <div class="panel-head">
+   822→   822→                    <h2>Raw Notes</h2>
+   823→   823→                    <span class="hint">paste anything</span>
+   824→   824→                </div>
+   825→   825→                <div class="input-body">
+   826→   826→                    <div class="textarea-wrap">
+   827→   827→                        <textarea id="notesInput" placeholder="Drop your rough notes here...&#10;&#10;e.g. &quot;Looking for a senior PM to lead growth. Needs SQL, A/B testing experience.&#10;Should be a strong communicator and data-driven leader...&quot;"></textarea>
+   828→   828→                    </div>
+   829→   829→                    <div class="input-footer">
+   830→   830→                        <span class="char-count" id="charCount">0 characters</span>
+   831→   831→                        <button class="sample-btn" id="sampleBtn">Load sample</button>
+   832→   832→                    </div>
+   833→   833→                    <div class="error-msg" id="errorMsg"></div>
+   834→   834→                </div>
+   835→   835→                <div class="input-actions">
+   836→   836→                    <button class="generate-btn" id="generateBtn">
+   837→   837→                        <span class="btn-label">Generate Documents</span>
+   838→   838→                        <span class="btn-loading"><span class="spinner"></span> Generating…</span>
+   839→   839→                    </button>
+   840→   840→                </div>
+   841→   841→            </div>
+   842→   842→
+   843→   843→            <!-- Output Panel -->
+   844→   844→            <div class="panel output-panel">
+   845→   845→                <div class="tabs-row">
+   846→   846→                    <div class="tabs" id="tabs">
+   847→   847→                        <button class="tab-btn active" data-tab="jd">Job Description</button>
+   848→   848→                        <button class="tab-btn" data-tab="guide">Interview Guide</button>
+   849→   849→                        <div class="tab-indicator" id="tabIndicator"></div>
+   850→   850→                    </div>
+   851→   851→                    <button class="copy-btn" id="copyBtn" style="display:none;">
+   852→   852→                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+   853→   853→                        <span>Copy</span>
+   854→   854→                    </button>
+   855→   855→                </div>
+   856→   856→                <div class="output-body" id="outputBody">
+   857→   857→                    <!-- JD Tab -->
+   858→   858→                    <div class="tab-content active" id="jdTab">
+   859→   859→                        <div class="placeholder-state" id="jdPlaceholder">
+   860→   860→                            <div class="placeholder-icon">
+   861→   861→                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+   862→   862→                            </div>
+   863→   863→                            <h3>Job Description</h3>
+   864→   864→                            <p>Enter your raw role notes and click Generate to create a LinkedIn-ready job description.</p>
+   865→   865→                        </div>
+   866→   866→                        <div id="jdOutput"></div>
+   867→   867→                    </div>
+   868→   868→                    <!-- Guide Tab -->
+   869→   869→                    <div class="tab-content" id="guideTab">
+   870→   870→                        <div class="placeholder-state" id="guidePlaceholder">
+   871→   871→                            <div class="placeholder-icon">
+   872→   872→                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+   873→   873→                            </div>
+   874→   874→                            <h3>Interview Guide</h3>
+   875→   875→                            <p>10 behavioral interview questions will appear here, tailored to the skills in your JD.</p>
+   876→   876→                        </div>
+   877→   877→                        <div id="guideOutput"></div>
+   878→   878→                    </div>
+   879→   879→                </div>
+   880→   880→            </div>
+   881→   881→        </main>
+   882→   882→    </div>
+   883→   883→
+   884→   884→    <script>
+   885→   885→    // ============================================================
+   886→   886→    // CONFIGURATION
+   887→   887→    // ============================================================
+   888→   888→    const CONFIG = {
+   889→   889→        MAX_QUESTIONS: 10,
+   890→   890→        MIN_INPUT: 15,
+   891→   891→        GEN_DELAY: 700
+   892→   892→    };
+   893→   893→
+   894→   894→    // ============================================================
+   895→   895→    // SKILL DATABASES
+   896→   896→    // ============================================================
+   897→   897→    const HARD_SKILLS = {
+   898→   898→        'Software Engineering': ['python','java','javascript','typescript','c++','c#','go','rust','ruby','php','swift','kotlin','scala','r programming','perl'],
+   899→   899→        'Web Development': ['react','angular','vue','next.js','nuxt','node.js','express','django','flask','spring boot','rails','laravel','fastapi','html','css','sass','rest api','graphql','webpack'],
+   900→   900→        'Data & Databases': ['sql','postgresql','mysql','mongodb','redis','elasticsearch','cassandra','dynamodb','neo4j','oracle','sqlite','pandas','numpy','spark','hadoop','airflow','dbt','etl','data pipeline','data warehouse','data modeling'],
+   901→   901→        'Cloud & DevOps': ['aws','azure','gcp','google cloud','docker','kubernetes','terraform','ansible','jenkins','ci/cd','circleci','gitlab','cloudformation','ecs','lambda','s3'],
+   902→   902→        'AI & Machine Learning': ['machine learning','deep learning','tensorflow','pytorch','keras','nlp','natural language processing','computer vision','neural networks','llm','generative ai','hugging face','openai','scikit-learn','data science'],
+   903→   903→        'Design': ['figma','sketch','adobe xd','photoshop','illustrator','indesign','ux design','ui design','wireframing','prototyping','user research','design thinking','design system','canva'],
+   904→   904→        'Analytics & BI': ['tableau','power bi','looker','google analytics','mixpanel','amplitude','snowflake','bigquery','redshift','databricks','data analysis','data visualization','excel','spreadsheet'],
+   905→   905→        'Product Management': ['product management','product strategy','roadmap','a/b testing','user stories','requirements gathering','agile','scrum','kanban','sprint planning','backlog','jira','asana','product analytics'],
+   906→   906→        'Marketing': ['seo','sem','ppc','google ads','facebook ads','content marketing','social media marketing','email marketing','marketing automation','hubspot','marketo','google tag manager','growth marketing','demand generation'],
+   907→   907→        'Sales': ['salesforce','hubspot crm','crm','pipeline management','lead generation','account management','b2b sales','b2c sales','saas sales','cold outreach','sales strategy','quota attainment'],
+   908→   908→        'Finance & Accounting': ['financial modeling','financial analysis','budgeting','forecasting','p&l','gaap','ifrs','valuation','quickbooks','sap','erp','accounting','audit','tax'],
+   909→   909→        'Human Resources': ['recruitment','talent acquisition','performance management','employee engagement','onboarding','compensation','benefits','hrbp','learning and development','diversity','inclusion','workforce planning'],
+   910→   910→        'Operations': ['supply chain','logistics','process improvement','lean','six sigma','project management','vendor management','procurement','quality assurance','qa','inventory management'],
+   911→   911→        'Legal & Compliance': ['compliance','gdpr','hipaa','sox','regulatory','contracts','legal research','intellectual property','risk management','internal audit']
+   912→   912→    };
+   913→   913→
+   914→   914→    const SOFT_SKILLS = [
+   915→   915→        'communication','leadership','teamwork','collaboration','problem-solving','problem solving',
+   916→   916→        'critical thinking','creativity','innovation','adaptability','flexibility','time management',
+   917→   917→        'organization','attention to detail','analytical thinking','strategic thinking',
+   918→   918→        'decision-making','decision making','conflict resolution','negotiation','presentation',
+   919→   919→        'mentoring','coaching','emotional intelligence','empathy','resilience','initiative',
+   920→   920→        'self-motivated','self motivated','stakeholder management','cross-functional','cross functional',
+   921→   921→        'interpersonal','active listening','persuasion','influence','public speaking','facilitation',
+   922→   922→        'delegation','accountability','ownership','growth mindset','curiosity','proactive',
+   923→   923→        'detail-oriented','detail oriented','results-driven','results driven','data-driven','data driven',
+   924→   924→        'customer-centric','customer centric','verbal communication','written communication',
+   925→   925→        'relationship building','networking','client management','customer-facing'
+   926→   926→    ];
+   927→   927→
+   928→   928→    const ACTION_VERBS = [
+   929→   929→        'manage','lead','develop','create','build','design','implement','oversee','coordinate',
+   930→   930→        'drive','establish','define','own','deliver','execute','analyze','optimize','improve',
+   931→   931→        'maintain','support','collaborate','partner','mentor','train','hire','scale','launch',
+   932→   932→        'plan','research','evaluate','assess','identify','recommend','present','report',
+   933→   933→        'document','ensure','facilitate','negotiate','resolve','architect','engineer',
+   934→   934→        'test','deploy','monitor','configure','automate','streamline','cultivate','foster',
+   935→   935→        'champion','spearhead','orchestrate','synthesize','translate','liaise'
+   936→   936→    ];
+   937→   937→
+   938→   938→    const ROLE_KEYWORDS = [
+   939→   939→        'manager','director','engineer','developer','analyst','designer','architect',
+   940→   940→        'specialist','coordinator','lead','head','vp','chief','officer','associate',
+   941→   941→        'senior','junior','principal','staff','consultant','strategist','scientist',
+   942→   942→        'administrator','representative','executive','advisor','technician','examiner',
+   943→   943→        'intern','fellow','contractor','freelancer'
+   944→   944→    ];
+   945→   945→
+   946→   946→    const SECTION_HEADERS = [
+   947→   947→        'responsibilities','duties','what you','what we','requirements','qualifications',
+   948→   948→        'skills','experience','about','overview','summary','role','position','nice to',
+   949→   949→        'preferred','required','must have','good to','bonus','plus','we offer','benefits',
+   950→   950→        'compensation','salary','location','team','company','ideal candidate','who you are'
+   951→   951→    ];
+   952→   952→
+   953→   953→    // ============================================================
+   954→   954→    // QUESTION BANK
+   955→   955→    // ============================================================
+   956→   956→    const SPECIFIC_QUESTIONS = {
+   957→   957→        'sql': {
+   958→   958→            q: 'Describe a time when your SQL and data analysis skills helped uncover a critical insight that changed the direction of a project or business decision.',
+   959→   959→            listen: ['Ability to write complex queries and work with large datasets','Translation of raw data into actionable business recommendations','Measurable impact on outcomes driven by their analysis']
+   960→   960→        },
+   961→   961→        'python': {
+   962→   962→            q: 'Walk me through a complex problem you solved using Python where you had to balance code quality, performance, and delivery timelines.',
+   963→   963→            listen: ['Structured problem-solving approach and technical depth','Awareness of code quality, testing, and maintainability','Ability to handle ambiguity and make pragmatic trade-offs']
+   964→   964→        },
+   965→   965→        'leadership': {
+   966→   966→            q: 'Tell me about a time you led a team through a significant change or challenge. How did you maintain morale and keep the team focused on results?',
+   967→   967→            listen: ['Concrete leadership actions — not just holding the title','Ability to communicate vision and handle resistance empathetically','Measurable outcome that shows their leadership made a difference']
+   968→   968→        },
+   969→   969→        'communication': {
+   970→   970→            q: 'Give an example of when you had to convey a complex or unpopular message to a diverse audience. How did you tailor your approach?',
+   971→   971→            listen: ['Adaptability in communication style based on the audience','Active listening and checking for understanding','Positive outcome or successful alignment that resulted']
+   972→   972→        },
+   973→   973→        'product management': {
+   974→   974→            q: 'Tell me about a product decision you made that involved significant trade-offs. How did you evaluate options and communicate your rationale to stakeholders?',
+   975→   975→            listen: ['Framework for decision-making (data, user research, business goals)','Ability to say no and manage stakeholder expectations','Outcome of the decision and lessons learned']
+   976→   976→        },
+   977→   977→        'agile': {
+   978→   978→            q: 'Describe a situation where an Agile process you were part of broke down. What went wrong, and what did you do to get things back on track?',
+   979→   979→            listen: ['Deep understanding of Agile principles, not just ceremonies','Proactive problem-solving and team facilitation skills','Continuous improvement mindset and concrete changes implemented']
+   980→   980→        },
+   981→   981→        'machine learning': {
+   982→   982→            q: 'Tell me about a machine learning project where the initial approach didn\'t work. How did you diagnose the problem and iterate toward a solution?',
+   983→   983→            listen: ['Methodical experimentation and debugging approach','Ability to communicate technical challenges to non-technical stakeholders','Persistence and creativity in finding alternative approaches']
+   984→   984→        },
+   985→   985→        'financial analysis': {
+   986→   986→            q: 'Describe a time your financial analysis directly influenced a major business decision. How did you present your findings to ensure they were acted upon?',
+   987→   987→            listen: ['Analytical rigor and attention to detail in the analysis','Storytelling ability — turning numbers into a compelling narrative','Tangible business impact from their recommendation']
+   988→   988→        },
+   989→   989→        'stakeholder management': {
+   990→   990→            q: 'Tell me about a time you had to manage conflicting priorities or expectations from multiple stakeholders. How did you find alignment?',
+   991→   991→            listen: ['Structured approach to understanding each stakeholder\'s needs','Negotiation and prioritization skills','Win-win outcome or clear rationale for the final decision']
+   992→   992→        },
+   993→   993→        'problem-solving': {
+   994→   994→            q: 'Walk me through the most complex problem you\'ve faced in the last year. What was your systematic approach to solving it?',
+   995→   995→            listen: ['Clear, structured thinking process — not just jumping to solutions','Ability to break down complexity into manageable parts','Quality and impact of the solution they arrived at']
+   996→   996→        },
+   997→   997→        'data-driven': {
+   998→   998→            q: 'Give an example of a time when data contradicted your intuition or a popular opinion. What did you do?',
+   999→   999→            listen: ['Intellectual honesty and willingness to change course','Ability to interrogate data quality and methodology','How they communicated the counterintuitive finding to others']
+  1000→  1000→        },
+  1001→  1001→        'collaboration': {
+  1002→  1002→            q: 'Describe a cross-functional project where you had to work closely with people from very different disciplines. What made the collaboration successful?',
+  1003→  1003→            listen: ['Genuine respect for other disciplines and willingness to learn','Clear communication across functional boundaries','Shared ownership and how they navigated disagreements']
+  1004→  1004→        },
+  1005→  1005→        'time management': {
+  1006→  1006→            q: 'Tell me about a period when you had multiple high-priority deadlines competing for your time. How did you decide what to focus on first?',
+  1007→  1007→            listen: ['Prioritization framework (impact, urgency, dependencies)','Proactive communication about trade-offs and expectations','Outcome — did they meet the deadlines, and at what quality?']
+  1008→  1008→        },
+  1009→  1009→        'a/b testing': {
+  1010→  1010→            q: 'Describe an A/B test you designed that yielded surprising or inconclusive results. What did you do next?',
+  1011→  1011→            listen: ['Understanding of experimental design and statistical significance','Intellectual curiosity — not just accepting results at face value','Follow-through: how they used the learning to inform next steps']
+  1012→  1012→        },
+  1013→  1013→        'creativity': {
+  1014→  1014→            q: 'Tell me about a time you proposed a creative or unconventional solution to a problem. How did you get buy-in for your idea?',
+  1015→  1015→            listen: ['Genuine originality in their thinking, not just incremental improvement','Courage to challenge the status quo with evidence','Ability to prototype or validate ideas before committing resources']
+  1016→  1016→        },
+  1017→  1017→        'adaptability': {
+  1018→  1018→            q: 'Describe a situation where your priorities or scope changed significantly mid-project. How did you adapt without losing momentum?',
+  1019→  1019→            listen: ['Emotional resilience — frustration is fine, but they should recover','Speed and effectiveness of their pivot','How they helped others on the team adjust as well']
+  1020→  1020→        },
+  1021→  1021→        'mentoring': {
+  1022→  1022→            q: 'Tell me about someone you mentored or developed. What was your approach, and how did that person grow as a result?',
+  1023→  1023→            listen: ['Genuine investment in the other person\'s growth, not just delegation','Tailored approach based on the mentee\'s needs and learning style','Concrete evidence of the mentee\'s progress or promotion']
+  1024→  1024→        },
+  1025→  1025→        'negotiation': {
+  1026→  1026→            q: 'Describe a negotiation you led where the stakes were high. How did you prepare, and what was the outcome?',
+  1027→  1027→            listen: ['Thorough preparation and understanding of the other party\'s needs','Creative deal-making — looking for value beyond just price','Ability to maintain the relationship while advocating firmly']
+  1028→  1028→        },
+  1029→  1029→        'attention to detail': {
+  1030→  1030→            q: 'Tell me about a time when your attention to detail caught something critical that others had missed. What was the impact?',
+  1031→  1031→            listen: ['Systematic quality-checking habits, not just luck','Clear articulation of the risk or consequence if it had been missed','How they communicated the finding without alienating colleagues']
+  1032→  1032→        },
+  1033→  1033→        'strategic thinking': {
+  1034→  1034→            q: 'Give an example of when you stepped back from day-to-day work to identify a longer-term strategic opportunity. What did you do about it?',
+  1035→  1035→            listen: ['Ability to zoom out and see the bigger picture','Data or insight that informed their strategic perspective','Concrete actions taken to turn strategy into execution']
+  1036→  1036→        },
+  1037→  1037→        'resilience': {
+  1038→  1038→            q: 'Tell me about a significant professional setback or failure. How did you handle it, and what did you learn?',
+  1039→  1039→            listen: ['Honesty and self-awareness about what went wrong','Constructive response — learning, adapting, not just recovering','Growth demonstrated in subsequent work']
+  1040→  1040→        },
+  1041→  1041→        'innovation': {
+  1042→  1042→            q: 'Describe a time you introduced a new process, tool, or idea that meaningfully improved how your team worked.',
+  1043→  1043→            listen: ['Proactive identification of the opportunity for improvement','Evidence of testing and iterating before full rollout','Measurable improvement in efficiency, quality, or outcomes']
+  1044→  1044→        },
+  1045→  1045→        'customer-centric': {
+  1046→  1046→            q: 'Tell me about a time you advocated for the customer or user when it was difficult or unpopular to do so.',
+  1047→  1047→            listen: ['Deep understanding of customer needs backed by evidence','Courage to push back internally on behalf of the customer','Positive outcome for both the customer and the business']
+  1048→  1048→        }
+  1049→  1049→    };
+  1050→  1050→
+  1051→  1051→    // Generic question templates for skills not in the specific bank
+  1052→  1052→    const GENERIC_HARD_TEMPLATES = [
+  1053→  1053→        (s) => `Describe a project where your expertise in ${s} was critical to delivering a successful outcome. What was the challenge and how did you approach it?`,
+  1054→  1054→        (s) => `Tell me about a time you had to quickly deepen your knowledge of ${s} to meet a project need. How did you manage the learning curve while delivering results?`,
+  1055→  1055→        (s) => `Walk me through a situation where your ${s} skills helped you solve a problem that would have been significantly harder otherwise. What made the difference?`,
+  1056→  1056→        (s) => `Can you share an example of how you've used ${s} to drive a measurable impact on a team or business outcome?`
+  1057→  1057→    ];
+  1058→  1058→
+  1059→  1059→    const GENERIC_SOFT_TEMPLATES = [
+  1060→  1060→        (s) => `Tell me about a time your ${s} was tested in a high-pressure situation. How did you handle it and what was the outcome?`,
+  1061→  1061→        (s) => `Describe a situation where your ability to demonstrate ${s} directly contributed to the success of a project or team.`,
+  1062→  1062→        (s) => `Give an example of when you had to use strong ${s} to navigate a challenging interpersonal or organizational dynamic.`,
+  1063→  1063→        (s) => `Can you share a time when you intentionally worked to improve your ${s}? What steps did you take and what changed?`
+  1064→  1064→    ];
+  1065→  1065→
+  1066→  1066→    const GENERIC_HARD_LISTEN = (s) => [
+  1067→  1067→        `Specific, demonstrated experience with ${s} — not just theoretical knowledge`,
+  1068→  1068→        `Clear articulation of the problem-solving process and their specific contribution`,
+  1069→  1069→        `Tangible results or impact from applying ${s}`
+  1070→  1070→    ];
+  1071→  1071→
+  1072→  1072→    const GENERIC_SOFT_LISTEN = (s) => [
+  1073→  1073→        `Self-awareness and intentionality in how they apply ${s}`,
+  1074→  1074→        `Specific examples with concrete details rather than vague generalizations`,
+  1075→  1075→        `Evidence of growth or learning from the experience`
+  1076→  1076→    ];
+  1077→  1077→
+  1078→  1078→    // Fallback questions when few skills are detected
+  1079→  1079→    const FALLBACK_QUESTIONS = [
+  1080→  1080→        {
+  1081→  1081→            skill: 'Problem Solving',
+  1082→  1082→            type: 'general',
+  1083→  1083→            q: 'Walk me through the most complex problem you\'ve faced professionally in the last year. What was your systematic approach to solving it?',
+  1084→  1084→            listen: ['Structured thinking — breaking complex problems into parts','Ability to identify root causes vs. symptoms','Quality and creativity of the solution']
+  1085→  1085→        },
+  1086→  1086→        {
+  1087→  1087→            skill: 'Leadership',
+  1088→  1088→            type: 'general',
+  1089→  1089→            q: 'Tell me about a time you took ownership of something outside your defined responsibilities. What motivated you, and what happened?',
+  1090→  1090→            listen: ['Proactive initiative and sense of ownership','Ability to influence without formal authority','Positive impact on the team or project']
+  1091→  1091→        },
+  1092→  1092→        {
+  1093→  1093→            skill: 'Collaboration',
+  1094→  1094→            type: 'general',
+  1095→  1095→            q: 'Describe a situation where you had to work with someone whose working style was very different from yours. How did you make it work?',
+  1096→  1096→            listen: ['Empathy and adaptability in working with different styles','Focus on shared goals rather than personal preferences','Successful outcome from the collaboration']
+  1097→  1097→        },
+  1098→  1098→        {
+  1099→  1099→            skill: 'Communication',
+
+[showing lines 600-1099 of 2002; use offset=1100 with limit to continue reading]

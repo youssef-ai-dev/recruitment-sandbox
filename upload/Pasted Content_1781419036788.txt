@@ -1,0 +1,4899 @@
+Xiaomi MiMo Studio
+
+
+MiMo Claw
+Free Trial
+
+MiMo Chat
+
+
+Xiaomi MiMo-V2.5 Now Available: MiMo-V2.5-Pro with significantly enhanced long-horizon reasoning & Agent; MiMo-V2.5 full-modality 1M context; MiMo-V2.5-TTS series now with voice cloning & fine-grained control
+
+
+
+
+ Create a Recruitment Sandbox. User inputs raw notes about a desired role. The app generates two distinct outputs: 1) A polished, correctly formatted Job Description tailored for LinkedIn, and 2) An Interview Guide containing 10 behavioral questions specifically targeting the soft and hard skills mentioned in that new JD.
+
+html
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruitment Sandbox</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================
+           1. CUSTOM PROPERTIES
+           ========================================== */
+        :root {
+            --bg: #09090c;
+            --bg-subtle: #0d0d12;
+            --surface: #131318;
+            --surface-raised: #1a1a21;
+            --surface-hover: #212129;
+            --border: #2a2a35;
+            --border-light: #3a3a4a;
+            --accent: #c89b3c;
+            --accent-soft: rgba(200, 155, 60, 0.12);
+            --accent-hover: #dbb04a;
+            --text: #e8e4db;
+            --text-secondary: #a09a8f;
+            --text-muted: #6b655b;
+            --danger: #c85050;
+            --success: #4caf6a;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --font-display: 'Instrument Serif', serif;
+            --font-body: 'Source Serif 4', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        /* ==========================================
+           2. RESET & BASE
+           ========================================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html { font-size: 16px; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-body);
+            font-weight: 400;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        /* ==========================================
+           3. TYPOGRAPHY
+           ========================================== */
+        h1, h2, h3 { font-family: var(--font-display); font-weight: 400; }
+        code, .mono { font-family: var(--font-mono); }
+
+        /* ==========================================
+           4. APP LAYOUT
+           ========================================== */
+        .app {
+            max-width: 1480px;
+            margin: 0 auto;
+            padding: 0 24px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==========================================
+           5. HEADER
+           ========================================== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .brand-icon svg { width: 22px; height: 22px; }
+
+        .brand-text h1 {
+            font-size: 1.35rem;
+            line-height: 1.2;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        .brand-tagline {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+        }
+
+        .brand-tagline span { color: var(--accent); }
+
+        /* ==========================================
+           6. WORKSPACE
+           ========================================== */
+        .workspace {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 24px;
+            padding: 24px 0 40px;
+            align-items: start;
+        }
+
+        /* ==========================================
+           7. PANELS
+           ========================================== */
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .panel-head {
+            padding: 18px 22px 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+        }
+
+        .panel-head h2 {
+            font-size: 1.15rem;
+            color: var(--text);
+        }
+
+        .panel-head .hint {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            letter-spacing: 0.03em;
+        }
+
+        /* ==========================================
+           8. INPUT SECTION
+           ========================================== */
+        .input-body { padding: 18px 22px; }
+
+        .textarea-wrap textarea {
+            width: 100%;
+            min-height: 380px;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px 18px;
+            color: var(--text);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            line-height: 1.65;
+            resize: vertical;
+            transition: border-color 0.2s ease;
+            outline: none;
+        }
+
+        .textarea-wrap textarea::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .textarea-wrap textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        .input-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 0 2px;
+        }
+
+        .char-count {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
+
+        .sample-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 5px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .sample-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .input-actions {
+            padding: 16px 22px 20px;
+        }
+
+        /* ==========================================
+           9. BUTTONS
+           ========================================== */
+        .generate-btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(200, 155, 60, 0.25);
+        }
+
+        .generate-btn:active { transform: translateY(0); }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .generate-btn .btn-loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .generate-btn.loading .btn-label { display: none; }
+        .generate-btn.loading .btn-loading { display: flex; }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0,0,0,0.2);
+            border-top-color: var(--bg);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ==========================================
+           10. OUTPUT SECTION
+           ========================================== */
+        .output-panel {
+            position: sticky;
+            top: 24px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tabs-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 22px;
+            position: relative;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            position: relative;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 16px 18px;
+            color: var(--text-muted);
+            font-family: var(--font-body);
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            position: relative;
+        }
+
+        .tab-btn:hover { color: var(--text-secondary); }
+        .tab-btn.active { color: var(--text); }
+
+        .tab-indicator {
+            position: absolute;
+            bottom: 0;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 1px;
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .copy-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            padding: 5px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            letter-spacing: 0.02em;
+        }
+
+        .copy-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .copy-btn.copied {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .copy-btn svg { width: 13px; height: 13px; }
+
+        .output-body {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ==========================================
+           11. PLACEHOLDER STATE
+           ========================================== */
+        .placeholder-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 360px;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .placeholder-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--accent-soft);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .placeholder-icon svg { width: 28px; height: 28px; }
+
+        .placeholder-state h3 {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .placeholder-state p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            max-width: 300px;
+        }
+
+        /* ==========================================
+           12. JD DOCUMENT STYLING
+           ========================================== */
+        .jd-doc { animation: fadeUp 0.5s ease forwards; }
+
+        .jd-doc .doc-title {
+            font-family: var(--font-display);
+            font-size: 1.65rem;
+            color: var(--text);
+            margin-bottom: 4px;
+            line-height: 1.25;
+        }
+
+        .jd-doc .doc-meta {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.03em;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 16px;
+        }
+
+        .jd-doc .doc-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .jd-section {
+            margin-bottom: 26px;
+            animation: fadeUp 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .jd-section:nth-child(2) { animation-delay: 0.08s; }
+        .jd-section:nth-child(3) { animation-delay: 0.14s; }
+        .jd-section:nth-child(4) { animation-delay: 0.20s; }
+        .jd-section:nth-child(5) { animation-delay: 0.26s; }
+        .jd-section:nth-child(6) { animation-delay: 0.32s; }
+
+        .jd-section h3 {
+            font-size: 1.05rem;
+            color: var(--accent);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-display);
+        }
+
+        .jd-section p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .jd-section ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .jd-section li {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.55;
+        }
+
+        .jd-section li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 9px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.6;
+        }
+
+        .jd-section .skill-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .skill-pill {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-radius: 20px;
+            border: 1px solid rgba(200, 155, 60, 0.2);
+        }
+
+        .jd-doc .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 28px 0;
+        }
+
+        .jd-doc .eoe {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        /* ==========================================
+           13. INTERVIEW GUIDE STYLING
+           ========================================== */
+        .guide-doc { animation: fadeUp 0.5s ease forwards; }
+
+        .guide-doc .guide-header {
+            margin-bottom: 24px;
+        }
+
+        .guide-doc .guide-header h2 {
+            font-size: 1.4rem;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .guide-doc .guide-header p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .guide-doc .guide-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 14px;
+        }
+
+        .stat-badge {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 5px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.02em;
+        }
+
+        .stat-badge.hard {
+            background: rgba(76, 175, 106, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(76, 175, 106, 0.2);
+        }
+
+        .stat-badge.soft {
+            background: rgba(100, 140, 230, 0.1);
+            color: #7a9ee6;
+            border: 1px solid rgba(100, 140, 230, 0.2);
+        }
+
+        .question-card {
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px 22px;
+            margin-bottom: 14px;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+            opacity: 0;
+            animation: fadeUp 0.45s ease forwards;
+        }
+
+        .question-card:nth-child(1) { animation-delay: 0.05s; }
+        .question-card:nth-child(2) { animation-delay: 0.1s; }
+        .question-card:nth-child(3) { animation-delay: 0.15s; }
+        .question-card:nth-child(4) { animation-delay: 0.2s; }
+        .question-card:nth-child(5) { animation-delay: 0.25s; }
+        .question-card:nth-child(6) { animation-delay: 0.3s; }
+        .question-card:nth-child(7) { animation-delay: 0.35s; }
+        .question-card:nth-child(8) { animation-delay: 0.4s; }
+        .question-card:nth-child(9) { animation-delay: 0.45s; }
+        .question-card:nth-child(10) { animation-delay: 0.5s; }
+
+        .question-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-1px);
+        }
+
+        .question-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .q-number {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--accent);
+            min-width: 24px;
+        }
+
+        .q-skill-tag {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            padding: 3px 9px;
+            border-radius: 20px;
+            letter-spacing: 0.03em;
+        }
+
+        .q-skill-tag.hard {
+            background: rgba(76, 175, 106, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(76, 175, 106, 0.15);
+        }
+
+        .q-skill-tag.soft {
+            background: rgba(100, 140, 230, 0.1);
+            color: #7a9ee6;
+            border: 1px solid rgba(100, 140, 230, 0.15);
+        }
+
+        .q-skill-tag.general {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border: 1px solid rgba(200, 155, 60, 0.15);
+        }
+
+        .question-text {
+            font-size: 0.92rem;
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 14px;
+            font-style: italic;
+            font-family: var(--font-display);
+            font-size: 1.02rem;
+        }
+
+        .listen-guide {
+            background: var(--bg-subtle);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            border-left: 2px solid var(--accent);
+        }
+
+        .listen-guide h4 {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
+
+        .listen-guide ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .listen-guide li {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            padding-left: 14px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .listen-guide li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.75rem;
+        }
+
+        /* ==========================================
+           14. ERROR STATE
+           ========================================== */
+        .error-msg {
+            background: rgba(200, 80, 80, 0.08);
+            border: 1px solid rgba(200, 80, 80, 0.2);
+            color: var(--danger);
+            font-size: 0.82rem;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            margin-top: 12px;
+            display: none;
+            animation: fadeUp 0.3s ease;
+        }
+
+        .error-msg.show { display: block; }
+
+        /* ==========================================
+           15. ANIMATIONS
+           ========================================== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /* ==========================================
+           16. RESPONSIVE
+           ========================================== */
+        @media (max-width: 960px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .output-panel {
+                position: static;
+            }
+
+            .header { padding: 18px 0; }
+        }
+
+        @media (max-width: 600px) {
+            .app { padding: 0 14px; }
+
+            .textarea-wrap textarea { min-height: 240px; }
+
+            .panel-head { padding: 14px 16px 12px; }
+            .input-body { padding: 14px 16px; }
+            .input-actions { padding: 14px 16px 16px; }
+            .output-body { padding: 18px 16px; }
+
+            .jd-doc .doc-title { font-size: 1.3rem; }
+            .guide-doc .guide-header h2 { font-size: 1.15rem; }
+            .question-card { padding: 16px 18px; }
+
+            .tabs-row { padding: 0 14px; }
+            .tab-btn { padding: 14px 12px; font-size: 0.82rem; }
+        }
+
+        /* ==========================================
+           17. SCROLLBAR
+           ========================================== */
+        .output-body::-webkit-scrollbar { width: 6px; }
+        .output-body::-webkit-scrollbar-track { background: transparent; }
+        .output-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        .output-body::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- ========== HEADER ========== -->
+        <header class="header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>Recruitment Sandbox</h1>
+                    <div class="brand-tagline">raw notes <span>→</span> polished JD + interview guide</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ========== WORKSPACE ========== -->
+        <main class="workspace">
+            <!-- Input Panel -->
+            <div class="panel input-panel">
+                <div class="panel-head">
+                    <h2>Raw Notes</h2>
+                    <span class="hint">paste anything</span>
+                </div>
+                <div class="input-body">
+                    <div class="textarea-wrap">
+                        <textarea id="notesInput" placeholder="Drop your rough notes here...&#10;&#10;e.g. &quot;Looking for a senior PM to lead growth. Needs SQL, A/B testing experience.&#10;Should be a strong communicator and data-driven leader...&quot;"></textarea>
+                    </div>
+                    <div class="input-footer">
+                        <span class="char-count" id="charCount">0 characters</span>
+                        <button class="sample-btn" id="sampleBtn">Load sample</button>
+                    </div>
+                    <div class="error-msg" id="errorMsg"></div>
+                </div>
+                <div class="input-actions">
+                    <button class="generate-btn" id="generateBtn">
+                        <span class="btn-label">Generate Documents</span>
+                        <span class="btn-loading"><span class="spinner"></span> Generating…</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Output Panel -->
+            <div class="panel output-panel">
+                <div class="tabs-row">
+                    <div class="tabs" id="tabs">
+                        <button class="tab-btn active" data-tab="jd">Job Description</button>
+                        <button class="tab-btn" data-tab="guide">Interview Guide</button>
+                        <div class="tab-indicator" id="tabIndicator"></div>
+                    </div>
+                    <button class="copy-btn" id="copyBtn" style="display:none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+                <div class="output-body" id="outputBody">
+                    <!-- JD Tab -->
+                    <div class="tab-content active" id="jdTab">
+                        <div class="placeholder-state" id="jdPlaceholder">
+                            <div class="placeholder-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+                            </div>
+                            <h3>Job Description</h3>
+                            <p>Enter your raw role notes and click Generate to create a LinkedIn-ready job description.</p>
+                        </div>
+                        <div id="jdOutput"></div>
+                    </div>
+                    <!-- Guide Tab -->
+                    <div class="tab-content" id="guideTab">
+                        <div class="placeholder-state" id="guidePlaceholder">
+                            <div class="placeholder-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                            </div>
+                            <h3>Interview Guide</h3>
+                            <p>10 behavioral interview questions will appear here, tailored to the skills in your JD.</p>
+                        </div>
+                        <div id="guideOutput"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    // CONFIGURATION
+    // ============================================================
+    const CONFIG = {
+        MAX_QUESTIONS: 10,
+        MIN_INPUT: 15,
+        GEN_DELAY: 700
+    };
+
+    // ============================================================
+    // SKILL DATABASES
+    // ============================================================
+    const HARD_SKILLS = {
+        'Software Engineering': ['python','java','javascript','typescript','c++','c#','go','rust','ruby','php','swift','kotlin','scala','r programming','perl'],
+        'Web Development': ['react','angular','vue','next.js','nuxt','node.js','express','django','flask','spring boot','rails','laravel','fastapi','html','css','sass','rest api','graphql','webpack'],
+        'Data & Databases': ['sql','postgresql','mysql','mongodb','redis','elasticsearch','cassandra','dynamodb','neo4j','oracle','sqlite','pandas','numpy','spark','hadoop','airflow','dbt','etl','data pipeline','data warehouse','data modeling'],
+        'Cloud & DevOps': ['aws','azure','gcp','google cloud','docker','kubernetes','terraform','ansible','jenkins','ci/cd','circleci','gitlab','cloudformation','ecs','lambda','s3'],
+        'AI & Machine Learning': ['machine learning','deep learning','tensorflow','pytorch','keras','nlp','natural language processing','computer vision','neural networks','llm','generative ai','hugging face','openai','scikit-learn','data science'],
+        'Design': ['figma','sketch','adobe xd','photoshop','illustrator','indesign','ux design','ui design','wireframing','prototyping','user research','design thinking','design system','canva'],
+        'Analytics & BI': ['tableau','power bi','looker','google analytics','mixpanel','amplitude','snowflake','bigquery','redshift','databricks','data analysis','data visualization','excel','spreadsheet'],
+        'Product Management': ['product management','product strategy','roadmap','a/b testing','user stories','requirements gathering','agile','scrum','kanban','sprint planning','backlog','jira','asana','product analytics'],
+        'Marketing': ['seo','sem','ppc','google ads','facebook ads','content marketing','social media marketing','email marketing','marketing automation','hubspot','marketo','google tag manager','growth marketing','demand generation'],
+        'Sales': ['salesforce','hubspot crm','crm','pipeline management','lead generation','account management','b2b sales','b2c sales','saas sales','cold outreach','sales strategy','quota attainment'],
+        'Finance & Accounting': ['financial modeling','financial analysis','budgeting','forecasting','p&l','gaap','ifrs','valuation','quickbooks','sap','erp','accounting','audit','tax'],
+        'Human Resources': ['recruitment','talent acquisition','performance management','employee engagement','onboarding','compensation','benefits','hrbp','learning and development','diversity','inclusion','workforce planning'],
+        'Operations': ['supply chain','logistics','process improvement','lean','six sigma','project management','vendor management','procurement','quality assurance','qa','inventory management'],
+        'Legal & Compliance': ['compliance','gdpr','hipaa','sox','regulatory','contracts','legal research','intellectual property','risk management','internal audit']
+    };
+
+    const SOFT_SKILLS = [
+        'communication','leadership','teamwork','collaboration','problem-solving','problem solving',
+        'critical thinking','creativity','innovation','adaptability','flexibility','time management',
+        'organization','attention to detail','analytical thinking','strategic thinking',
+        'decision-making','decision making','conflict resolution','negotiation','presentation',
+        'mentoring','coaching','emotional intelligence','empathy','resilience','initiative',
+        'self-motivated','self motivated','stakeholder management','cross-functional','cross functional',
+        'interpersonal','active listening','persuasion','influence','public speaking','facilitation',
+        'delegation','accountability','ownership','growth mindset','curiosity','proactive',
+        'detail-oriented','detail oriented','results-driven','results driven','data-driven','data driven',
+        'customer-centric','customer centric','verbal communication','written communication',
+        'relationship building','networking','client management','customer-facing'
+    ];
+
+    const ACTION_VERBS = [
+        'manage','lead','develop','create','build','design','implement','oversee','coordinate',
+        'drive','establish','define','own','deliver','execute','analyze','optimize','improve',
+        'maintain','support','collaborate','partner','mentor','train','hire','scale','launch',
+        'plan','research','evaluate','assess','identify','recommend','present','report',
+        'document','ensure','facilitate','negotiate','resolve','architect','engineer',
+        'test','deploy','monitor','configure','automate','streamline','cultivate','foster',
+        'champion','spearhead','orchestrate','synthesize','translate','liaise'
+    ];
+
+    const ROLE_KEYWORDS = [
+        'manager','director','engineer','developer','analyst','designer','architect',
+        'specialist','coordinator','lead','head','vp','chief','officer','associate',
+        'senior','junior','principal','staff','consultant','strategist','scientist',
+        'administrator','representative','executive','advisor','technician','examiner',
+        'intern','fellow','contractor','freelancer'
+    ];
+
+    const SECTION_HEADERS = [
+        'responsibilities','duties','what you','what we','requirements','qualifications',
+        'skills','experience','about','overview','summary','role','position','nice to',
+        'preferred','required','must have','good to','bonus','plus','we offer','benefits',
+        'compensation','salary','location','team','company','ideal candidate','who you are'
+    ];
+
+    // ============================================================
+    // QUESTION BANK
+    // ============================================================
+    const SPECIFIC_QUESTIONS = {
+        'sql': {
+            q: 'Describe a time when your SQL and data analysis skills helped uncover a critical insight that changed the direction of a project or business decision.',
+            listen: ['Ability to write complex queries and work with large datasets','Translation of raw data into actionable business recommendations','Measurable impact on outcomes driven by their analysis']
+        },
+        'python': {
+            q: 'Walk me through a complex problem you solved using Python where you had to balance code quality, performance, and delivery timelines.',
+            listen: ['Structured problem-solving approach and technical depth','Awareness of code quality, testing, and maintainability','Ability to handle ambiguity and make pragmatic trade-offs']
+        },
+        'leadership': {
+            q: 'Tell me about a time you led a team through a significant change or challenge. How did you maintain morale and keep the team focused on results?',
+            listen: ['Concrete leadership actions — not just holding the title','Ability to communicate vision and handle resistance empathetically','Measurable outcome that shows their leadership made a difference']
+        },
+        'communication': {
+            q: 'Give an example of when you had to convey a complex or unpopular message to a diverse audience. How did you tailor your approach?',
+            listen: ['Adaptability in communication style based on the audience','Active listening and checking for understanding','Positive outcome or successful alignment that resulted']
+        },
+        'product management': {
+            q: 'Tell me about a product decision you made that involved significant trade-offs. How did you evaluate options and communicate your rationale to stakeholders?',
+            listen: ['Framework for decision-making (data, user research, business goals)','Ability to say no and manage stakeholder expectations','Outcome of the decision and lessons learned']
+        },
+        'agile': {
+            q: 'Describe a situation where an Agile process you were part of broke down. What went wrong, and what did you do to get things back on track?',
+            listen: ['Deep understanding of Agile principles, not just ceremonies','Proactive problem-solving and team facilitation skills','Continuous improvement mindset and concrete changes implemented']
+        },
+        'machine learning': {
+            q: 'Tell me about a machine learning project where the initial approach didn\'t work. How did you diagnose the problem and iterate toward a solution?',
+            listen: ['Methodical experimentation and debugging approach','Ability to communicate technical challenges to non-technical stakeholders','Persistence and creativity in finding alternative approaches']
+        },
+        'financial analysis': {
+            q: 'Describe a time your financial analysis directly influenced a major business decision. How did you present your findings to ensure they were acted upon?',
+            listen: ['Analytical rigor and attention to detail in the analysis','Storytelling ability — turning numbers into a compelling narrative','Tangible business impact from their recommendation']
+        },
+        'stakeholder management': {
+            q: 'Tell me about a time you had to manage conflicting priorities or expectations from multiple stakeholders. How did you find alignment?',
+            listen: ['Structured approach to understanding each stakeholder\'s needs','Negotiation and prioritization skills','Win-win outcome or clear rationale for the final decision']
+        },
+        'problem-solving': {
+            q: 'Walk me through the most complex problem you\'ve faced in the last year. What was your systematic approach to solving it?',
+            listen: ['Clear, structured thinking process — not just jumping to solutions','Ability to break down complexity into manageable parts','Quality and impact of the solution they arrived at']
+        },
+        'data-driven': {
+            q: 'Give an example of a time when data contradicted your intuition or a popular opinion. What did you do?',
+            listen: ['Intellectual honesty and willingness to change course','Ability to interrogate data quality and methodology','How they communicated the counterintuitive finding to others']
+        },
+        'collaboration': {
+            q: 'Describe a cross-functional project where you had to work closely with people from very different disciplines. What made the collaboration successful?',
+            listen: ['Genuine respect for other disciplines and willingness to learn','Clear communication across functional boundaries','Shared ownership and how they navigated disagreements']
+        },
+        'time management': {
+            q: 'Tell me about a period when you had multiple high-priority deadlines competing for your time. How did you decide what to focus on first?',
+            listen: ['Prioritization framework (impact, urgency, dependencies)','Proactive communication about trade-offs and expectations','Outcome — did they meet the deadlines, and at what quality?']
+        },
+        'a/b testing': {
+            q: 'Describe an A/B test you designed that yielded surprising or inconclusive results. What did you do next?',
+            listen: ['Understanding of experimental design and statistical significance','Intellectual curiosity — not just accepting results at face value','Follow-through: how they used the learning to inform next steps']
+        },
+        'creativity': {
+            q: 'Tell me about a time you proposed a creative or unconventional solution to a problem. How did you get buy-in for your idea?',
+            listen: ['Genuine originality in their thinking, not just incremental improvement','Courage to challenge the status quo with evidence','Ability to prototype or validate ideas before committing resources']
+        },
+        'adaptability': {
+            q: 'Describe a situation where your priorities or scope changed significantly mid-project. How did you adapt without losing momentum?',
+            listen: ['Emotional resilience — frustration is fine, but they should recover','Speed and effectiveness of their pivot','How they helped others on the team adjust as well']
+        },
+        'mentoring': {
+            q: 'Tell me about someone you mentored or developed. What was your approach, and how did that person grow as a result?',
+            listen: ['Genuine investment in the other person\'s growth, not just delegation','Tailored approach based on the mentee\'s needs and learning style','Concrete evidence of the mentee\'s progress or promotion']
+        },
+        'negotiation': {
+            q: 'Describe a negotiation you led where the stakes were high. How did you prepare, and what was the outcome?',
+            listen: ['Thorough preparation and understanding of the other party\'s needs','Creative deal-making — looking for value beyond just price','Ability to maintain the relationship while advocating firmly']
+        },
+        'attention to detail': {
+            q: 'Tell me about a time when your attention to detail caught something critical that others had missed. What was the impact?',
+            listen: ['Systematic quality-checking habits, not just luck','Clear articulation of the risk or consequence if it had been missed','How they communicated the finding without alienating colleagues']
+        },
+        'strategic thinking': {
+            q: 'Give an example of when you stepped back from day-to-day work to identify a longer-term strategic opportunity. What did you do about it?',
+            listen: ['Ability to zoom out and see the bigger picture','Data or insight that informed their strategic perspective','Concrete actions taken to turn strategy into execution']
+        },
+        'resilience': {
+            q: 'Tell me about a significant professional setback or failure. How did you handle it, and what did you learn?',
+            listen: ['Honesty and self-awareness about what went wrong','Constructive response — learning, adapting, not just recovering','Growth demonstrated in subsequent work']
+        },
+        'innovation': {
+            q: 'Describe a time you introduced a new process, tool, or idea that meaningfully improved how your team worked.',
+            listen: ['Proactive identification of the opportunity for improvement','Evidence of testing and iterating before full rollout','Measurable improvement in efficiency, quality, or outcomes']
+        },
+        'customer-centric': {
+            q: 'Tell me about a time you advocated for the customer or user when it was difficult or unpopular to do so.',
+            listen: ['Deep understanding of customer needs backed by evidence','Courage to push back internally on behalf of the customer','Positive outcome for both the customer and the business']
+        }
+    };
+
+    // Generic question templates for skills not in the specific bank
+    const GENERIC_HARD_TEMPLATES = [
+        (s) => `Describe a project where your expertise in ${s} was critical to delivering a successful outcome. What was the challenge and how did you approach it?`,
+        (s) => `Tell me about a time you had to quickly deepen your knowledge of ${s} to meet a project need. How did you manage the learning curve while delivering results?`,
+        (s) => `Walk me through a situation where your ${s} skills helped you solve a problem that would have been significantly harder otherwise. What made the difference?`,
+        (s) => `Can you share an example of how you've used ${s} to drive a measurable impact on a team or business outcome?`
+    ];
+
+    const GENERIC_SOFT_TEMPLATES = [
+        (s) => `Tell me about a time your ${s} was tested in a high-pressure situation. How did you handle it and what was the outcome?`,
+        (s) => `Describe a situation where your ability to demonstrate ${s} directly contributed to the success of a project or team.`,
+        (s) => `Give an example of when you had to use strong ${s} to navigate a challenging interpersonal or organizational dynamic.`,
+        (s) => `Can you share a time when you intentionally worked to improve your ${s}? What steps did you take and what changed?`
+    ];
+
+    const GENERIC_HARD_LISTEN = (s) => [
+        `Specific, demonstrated experience with ${s} — not just theoretical knowledge`,
+        `Clear articulation of the problem-solving process and their specific contribution`,
+        `Tangible results or impact from applying ${s}`
+    ];
+
+    const GENERIC_SOFT_LISTEN = (s) => [
+        `Self-awareness and intentionality in how they apply ${s}`,
+        `Specific examples with concrete details rather than vague generalizations`,
+        `Evidence of growth or learning from the experience`
+    ];
+
+    // Fallback questions when few skills are detected
+    const FALLBACK_QUESTIONS = [
+        {
+            skill: 'Problem Solving',
+            type: 'general',
+            q: 'Walk me through the most complex problem you\'ve faced professionally in the last year. What was your systematic approach to solving it?',
+            listen: ['Structured thinking — breaking complex problems into parts','Ability to identify root causes vs. symptoms','Quality and creativity of the solution']
+        },
+        {
+            skill: 'Leadership',
+            type: 'general',
+            q: 'Tell me about a time you took ownership of something outside your defined responsibilities. What motivated you, and what happened?',
+            listen: ['Proactive initiative and sense of ownership','Ability to influence without formal authority','Positive impact on the team or project']
+        },
+        {
+            skill: 'Collaboration',
+            type: 'general',
+            q: 'Describe a situation where you had to work with someone whose working style was very different from yours. How did you make it work?',
+            listen: ['Empathy and adaptability in working with different styles','Focus on shared goals rather than personal preferences','Successful outcome from the collaboration']
+        },
+        {
+            skill: 'Communication',
+            type: 'general',
+            q: 'Give an example of a time you had to persuade a skeptical audience to support your idea or proposal. How did you build your case?',
+            listen: ['Preparation and understanding of the audience\'s concerns','Use of data, logic, and storytelling','Ability to handle objections gracefully']
+        },
+        {
+            skill: 'Adaptability',
+            type: 'general',
+            q: 'Tell me about a time when something you were working on changed dramatically mid-course — a pivot, a reorg, a shift in strategy. How did you handle it?',
+            listen: ['Resilience and ability to stay productive during uncertainty','Speed of adaptation and proactive communication','Positive framing of the change and lessons learned']
+        },
+        {
+            skill: 'Decision Making',
+            type: 'general',
+            q: 'Describe a difficult decision you made with incomplete information. What was your framework and how did it play out?',
+            listen: ['Clear decision-making framework, even under ambiguity','Willingness to make a call and take responsibility','Honest reflection on what they\'d do differently']
+        },
+        {
+            skill: 'Impact',
+            type: 'general',
+            q: 'What accomplishment in your career are you most proud of, and why? Walk me through what made it significant.',
+            listen: ['Connection between their work and meaningful outcomes','Evidence of going beyond expectations','Passion and self-awareness about what drives them']
+        },
+        {
+            skill: 'Growth',
+            type: 'general',
+            q: 'Tell me about a piece of critical feedback you received that was hard to hear. How did you respond to it?',
+            listen: ['Genuine openness to feedback — not defensive','Concrete changes in behavior or approach after the feedback','Self-awareness about areas for improvement']
+        },
+        {
+            skill: 'Prioritization',
+            type: 'general',
+            q: 'How do you decide what to say no to? Give me a specific example of a time you declined or deprioritized a request and why.',
+            listen: ['Clear prioritization criteria (impact, alignment, capacity)','Courage and tact in communicating the no','Positive outcome from maintaining focus']
+        },
+        {
+            skill: 'Teamwork',
+            type: 'general',
+            q: 'Describe a team you were part of that was exceptionally high-performing. What do you think made it work, and what was your specific role in that?',
+            listen: ['Attribution of success to team dynamics, not just individual brilliance','Self-awareness about their role and contribution','Insight into what makes teams function well']
+        }
+    ];
+
+    // ============================================================
+    // PARSER
+    // ============================================================
+    function parseNotes(text) {
+        const result = {
+            title: '',
+            summary: '',
+            responsibilities: [],
+            hardSkills: [],
+            softSkills: [],
+            qualifications: [],
+            experienceLevel: '',
+            niceToHaves: [],
+            rawLines: []
+        };
+
+        const clean = text.replace(/\r\n/g, '\n').trim();
+        const lines = clean.split('\n')
+            .map(l => l.replace(/^[-•*◦▪]\s*/, '').replace(/^\d+[.)]\s*/, '').trim())
+            .filter(l => l.length > 0);
+
+        result.rawLines = lines;
+
+        // --- Extract title ---
+        result.title = extractTitle(lines, clean);
+
+        // --- Extract experience level ---
+        result.experienceLevel = extractExperience(clean);
+
+        // --- Detect section boundaries ---
+        const sections = detectSections(lines);
+
+        // --- Extract skills from full text ---
+        const lowerClean = clean.toLowerCase();
+        result.hardSkills = extractHardSkills(lowerClean);
+        result.softSkills = extractSoftSkills(lowerClean);
+
+        // --- Extract responsibilities ---
+        result.responsibilities = extractResponsibilities(lines, sections);
+
+        // --- Extract qualifications ---
+        result.qualifications = extractQualifications(lines, sections);
+
+        // --- Extract nice-to-haves ---
+        result.niceToHaves = extractNiceToHaves(lines, sections);
+
+        // --- Generate summary if not found ---
+        result.summary = generateSummary(result);
+
+        return result;
+    }
+
+    function extractTitle(lines, fullText) {
+        // Strategy 1: Look for role-like first line
+        if (lines.length > 0) {
+            const first = lines[0].replace(/[:\-–—]+$/, '').trim();
+            if (first.length < 80) {
+                const lower = first.toLowerCase();
+                // Check if it contains role keywords
+                if (ROLE_KEYWORDS.some(k => lower.includes(k))) {
+                    return first;
+                }
+                // Check if first line is short and looks like a title
+                if (first.length < 50 && !first.includes('.') && lines.length > 1) {
+                    return first;
+                }
+            }
+        }
+
+        // Strategy 2: Search for role pattern in text
+        const rolePattern = /(?:looking for|seeking|hire|hiring)\s+(?:a|an)\s+(.+?)(?:\.|,|\n|$)/i;
+        const match = fullText.match(rolePattern);
+        if (match) {
+            let candidate = match[1].trim();
+            // Clean up
+            candidate = candidate.replace(/\s+(?:to|who|that|for)\b.*$/i, '').trim();
+            if (candidate.length < 60) return capitalizeTitle(candidate);
+        }
+
+        // Strategy 3: Find a line with role keywords
+        for (const line of lines.slice(0, 5)) {
+            const lower = line.toLowerCase();
+            const hasRole = ROLE_KEYWORDS.some(k => lower.includes(k));
+            if (hasRole && line.length < 70) {
+                return line.replace(/[:\-–—]+$/, '').trim();
+            }
+        }
+
+        return 'Untitled Role';
+    }
+
+    function extractExperience(text) {
+        const patterns = [
+            /(\d+)\+?\s*years?\s+(?:of\s+)?(?:experience|exp)/i,
+            /(?:senior|sr\.?|lead|principal|staff)\s/i,
+            /(?:junior|jr\.?|entry.?level|associate)\s/i,
+            /(?:mid.?level|mid.?senior)\s/i
+        ];
+
+        const yearMatch = text.match(patterns[0]);
+        if (yearMatch) return `${yearMatch[1]}+ years`;
+
+        if (patterns[1].test(text)) return 'Senior-level';
+        if (patterns[2].test(text)) return 'Junior-level';
+        if (patterns[3].test(text)) return 'Mid-level';
+
+        return '';
+    }
+
+    function detectSections(lines) {
+        const sections = {};
+        let currentSection = 'top';
+
+        for (let i = 0; i < lines.length; i++) {
+            const lower = lines[i].toLowerCase().replace(/[:\-–—]+$/, '').trim();
+
+            if (SECTION_HEADERS.some(h => lower.startsWith(h) || lower === h) && lines[i].length < 60) {
+                currentSection = lower;
+                sections[currentSection] = [];
+            } else {
+                if (!sections[currentSection]) sections[currentSection] = [];
+                sections[currentSection].push(i);
+            }
+        }
+
+        return sections;
+    }
+
+    function extractHardSkills(text) {
+        const found = [];
+        for (const [category, skills] of Object.entries(HARD_SKILLS)) {
+            for (const skill of skills) {
+                const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+                if (regex.test(text)) {
+                    found.push(skill);
+                }
+            }
+        }
+        return [...new Set(found)];
+    }
+
+    function extractSoftSkills(text) {
+        const found = [];
+        for (const skill of SOFT_SKILLS) {
+            const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+            if (regex.test(text)) {
+                // Normalize the name
+                let normalized = skill.replace(/-/g, ' ');
+                normalized = normalized.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                if (!found.some(f => f.toLowerCase() === normalized.toLowerCase())) {
+                    found.push(normalized);
+                }
+            }
+        }
+        return found;
+    }
+
+    function extractResponsibilities(lines, sections) {
+        const resps = [];
+
+        // Look for responsibilities section
+        for (const [section, indices] of Object.entries(sections)) {
+            if (section.includes('responsib') || section.includes('duties') || section.includes('what you') || section.includes('you will') || section.includes('you\'ll')) {
+                for (const idx of indices) {
+                    if (lines[idx].length > 10) resps.push(cleanLine(lines[idx]));
+                }
+            }
+        }
+
+        // If none found, look for lines with action verbs
+        if (resps.length === 0) {
+            for (const line of lines) {
+                const lower = line.toLowerCase();
+                if (ACTION_VERBS.some(v => lower.startsWith(v) || lower.match(new RegExp(`\\b${v}\\b`)))) {
+                    if (line.length > 15 && line.length < 250) {
+                        resps.push(cleanLine(line));
+                    }
+                }
+            }
+        }
+
+        return [...new Set(resps)].slice(0, 12);
+    }
+
+    function extractQualifications(lines, sections) {
+        const quals = [];
+
+        for (const [section, indices] of Object.entries(sections)) {
+            if (section.includes('require') || section.includes('qualif') || section.includes('must have') || section.includes('experience')) {
+                for (const idx of indices) {
+                    if (lines[idx].length > 10) quals.push(cleanLine(lines[idx]));
+                }
+            }
+        }
+
+        return [...new Set(quals)].slice(0, 10);
+    }
+
+    function extractNiceToHaves(lines, sections) {
+        const nths = [];
+
+        for (const [section, indices] of Object.entries(sections)) {
+            if (section.includes('nice') || section.includes('preferred') || section.includes('bonus') || section.includes('plus') || section.includes('good to')) {
+                for (const idx of indices) {
+                    if (lines[idx].length > 10) nths.push(cleanLine(lines[idx]));
+                }
+            }
+        }
+
+        return [...new Set(nths)].slice(0, 6);
+    }
+
+    function generateSummary(parsed) {
+        const parts = [];
+
+        const title = parsed.title !== 'Untitled Role' ? parsed.title : 'this role';
+        const exp = parsed.experienceLevel ? ` with ${parsed.experienceLevel.includes('years') ? parsed.experienceLevel + ' of experience' : parsed.experienceLevel + ' experience'}` : '';
+
+        parts.push(`We're looking for a ${title}${exp} to join our team and make an immediate impact.`);
+
+        if (parsed.responsibilities.length > 0) {
+            const topResp = parsed.responsibilities.slice(0, 3).map(r => {
+                return r.charAt(0).toLowerCase() + r.slice(1);
+            });
+            parts.push(`In this role, you'll be responsible for ${topResp[0]}${topResp.length > 1 ? ', ' + topResp[1] : ''}${topResp.length > 2 ? ', and ' + topResp[2] : ''}.`);
+        }
+
+        if (parsed.hardSkills.length > 0 || parsed.softSkills.length > 0) {
+            const allSkills = [...parsed.hardSkills.slice(0, 3), ...parsed.softSkills.slice(0, 2)];
+            parts.push(`The ideal candidate brings expertise in ${allSkills.join(', ')} and thrives in a collaborative, fast-paced environment.`);
+        }
+
+        return parts.join(' ');
+    }
+
+    function cleanLine(line) {
+        return line.replace(/^[-•*◦▪]\s*/, '')
+            .replace(/^\d+[.)]\s*/, '')
+            .replace(/[:\-–—]+$/, '')
+            .trim();
+    }
+
+    function capitalizeTitle(str) {
+        const small = ['a','an','the','and','but','or','for','nor','in','on','at','to','of','by','with'];
+        return str.split(' ').map((w, i) => {
+            if (i === 0 || !small.includes(w.toLowerCase())) {
+                return w.charAt(0).toUpperCase() + w.slice(1);
+            }
+            return w.toLowerCase();
+        }).join(' ');
+    }
+
+    // ============================================================
+    // JOB DESCRIPTION GENERATOR
+    // ============================================================
+    function generateJD(parsed) {
+        const title = parsed.title;
+        const meta = [];
+        meta.push('Full-time');
+        if (parsed.experienceLevel) meta.push(parsed.experienceLevel);
+        meta.push('Remote / Hybrid');
+
+        // Build sections
+        const sections = [];
+
+        // About the Role
+        sections.push({
+            heading: 'About the Role',
+            content: `<p>${parsed.summary}</p>`
+        });
+
+        // What You'll Do
+        if (parsed.responsibilities.length > 0) {
+            const items = parsed.responsibilities.map(r => `<li>${ensurePeriod(r)}</li>`).join('');
+            sections.push({
+                heading: "What You'll Do",
+                content: `<ul>${items}</ul>`
+            });
+        } else {
+            // Generate generic responsibilities from skills
+            const generic = generateGenericResponsibilities(parsed);
+            sections.push({
+                heading: "What You'll Do",
+                content: `<ul>${generic.map(r => `<li>${r}</li>`).join('')}</ul>`
+            });
+        }
+
+        // What You'll Bring
+        const bringItems = [];
+        if (parsed.qualifications.length > 0) {
+            bringItems.push(...parsed.qualifications.map(q => ensurePeriod(q)));
+        }
+        if (parsed.hardSkills.length > 0) {
+            bringItems.push(`Proficiency in ${formatList(parsed.hardSkills.slice(0, 6))}.`);
+        }
+        if (parsed.softSkills.length > 0) {
+            bringItems.push(`Strong ${formatList(parsed.softSkills.slice(0, 4))} skills.`);
+        }
+        if (parsed.experienceLevel && parsed.experienceLevel.includes('years')) {
+            bringItems.push(`${parsed.experienceLevel} of relevant professional experience.`);
+        }
+        if (bringItems.length === 0) {
+            bringItems.push('Relevant professional experience in a similar role.');
+            bringItems.push('Strong problem-solving and analytical abilities.');
+            bringItems.push('Excellent communication and collaboration skills.');
+        }
+
+        sections.push({
+            heading: "What You'll Bring",
+            content: `<ul>${bringItems.slice(0, 8).map(q => `<li>${q}</li>`).join('')}</ul>`
+        });
+
+        // Nice to Have
+        if (parsed.niceToHaves.length > 0) {
+            sections.push({
+                heading: 'Nice to Have',
+                content: `<ul>${parsed.niceToHaves.map(n => `<li>${ensurePeriod(n)}</li>`).join('')}</ul>`
+            });
+        }
+
+        // Skills tags
+        const allSkills = [...new Set([...parsed.hardSkills, ...parsed.softSkills.map(s => s.toLowerCase())])];
+        if (allSkills.length > 0) {
+            sections.push({
+                heading: 'Key Skills',
+                content: `<div class="skill-pills">${allSkills.slice(0, 15).map(s => `<span class="skill-pill">${s}</span>`).join('')}</div>`
+            });
+        }
+
+        // What We Offer
+        sections.push({
+            heading: 'What We Offer',
+            content: `<ul>
+                <li>Competitive compensation package with equity options.</li>
+                <li>Comprehensive health, dental, and vision insurance.</li>
+                <li>Flexible work arrangements — remote-friendly with optional in-office collaboration.</li>
+                <li>Professional development budget and continuous learning opportunities.</li>
+                <li>Generous PTO policy and company-wide wellness days.</li>
+            </ul>`
+        });
+
+        // Build HTML
+        const metaHTML = meta.map(m => `<span>${m}</span>`).join('');
+        const sectionsHTML = sections.map(s => `
+            <div class="jd-section">
+                <h3>${s.heading}</h3>
+                ${s.content}
+            </div>
+        `).join('');
+
+        return `
+            <div class="jd-doc">
+                <h2 class="doc-title">${title}</h2>
+                <div class="doc-meta">${metaHTML}</div>
+                ${sectionsHTML}
+                <div class="divider"></div>
+                <p class="eoe">We are an equal opportunity employer and value diversity. We do not discriminate on the basis of race, religion, color, national origin, gender, sexual orientation, age, marital status, veteran status, or disability status.</p>
+            </div>
+        `;
+    }
+
+    function generateGenericResponsibilities(parsed) {
+        const resps = [
+            'Define and drive the strategic vision and roadmap for your area of ownership.',
+            'Collaborate cross-functionally with engineering, design, and business partners to deliver high-impact outcomes.',
+            'Analyze data and metrics to identify opportunities, inform decisions, and measure success.',
+            'Communicate progress, insights, and recommendations clearly to stakeholders at all levels.',
+            'Foster a culture of continuous improvement, experimentation, and accountability within the team.'
+        ];
+
+        if (parsed.hardSkills.some(s => /sql|data|analyt/i.test(s))) {
+            resps.push('Leverage data analysis tools and techniques to uncover actionable insights.');
+        }
+        if (parsed.softSkills.some(s => /lead|mentor/i.test(s))) {
+            resps.push('Mentor and develop team members, fostering their professional growth.');
+        }
+
+        return resps.slice(0, 7);
+    }
+
+    function ensurePeriod(s) {
+        s = s.trim();
+        if (!s.match(/[.!?]$/)) s += '.';
+        return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    function formatList(items) {
+        if (items.length === 0) return '';
+        if (items.length === 1) return items[0];
+        if (items.length === 2) return `${items[0]} and ${items[1]}`;
+        return items.slice(0, -1).join(', ') + ', and ' + items[items.length - 1];
+    }
+
+    // ============================================================
+    // INTERVIEW GUIDE GENERATOR
+    // ============================================================
+    function generateGuide(parsed) {
+        const questions = [];
+        const usedKeys = new Set();
+
+        // 1. Match specific questions for detected hard skills
+        for (const skill of parsed.hardSkills) {
+            if (questions.length >= CONFIG.MAX_QUESTIONS) break;
+            const key = skill.toLowerCase();
+            if (SPECIFIC_QUESTIONS[key] && !usedKeys.has(key)) {
+                questions.push({
+                    number: questions.length + 1,
+                    skill: skill,
+                    type: 'hard',
+                    question: SPECIFIC_QUESTIONS[key].q,
+                    listenFor: SPECIFIC_QUESTIONS[key].listen
+                });
+                usedKeys.add(key);
+            }
+        }
+
+        // 2. Match specific questions for detected soft skills
+        for (const skill of parsed.softSkills) {
+            if (questions.length >= CONFIG.MAX_QUESTIONS) break;
+            const key = skill.toLowerCase();
+            if (SPECIFIC_QUESTIONS[key] && !usedKeys.has(key)) {
+                questions.push({
+                    number: questions.length + 1,
+                    skill: skill,
+                    type: 'soft',
+                    question: SPECIFIC_QUESTIONS[key].q,
+                    listenFor: SPECIFIC_QUESTIONS[key].listen
+                });
+                usedKeys.add(key);
+            }
+        }
+
+        // 3. Generate generic questions for remaining hard skills
+        for (const skill of parsed.hardSkills) {
+            if (questions.length >= CONFIG.MAX_QUESTIONS) break;
+            const key = skill.toLowerCase();
+            if (!usedKeys.has(key)) {
+                const hash = simpleHash(skill);
+                const template = GENERIC_HARD_TEMPLATES[hash % GENERIC_HARD_TEMPLATES.length];
+                questions.push({
+                    number: questions.length + 1,
+                    skill: skill,
+                    type: 'hard',
+                    question: template(skill),
+                    listenFor: GENERIC_HARD_LISTEN(skill)
+                });
+                usedKeys.add(key);
+            }
+        }
+
+        // 4. Generate generic questions for remaining soft skills
+        for (const skill of parsed.softSkills) {
+            if (questions.length >= CONFIG.MAX_QUESTIONS) break;
+            const key = skill.toLowerCase();
+            if (!usedKeys.has(key)) {
+                const hash = simpleHash(skill);
+                const template = GENERIC_SOFT_TEMPLATES[hash % GENERIC_SOFT_TEMPLATES.length];
+                questions.push({
+                    number: questions.length + 1,
+                    skill: skill,
+                    type: 'soft',
+                    question: template(skill),
+                    listenFor: GENERIC_SOFT_LISTEN(skill)
+                });
+                usedKeys.add(key);
+            }
+        }
+
+        // 5. Fill remaining slots with fallback questions
+        for (const fq of FALLBACK_QUESTIONS) {
+            if (questions.length >= CONFIG.MAX_QUESTIONS) break;
+            const key = fq.skill.toLowerCase();
+            if (!usedKeys.has(key)) {
+                questions.push({
+                    number: questions.length + 1,
+                    skill: fq.skill,
+                    type: fq.type,
+                    question: fq.q,
+                    listenFor: fq.listen
+                });
+                usedKeys.add(key);
+            }
+        }
+
+        // Renumber
+        questions.forEach((q, i) => q.number = i + 1);
+
+        // Count types
+        const hardCount = questions.filter(q => q.type === 'hard').length;
+        const softCount = questions.filter(q => q.type === 'soft').length;
+        const genCount = questions.filter(q => q.type === 'general').length;
+
+        return { questions, hardCount, softCount, genCount, title: parsed.title };
+    }
+
+    function simpleHash(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = ((hash << 5) - hash) + str.charCodeAt(i);
+            hash |= 0;
+        }
+        return Math.abs(hash);
+    }
+
+    function renderGuide(guide) {
+        const statsHTML = [];
+        if (guide.hardCount > 0) statsHTML.push(`<span class="stat-badge hard">${guide.hardCount} technical</span>`);
+        if (guide.softCount > 0) statsHTML.push(`<span class="stat-badge soft">${guide.softCount} soft skill</span>`);
+        if (guide.genCount > 0) statsHTML.push(`<span class="stat-badge general" style="background:var(--accent-soft);color:var(--accent);border:1px solid rgba(200,155,60,0.2);">${guide.genCount} general</span>`);
+
+        const questionsHTML = guide.questions.map(q => {
+            const typeClass = q.type === 'hard' ? 'hard' : q.type === 'soft' ? 'soft' : 'general';
+            const typeLabel = q.type === 'hard' ? 'Technical' : q.type === 'soft' ? 'Soft Skill' : 'General';
+            const listenHTML = q.listenFor.map(l => `<li>${l}</li>`).join('');
+
+            return `
+                <div class="question-card">
+                    <div class="question-top">
+                        <span class="q-number">${String(q.number).padStart(2, '0')}</span>
+                        <span class="q-skill-tag ${typeClass}">${q.skill}</span>
+                        <span class="q-skill-tag ${typeClass}" style="opacity:0.7">${typeLabel}</span>
+                    </div>
+                    <p class="question-text">"${q.question}"</p>
+                    <div class="listen-guide">
+                        <h4>What to listen for</h4>
+                        <ul>${listenHTML}</ul>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="guide-doc">
+                <div class="guide-header">
+                    <h2>Interview Guide: ${guide.title}</h2>
+                    <p>${guide.questions.length} behavioral questions · STAR format recommended</p>
+                    ${statsHTML.length > 0 ? `<div class="guide-stats">${statsHTML.join('')}</div>` : ''}
+                </div>
+                ${questionsHTML}
+            </div>
+        `;
+    }
+
+    // ============================================================
+    // PLAIN TEXT GENERATORS (for copy)
+    // ============================================================
+    function jdToPlainText(parsed) {
+        const lines = [];
+        lines.push(parsed.title.toUpperCase());
+        lines.push(`Full-time · ${parsed.experienceLevel || 'All levels'} · Remote / Hybrid`);
+        lines.push('');
+        lines.push('ABOUT THE ROLE');
+        lines.push(stripHTML(parsed.summary));
+        lines.push('');
+
+        if (parsed.responsibilities.length > 0) {
+            lines.push("WHAT YOU'LL DO");
+            parsed.responsibilities.forEach(r => lines.push(`• ${ensurePeriod(r)}`));
+            lines.push('');
+        }
+
+        lines.push("WHAT YOU'LL BRING");
+        if (parsed.qualifications.length > 0) {
+            parsed.qualifications.forEach(q => lines.push(`• ${ensurePeriod(q)}`));
+        }
+        if (parsed.hardSkills.length > 0) {
+            lines.push(`• Proficiency in ${formatList(parsed.hardSkills.slice(0, 6))}.`);
+        }
+        if (parsed.softSkills.length > 0) {
+            lines.push(`• Strong ${formatList(parsed.softSkills.slice(0, 4))} skills.`);
+        }
+        lines.push('');
+
+        if (parsed.niceToHaves.length > 0) {
+            lines.push('NICE TO HAVE');
+            parsed.niceToHaves.forEach(n => lines.push(`• ${ensurePeriod(n)}`));
+            lines.push('');
+        }
+
+        lines.push('We are an equal opportunity employer and value diversity.');
+        return lines.join('\n');
+    }
+
+    function guideToPlainText(guide) {
+        const lines = [];
+        lines.push(`INTERVIEW GUIDE: ${guide.title.toUpperCase()}`);
+        lines.push(`${guide.questions.length} behavioral questions — STAR format recommended`);
+        lines.push('');
+
+        guide.questions.forEach(q => {
+            lines.push(`${String(q.number).padStart(2, '0')}. [${q.type === 'hard' ? 'Technical' : q.type === 'soft' ? 'Soft Skill' : 'General'} · ${q.skill}]`);
+            lines.push(`"${q.question}"`);
+            lines.push('What to listen for:');
+            q.listenFor.forEach(l => lines.push(`  → ${l}`));
+            lines.push('');
+        });
+
+        return lines.join('\n');
+    }
+
+    function stripHTML(html) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || '';
+    }
+
+    // ============================================================
+    // UI CONTROLLER
+    // ============================================================
+    let currentParsed = null;
+    let currentGuide = null;
+    let currentTab = 'jd';
+
+    const DOM = {};
+
+    function initUI() {
+        DOM.input = document.getElementById('notesInput');
+        DOM.charCount = document.getElementById('charCount');
+        DOM.sampleBtn = document.getElementById('sampleBtn');
+        DOM.generateBtn = document.getElementById('generateBtn');
+        DOM.errorMsg = document.getElementById('errorMsg');
+        DOM.jdTab = document.getElementById('jdTab');
+        DOM.guideTab = document.getElementById('guideTab');
+        DOM.jdOutput = document.getElementById('jdOutput');
+        DOM.jdPlaceholder = document.getElementById('jdPlaceholder');
+        DOM.guideOutput = document.getElementById('guideOutput');
+        DOM.guidePlaceholder = document.getElementById('guidePlaceholder');
+        DOM.tabIndicator = document.getElementById('tabIndicator');
+        DOM.copyBtn = document.getElementById('copyBtn');
+        DOM.outputBody = document.getElementById('outputBody');
+
+        // Character count
+        DOM.input.addEventListener('input', () => {
+            const len = DOM.input.value.length;
+            DOM.charCount.textContent = `${len} character${len !== 1 ? 's' : ''}`;
+            hideError();
+        });
+
+        // Sample button
+        DOM.sampleBtn.addEventListener('click', loadSample);
+
+        // Generate button
+        DOM.generateBtn.addEventListener('click', handleGenerate);
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+        });
+
+        // Copy button
+        DOM.copyBtn.addEventListener('click', handleCopy);
+
+        // Initial tab indicator
+        requestAnimationFrame(updateTabIndicator);
+
+        // Resize observer for tab indicator
+        window.addEventListener('resize', updateTabIndicator);
+    }
+
+    function loadSample() {
+        const sample = `Senior Product Manager - Growth Team
+
+Looking for a senior PM to own growth strategy for our B2B SaaS platform.
+
+Responsibilities:
+- Own the product roadmap for growth and activation features
+- Design and run A/B experiments to improve conversion rates
+- Partner with engineering, design, and data science teams
+- Analyze user behavior data using SQL and analytics tools
+- Define success metrics and track KPIs for the growth team
+- Present findings and recommendations to executive leadership
+- Mentor junior product managers on the team
+
+Requirements:
+- 5+ years of product management experience
+- Strong analytical and data-driven mindset
+- Proficiency in SQL and data analysis tools (Tableau, Looker)
+- Excellent communication and stakeholder management skills
+- Experience with B2B or SaaS products
+- Track record of driving measurable business outcomes
+- Ability to thrive in a fast-paced, ambiguous environment
+
+Nice to have:
+- MBA or advanced degree
+- Experience with machine learning or AI products
+- Background in growth hacking or marketing technology
+
+We need someone who is a strong leader but also collaborative. They should be able to think strategically while being hands-on with data. Strong presentation skills are important since they'll be presenting to the C-suite regularly.`;
+
+        DOM.input.value = sample;
+        DOM.input.dispatchEvent(new Event('input'));
+        DOM.input.focus();
+    }
+
+    async function handleGenerate() {
+        const text = DOM.input.value.trim();
+
+        // Validate
+        if (text.length < CONFIG.MIN_INPUT) {
+            showError(`Please enter at least a few sentences about the role. (${text.length}/${CONFIG.MIN_INPUT} characters)`);
+            return;
+        }
+
+        // Loading state
+        DOM.generateBtn.classList.add('loading');
+        DOM.generateBtn.disabled = true;
+        hideError();
+
+        // Simulate generation delay
+        await sleep(CONFIG.GEN_DELAY);
+
+        try {
+            // Parse
+            const parsed = parseNotes(text);
+            currentParsed = parsed;
+
+            // Generate JD
+            const jdHTML = generateJD(parsed);
+            DOM.jdPlaceholder.style.display = 'none';
+            DOM.jdOutput.innerHTML = jdHTML;
+
+            // Generate Interview Guide
+            const guide = generateGuide(parsed);
+            currentGuide = guide;
+            DOM.guidePlaceholder.style.display = 'none';
+            DOM.guideOutput.innerHTML = renderGuide(guide);
+
+            // Show copy button
+            DOM.copyBtn.style.display = 'flex';
+
+            // Switch to JD tab if not already there
+            switchTab('jd');
+
+        } catch (err) {
+            showError('Something went wrong during generation. Please try again.');
+            console.error(err);
+        }
+
+        // Reset button
+        DOM.generateBtn.classList.remove('loading');
+        DOM.generateBtn.disabled = false;
+    }
+
+    function switchTab(tab) {
+        currentTab = tab;
+
+        // Update buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tab === tab);
+        });
+
+        // Update content
+        document.querySelectorAll('.tab-content').forEach(el => {
+            el.classList.remove('active');
+        });
+
+        if (tab === 'jd') {
+            DOM.jdTab.classList.add('active');
+        } else {
+            DOM.guideTab.classList.add('active');
+        }
+
+        // Scroll to top of output
+        DOM.outputBody.scrollTop = 0;
+
+        // Update indicator
+        updateTabIndicator();
+    }
+
+    function updateTabIndicator() {
+        const activeTab = document.querySelector('.tab-btn.active');
+        if (!activeTab || !DOM.tabIndicator) return;
+
+        const tabsContainer = document.getElementById('tabs');
+        const rect = activeTab.getBoundingClientRect();
+        const containerRect = tabsContainer.getBoundingClientRect();
+
+        DOM.tabIndicator.style.left = (rect.left - containerRect.left) + 'px';
+        DOM.tabIndicator.style.width = rect.width + 'px';
+    }
+
+    async function handleCopy() {
+        let text = '';
+        if (currentTab === 'jd' && currentParsed) {
+            text = jdToPlainText(currentParsed);
+        } else if (currentTab === 'guide' && currentGuide) {
+            text = guideToPlainText(currentGuide);
+        }
+
+        if (!text) return;
+
+        try {
+            await navigator.clipboard.writeText(text);
+            DOM.copyBtn.classList.add('copied');
+            DOM.copyBtn.querySelector('span').textContent = 'Copied!';
+            setTimeout(() => {
+                DOM.copyBtn.classList.remove('copied');
+                DOM.copyBtn.querySelector('span').textContent = 'Copy';
+            }, 2000);
+        } catch (err) {
+            // Fallback for older browsers
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            DOM.copyBtn.classList.add('copied');
+            DOM.copyBtn.querySelector('span').textContent = 'Copied!';
+            setTimeout(() => {
+                DOM.copyBtn.classList.remove('copied');
+                DOM.copyBtn.querySelector('span').textContent = 'Copy';
+            }, 2000);
+        }
+    }
+
+    function showError(msg) {
+        DOM.errorMsg.textContent = msg;
+        DOM.errorMsg.classList.add('show');
+    }
+
+    function hideError() {
+        DOM.errorMsg.classList.remove('show');
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', initUI);
+    </script>
+</body>
+</html>
+انتا عملت اي؟
+
+أهلاً! اللي عملته هو تطبيق ويب كامل اسمه Recruitment Sandbox - أداة لتوليد وصف وظيفي ودليل مقابلات من ملاحظات خام. خليني أشرحلك بالتفصيل:
+
+
+
+الإدخال:
+
+بتكتب ملاحظاتك الخام عن أي وظيفة (أي شكل، مش مهم تكون مرتبة)
+ممكن تضغط "Load sample" عشان تشوف مثال جاهز
+
+الإخراج (نتيجتين):
+
+
+١) Job Description (وصف وظيفي)
+
+بيقرأ ملاحظاتك ويستخلص منها: العنوان، مستوى الخبرة، المهارات التقنية والشخصية، المسؤوليات، المؤهلات
+بيولّد وصف وظيفي متنسق بأسلوب LinkedIn جاهز للنشر
+مقسوم لأقسام: About the Role, What You'll Do, What You'll Bring, Nice to Have, Key Skills, What We Offer
+فيه زر Copy بتنسخه كنص عادي
+
+٢) Interview Guide (دليل مقابلة)
+
+بيولّد 10 أسئلة سلوكية مبنية على المهارات اللي اكتشفها من الوصف
+كل سؤال عليه تصنيف: تقني / مهارة شخصية / عام
+كل سؤال معاه "What to listen for" - يعني إيه اللي المفروض تسمعه في الإجابة
+
+من جوه التطبيق فيه:
+
+قاعدة بيانات لأكتر من 200 مهارة تقنية في مجالات مختلفة
+قاعدة أسئلة محددة لمهارات زي SQL، Leadership، Communication وغيرهم
+نظام ذكي بيملا الأسئلة المتبقية لو المهارات المكتشفة مش كفاية
+
+عايز تجرّبه؟ اكتب أي ملاحظات عن وظيفة واضغط Generate
+
+هو ده ملف واحد بس ؟
+
+أيوا، ملف واحد بس - ملف HTML كامل.
+
+
+كل حاجة جواه:
+
+
+الـ HTML - هيكل الصفحة والواجهة
+الـ CSS - كل التنسيقات والألوان والحركات
+الـ JavaScript - كل المنطق: تحليل النصوص، قواعد البيانات، توليد الوصف الوظيفي، توليد الأسئلة
+
+مش محتاج أي سيرفر أو قاعدة بيانات أو مكتبات خارجية. بتفتحه في المتصفح مباشرة وهو شغال.
+
+
+الطريقة:
+
+1.انسخ الكود
+2.حفظه كملف recruitment-sandbox.html
+3.افتحه في أي متصفح (Chrome, Firefox, Safari...)
+4.ابدأ استخدمه
+
+كل حاجة بتشتغل في المتصفح نفسه - التحليل، التوليد، النسخ - كله client-side.
+
+طب  بيقى اي النظام لو انا عاوز ارفع المشروع على جيتهوب بيبقى اي النظام ؟
+
+بما إنه ملف واحد بس، الموضوع بسيط جداً. بس خليني أوريك الهيكل المثالي:
+
+
+
+المشروع على GitHub
+
+text
+text
+recruitment-sandbox/
+├── index.html          ← الملف الأساسي (غيّر اسمه لـ index.html)
+├── README.md           ← وصف المشروع
+└── LICENSE             ← اختياري
+
+بس كده. 3 ملفات أو حتى ملفين.
+
+
+
+خطوات الرفع
+
+١) اعمل Repository على GitHub
+
+
+text
+text
+اسم الريبو: recruitment-sandbox
+
+٢) ارفع الملفات
+
+
+bash
+bash
+# على جهازك
+mkdir recruitment-sandbox
+cd recruitment-sandbox
+
+# حط الملف HTML وغير اسمه
+cp /مسار/الملف/recruitment-sandbox.html index.html
+
+# اعمل ملف README
+echo "# Recruitment Sandbox" > README.md
+
+# اعمل Git repo وارفع
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/USERNAME/recruitment-sandbox.git
+git push -u origin main
+
+٣) فعّل GitHub Pages عشان يبقى أونلاين مجاناً
+
+
+text
+text
+GitHub Repo → Settings → Pages → Branch: main → Folder: / (root) → Save
+
+بعد كده هيبقى متاح على:
+
+text
+text
+https://USERNAME.github.io/recruitment-sandbox/
+
+
+لو عايز تنظّم المشروع أكتر بعدين
+
+text
+text
+recruitment-sandbox/
+├── index.html
+├── css/
+│   └── styles.css          ← لو فككت الـ CSS
+├── js/
+│   ├── parser.js            ← لو فككت التحليل
+│   ├── generator.js         ← لو فككت التوليد
+│   └── app.js               ← لو فككت التحكم بالواجهة
+├── data/
+│   ├── skills.json          ← قاعدة المهارات
+│   └── questions.json       ← قاعدة الأسئلة
+├── README.md
+└── LICENSE
+
+بس ده مش ضروري دلوقتي. الملف الواحد بيشتغل تمام. الفصل ده بيبقى مفيد لما المشروع يكبر.
+
+
+
+عايز أعملك ملف الـ README جاهز؟
+
+معلشي افصل 
+
+خليني أفصلهملك ملف ملف:
+
+
+
+الهيكل النهائي
+
+text
+text
+recruitment-sandbox/
+├── index.html
+├── css/
+│   └── styles.css
+├── js/
+│   ├── skills.js
+│   ├── parser.js
+│   ├── generator.js
+│   └── app.js
+└── README.md
+
+
+1. index.html
+
+html
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruitment Sandbox</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>Recruitment Sandbox</h1>
+                    <div class="brand-tagline">raw notes <span>→</span> polished JD + interview guide</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- WORKSPACE -->
+        <main class="workspace">
+            <!-- Input Panel -->
+            <div class="panel input-panel">
+                <div class="panel-head">
+                    <h2>Raw Notes</h2>
+                    <span class="hint">paste anything</span>
+                </div>
+                <div class="input-body">
+                    <div class="textarea-wrap">
+                        <textarea id="notesInput"
+                            placeholder="Drop your rough notes here...&#10;&#10;e.g. &quot;Looking for a senior PM to lead growth. Needs SQL, A/B testing experience.&#10;Should be a strong communicator and data-driven leader...&quot;">
+                        </textarea>
+                    </div>
+                    <div class="input-footer">
+                        <span class="char-count" id="charCount">0 characters</span>
+                        <button class="sample-btn" id="sampleBtn">Load sample</button>
+                    </div>
+                    <div class="error-msg" id="errorMsg"></div>
+                </div>
+                <div class="input-actions">
+                    <button class="generate-btn" id="generateBtn">
+                        <span class="btn-label">Generate Documents</span>
+                        <span class="btn-loading">
+                            <span class="spinner"></span> Generating…
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Output Panel -->
+            <div class="panel output-panel">
+                <div class="tabs-row">
+                    <div class="tabs" id="tabs">
+                        <button class="tab-btn active" data-tab="jd">Job Description</button>
+                        <button class="tab-btn" data-tab="guide">Interview Guide</button>
+                        <div class="tab-indicator" id="tabIndicator"></div>
+                    </div>
+                    <button class="copy-btn" id="copyBtn" style="display:none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2"/>
+                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                        </svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+
+                <div class="output-body" id="outputBody">
+                    <!-- JD Tab -->
+                    <div class="tab-content active" id="jdTab">
+                        <div class="placeholder-state" id="jdPlaceholder">
+                            <div class="placeholder-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/>
+                                </svg>
+                            </div>
+                            <h3>Job Description</h3>
+                            <p>Enter your raw role notes and click Generate to create a LinkedIn-ready job description.</p>
+                        </div>
+                        <div id="jdOutput"></div>
+                    </div>
+
+                    <!-- Guide Tab -->
+                    <div class="tab-content" id="guideTab">
+                        <div class="placeholder-state" id="guidePlaceholder">
+                            <div class="placeholder-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+                                    <path d="M12 17h.01"/>
+                                </svg>
+                            </div>
+                            <h3>Interview Guide</h3>
+                            <p>10 behavioral interview questions will appear here, tailored to the skills in your JD.</p>
+                        </div>
+                        <div id="guideOutput"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts (order matters) -->
+    <script src="js/skills.js"></script>
+    <script src="js/parser.js"></script>
+    <script src="js/generator.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+
+
+2. css/styles.css
+
+css
+css
+/* ==========================================
+   1. CUSTOM PROPERTIES
+   ========================================== */
+:root {
+    --bg: #09090c;
+    --bg-subtle: #0d0d12;
+    --surface: #131318;
+    --surface-raised: #1a1a21;
+    --surface-hover: #212129;
+    --border: #2a2a35;
+    --border-light: #3a3a4a;
+    --accent: #c89b3c;
+    --accent-soft: rgba(200, 155, 60, 0.12);
+    --accent-hover: #dbb04a;
+    --text: #e8e4db;
+    --text-secondary: #a09a8f;
+    --text-muted: #6b655b;
+    --danger: #c85050;
+    --success: #4caf6a;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --font-display: 'Instrument Serif', serif;
+    --font-body: 'Source Serif 4', serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ==========================================
+   2. RESET & BASE
+   ========================================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html { font-size: 16px; }
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 10000;
+}
+
+::selection {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+/* ==========================================
+   3. TYPOGRAPHY
+   ========================================== */
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; }
+code, .mono { font-family: var(--font-mono); }
+
+/* ==========================================
+   4. APP LAYOUT
+   ========================================== */
+.app {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 0 24px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================
+   5. HEADER
+   ========================================== */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.brand-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+}
+
+.brand-icon svg { width: 22px; height: 22px; }
+
+.brand-text h1 {
+    font-size: 1.35rem;
+    line-height: 1.2;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+
+.brand-tagline {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+}
+
+.brand-tagline span { color: var(--accent); }
+
+/* ==========================================
+   6. WORKSPACE
+   ========================================== */
+.workspace {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 24px;
+    padding: 24px 0 40px;
+    align-items: start;
+}
+
+/* ==========================================
+   7. PANELS
+   ========================================== */
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.panel-head {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.panel-head h2 {
+    font-size: 1.15rem;
+    color: var(--text);
+}
+
+.panel-head .hint {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+}
+
+/* ==========================================
+   8. INPUT SECTION
+   ========================================== */
+.input-body { padding: 18px 22px; }
+
+.textarea-wrap textarea {
+    width: 100%;
+    min-height: 380px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    resize: vertical;
+    transition: border-color 0.2s ease;
+    outline: none;
+}
+
+.textarea-wrap textarea::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.textarea-wrap textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.input-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding: 0 2px;
+}
+
+.char-count {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+}
+
+.sample-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 5px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.02em;
+}
+
+.sample-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.input-actions {
+    padding: 16px 22px 20px;
+}
+
+/* ==========================================
+   9. BUTTONS
+   ========================================== */
+.generate-btn {
+    width: 100%;
+    padding: 14px 24px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.generate-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(200, 155, 60, 0.25);
+}
+
+.generate-btn:active { transform: translateY(0); }
+
+.generate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.generate-btn .btn-loading {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.generate-btn.loading .btn-label { display: none; }
+.generate-btn.loading .btn-loading { display: flex; }
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(0,0,0,0.2);
+    border-top-color: var(--bg);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ==========================================
+   10. OUTPUT SECTION
+   ========================================== */
+.output-panel {
+    position: sticky;
+    top: 24px;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tabs-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 22px;
+    position: relative;
+}
+
+.tabs {
+    display: flex;
+    gap: 0;
+    position: relative;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 16px 18px;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    position: relative;
+}
+
+.tab-btn:hover { color: var(--text-secondary); }
+.tab-btn.active { color: var(--text); }
+
+.tab-indicator {
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 1px;
+    transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.copy-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 5px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    letter-spacing: 0.02em;
+}
+
+.copy-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.copy-btn.copied {
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.copy-btn svg { width: 13px; height: 13px; }
+
+.output-body {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ==========================================
+   11. PLACEHOLDER STATE
+   ========================================== */
+.placeholder-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 360px;
+    text-align: center;
+    padding: 40px;
+}
+
+.placeholder-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--accent-soft);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: var(--accent);
+}
+
+.placeholder-icon svg { width: 28px; height: 28px; }
+
+.placeholder-state h3 {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.placeholder-state p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    max-width: 300px;
+}
+
+/* ==========================================
+   12. JD DOCUMENT STYLING
+   ========================================== */
+.jd-doc { animation: fadeUp 0.5s ease forwards; }
+
+.jd-doc .doc-title {
+    font-family: var(--font-display);
+    font-size: 1.65rem;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.25;
+}
+
+.jd-doc .doc-meta {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+}
+
+.jd-doc .doc-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.jd-section {
+    margin-bottom: 26px;
+    animation: fadeUp 0.5s ease forwards;
+    opacity: 0;
+}
+
+.jd-section:nth-child(2) { animation-delay: 0.08s; }
+.jd-section:nth-child(3) { animation-delay: 0.14s; }
+.jd-section:nth-child(4) { animation-delay: 0.20s; }
+.jd-section:nth-child(5) { animation-delay: 0.26s; }
+.jd-section:nth-child(6) { animation-delay: 0.32s; }
+
+.jd-section h3 {
+    font-size: 1.05rem;
+    color: var(--accent);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-display);
+}
+
+.jd-section p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.jd-section ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.jd-section li {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.55;
+}
+
+.jd-section li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.6;
+}
+
+.jd-section .skill-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.skill-pill {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 20px;
+    border: 1px solid rgba(200, 155, 60, 0.2);
+}
+
+.jd-doc .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+}
+
+.jd-doc .eoe {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.6;
+}
+
+/* ==========================================
+   13. INTERVIEW GUIDE STYLING
+   ========================================== */
+.guide-doc { animation: fadeUp 0.5s ease forwards; }
+
+.guide-doc .guide-header {
+    margin-bottom: 24px;
+}
+
+.guide-doc .guide-header h2 {
+    font-size: 1.4rem;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.guide-doc .guide-header p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.guide-doc .guide-stats {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+}
+
+.stat-badge {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+}
+
+.stat-badge.hard {
+    background: rgba(76, 175, 106, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(76, 175, 106, 0.2);
+}
+
+.stat-badge.soft {
+    background: rgba(100, 140, 230, 0.1);
+    color: #7a9ee6;
+    border: 1px solid rgba(100, 140, 230, 0.2);
+}
+
+.question-card {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    margin-bottom: 14px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    opacity: 0;
+    animation: fadeUp 0.45s ease forwards;
+}
+
+.question-card:nth-child(1)  { animation-delay: 0.05s; }
+.question-card:nth-child(2)  { animation-delay: 0.1s; }
+.question-card:nth-child(3)  { animation-delay: 0.15s; }
+.question-card:nth-child(4)  { animation-delay: 0.2s; }
+.question-card:nth-child(5)  { animation-delay: 0.25s; }
+.question-card:nth-child(6)  { animation-delay: 0.3s; }
+.question-card:nth-child(7)  { animation-delay: 0.35s; }
+.question-card:nth-child(8)  { animation-delay: 0.4s; }
+.question-card:nth-child(9)  { animation-delay: 0.45s; }
+.question-card:nth-child(10) { animation-delay: 0.5s; }
+
+.question-card:hover {
+    border-color: var(--border-light);
+    transform: translateY(-1px);
+}
+
+.question-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.q-number {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--accent);
+    min-width: 24px;
+}
+
+.q-skill-tag {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+}
+
+.q-skill-tag.hard {
+    background: rgba(76, 175, 106, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(76, 175, 106, 0.15);
+}
+
+.q-skill-tag.soft {
+    background: rgba(100, 140, 230, 0.1);
+    color: #7a9ee6;
+    border: 1px solid rgba(100, 140, 230, 0.15);
+}
+
+.q-skill-tag.general {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid rgba(200, 155, 60, 0.15);
+}
+
+.question-text {
+    font-size: 1.02rem;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 14px;
+    font-style: italic;
+    font-family: var(--font-display);
+}
+
+.listen-guide {
+    background: var(--bg-subtle);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    border-left: 2px solid var(--accent);
+}
+
+.listen-guide h4 {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+}
+
+.listen-guide ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.listen-guide li {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.5;
+}
+
+.listen-guide li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 0.75rem;
+}
+
+/* ==========================================
+   14. ERROR STATE
+   ========================================== */
+.error-msg {
+    background: rgba(200, 80, 80, 0.08);
+    border: 1px solid rgba(200, 80, 80, 0.2);
+    color: var(--danger);
+    font-size: 0.82rem;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    margin-top: 12px;
+    display: none;
+    animation: fadeUp 0.3s ease;
+}
+
+.error-msg.show { display: block; }
+
+/* ==========================================
+   15. ANIMATIONS
+   ========================================== */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ==========================================
+   16. RESPONSIVE
+   ========================================== */
+@media (max-width: 960px) {
+    .workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .output-panel {
+        position: static;
+    }
+
+    .header { padding: 18px 0; }
+}
+
+@media (max-width: 600px) {
+    .app { padding: 0 14px; }
+
+    .textarea-wrap textarea { min-height: 240px; }
+
+    .panel-head { padding: 14px 16px 12px; }
+    .input-body { padding: 14px 16px; }
+    .input-actions { padding: 14px 16px 16px; }
+    .output-body { padding: 18px 16px; }
+
+    .jd-doc .doc-title { font-size: 1.3rem; }
+    .guide-doc .guide-header h2 { font-size: 1.15rem; }
+    .question-card { padding: 16px 18px; }
+
+    .tabs-row { padding: 0 14px; }
+    .tab-btn { padding: 14px 12px; font-size: 0.82rem; }
+}
+
+/* ==========================================
+   17. SCROLLBAR
+   ========================================== */
+.output-body::-webkit-scrollbar { width: 6px; }
+.output-body::-webkit-scrollbar-track { background: transparent; }
+.output-body::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+.output-body::-webkit-scrollbar-thumb:hover {
+    background: var(--border-light);
+}
+
+
+3. js/skills.js
+
+javascript
+javascript
+// ============================================================
+// HARD SKILLS DATABASE
+// ============================================================
+const HARD_SKILLS = {
+    'Software Engineering': [
+        'python','java','javascript','typescript','c++','c#','go','rust',
+        'ruby','php','swift','kotlin','scala','r programming','perl'
+    ],
+    'Web Development': [
+        'react','angular','vue','next.js','nuxt','node.js','express',
+        'django','flask','spring boot','rails','laravel','fastapi',
+        'html','css','sass','rest api','graphql','webpack'
+    ],
+    'Data & Databases': [
+        'sql','postgresql','mysql','mongodb','redis','elasticsearch',
+        'cassandra','dynamodb','neo4j','oracle','sqlite','pandas',
+        'numpy','spark','hadoop','airflow','dbt','etl',
+        'data pipeline','data warehouse','data modeling'
+    ],
+    'Cloud & DevOps': [
+        'aws','azure','gcp','google cloud','docker','kubernetes',
+        'terraform','ansible','jenkins','ci/cd','circleci','gitlab',
+        'cloudformation','ecs','lambda','s3'
+    ],
+    'AI & Machine Learning': [
+        'machine learning','deep learning','tensorflow','pytorch','keras',
+        'nlp','natural language processing','computer vision',
+        'neural networks','llm','generative ai','hugging face',
+        'openai','scikit-learn','data science'
+    ],
+    'Design': [
+        'figma','sketch','adobe xd','photoshop','illustrator',
+        'indesign','ux design','ui design','wireframing','prototyping',
+        'user research','design thinking','design system','canva'
+    ],
+    'Analytics & BI': [
+        'tableau','power bi','looker','google analytics','mixpanel',
+        'amplitude','snowflake','bigquery','redshift','databricks',
+        'data analysis','data visualization','excel','spreadsheet'
+    ],
+    'Product Management': [
+        'product management','product strategy','roadmap','a/b testing',
+        'user stories','requirements gathering','agile','scrum','kanban',
+        'sprint planning','backlog','jira','asana','product analytics'
+    ],
+    'Marketing': [
+        'seo','sem','ppc','google ads','facebook ads','content marketing',
+        'social media marketing','email marketing','marketing automation',
+        'hubspot','marketo','google tag manager','growth marketing',
+        'demand generation'
+    ],
+    'Sales': [
+        'salesforce','hubspot crm','crm','pipeline management',
+        'lead generation','account management','b2b sales','b2c sales',
+        'saas sales','cold outreach','sales strategy','quota attainment'
+    ],
+    'Finance & Accounting': [
+        'financial modeling','financial analysis','budgeting','forecasting',
+        'p&l','gaap','ifrs','valuation','quickbooks','sap','erp',
+        'accounting','audit','tax'
+    ],
+    'Human Resources': [
+        'recruitment','talent acquisition','performance management',
+        'employee engagement','onboarding','compensation','benefits',
+        'hrbp','learning and development','diversity','inclusion',
+        'workforce planning'
+    ],
+    'Operations': [
+        'supply chain','logistics','process improvement','lean',
+        'six sigma','project management','vendor management',
+        'procurement','quality assurance','qa','inventory management'
+    ],
+    'Legal & Compliance': [
+        'compliance','gdpr','hipaa','sox','regulatory','contracts',
+        'legal research','intellectual property','risk management',
+        'internal audit'
+    ]
+};
+
+// ============================================================
+// SOFT SKILLS DATABASE
+// ============================================================
+const SOFT_SKILLS = [
+    'communication','leadership','teamwork','collaboration',
+    'problem-solving','problem solving','critical thinking',
+    'creativity','innovation','adaptability','flexibility',
+    'time management','organization','attention to detail',
+    'analytical thinking','strategic thinking','decision-making',
+    'decision making','conflict resolution','negotiation',
+    'presentation','mentoring','coaching','emotional intelligence',
+    'empathy','resilience','initiative','self-motivated',
+    'self motivated','stakeholder management','cross-functional',
+    'cross functional','interpersonal','active listening',
+    'persuasion','influence','public speaking','facilitation',
+    'delegation','accountability','ownership','growth mindset',
+    'curiosity','proactive','detail-oriented','detail oriented',
+    'results-driven','results driven','data-driven','data driven',
+    'customer-centric','customer centric','verbal communication',
+    'written communication','relationship building','networking',
+    'client management','customer-facing'
+];
+
+// ============================================================
+// ACTION VERBS & ROLE KEYWORDS
+// ============================================================
+const ACTION_VERBS = [
+    'manage','lead','develop','create','build','design','implement',
+    'oversee','coordinate','drive','establish','define','own',
+    'deliver','execute','analyze','optimize','improve','maintain',
+    'support','collaborate','partner','mentor','train','hire',
+    'scale','launch','plan','research','evaluate','assess',
+    'identify','recommend','present','report','document','ensure',
+    'facilitate','negotiate','resolve','architect','engineer',
+    'test','deploy','monitor','configure','automate','streamline',
+    'cultivate','foster','champion','spearhead','orchestrate',
+    'synthesize','translate','liaise'
+];
+
+const ROLE_KEYWORDS = [
+    'manager','director','engineer','developer','analyst','designer',
+    'architect','specialist','coordinator','lead','head','vp','chief',
+    'officer','associate','senior','junior','principal','staff',
+    'consultant','strategist','scientist','administrator',
+    'representative','executive','advisor','technician','examiner',
+    'intern','fellow','contractor','freelancer'
+];
+
+const SECTION_HEADERS = [
+    'responsibilities','duties','what you','what we','requirements',
+    'qualifications','skills','experience','about','overview','summary',
+    'role','position','nice to','preferred','required','must have',
+    'good to','bonus','plus','we offer','benefits','compensation',
+    'salary','location','team','company','ideal candidate','who you are'
+];
+
+// ============================================================
+// QUESTION BANK — SPECIFIC MATCHES
+// ============================================================
+const SPECIFIC_QUESTIONS = {
+    'sql': {
+        q: 'Describe a time when your SQL and data analysis skills helped uncover a critical insight that changed the direction of a project or business decision.',
+        listen: [
+            'Ability to write complex queries and work with large datasets',
+            'Translation of raw data into actionable business recommendations',
+            'Measurable impact on outcomes driven by their analysis'
+        ]
+    },
+    'python': {
+        q: 'Walk me through a complex problem you solved using Python where you had to balance code quality, performance, and delivery timelines.',
+        listen: [
+            'Structured problem-solving approach and technical depth',
+            'Awareness of code quality, testing, and maintainability',
+            'Ability to handle ambiguity and make pragmatic trade-offs'
+        ]
+    },
+    'leadership': {
+        q: 'Tell me about a time you led a team through a significant change or challenge. How did you maintain morale and keep the team focused on results?',
+        listen: [
+            'Concrete leadership actions — not just holding the title',
+            'Ability to communicate vision and handle resistance empathetically',
+            'Measurable outcome that shows their leadership made a difference'
+        ]
+    },
+    'communication': {
+        q: 'Give an example of when you had to convey a complex or unpopular message to a diverse audience. How did you tailor your approach?',
+        listen: [
+            'Adaptability in communication style based on the audience',
+            'Active listening and checking for understanding',
+            'Positive outcome or successful alignment that resulted'
+        ]
+    },
+    'product management': {
+        q: 'Tell me about a product decision you made that involved significant trade-offs. How did you evaluate options and communicate your rationale to stakeholders?',
+        listen: [
+            'Framework for decision-making (data, user research, business goals)',
+            'Ability to say no and manage stakeholder expectations',
+            'Outcome of the decision and lessons learned'
+        ]
+    },
+    'agile': {
+        q: 'Describe a situation where an Agile process you were part of broke down. What went wrong, and what did you do to get things back on track?',
+        listen: [
+            'Deep understanding of Agile principles, not just ceremonies',
+            'Proactive problem-solving and team facilitation skills',
+            'Continuous improvement mindset and concrete changes implemented'
+        ]
+    },
+    'machine learning': {
+        q: "Tell me about a machine learning project where the initial approach didn't work. How did you diagnose the problem and iterate toward a solution?",
+        listen: [
+            'Methodical experimentation and debugging approach',
+            'Ability to communicate technical challenges to non-technical stakeholders',
+            'Persistence and creativity in finding alternative approaches'
+        ]
+    },
+    'financial analysis': {
+        q: 'Describe a time your financial analysis directly influenced a major business decision. How did you present your findings to ensure they were acted upon?',
+        listen: [
+            'Analytical rigor and attention to detail in the analysis',
+            'Storytelling ability — turning numbers into a compelling narrative',
+            'Tangible business impact from their recommendation'
+        ]
+    },
+    'stakeholder management': {
+        q: 'Tell me about a time you had to manage conflicting priorities or expectations from multiple stakeholders. How did you find alignment?',
+        listen: [
+            "Structured approach to understanding each stakeholder's needs",
+            'Negotiation and prioritization skills',
+            'Win-win outcome or clear rationale for the final decision'
+        ]
+    },
+    'problem-solving': {
+        q: "Walk me through the most complex problem you've faced in the last year. What was your systematic approach to solving it?",
+        listen: [
+            'Clear, structured thinking process — not just jumping to solutions',
+            'Ability to break down complexity into manageable parts',
+            'Quality and impact of the solution they arrived at'
+        ]
+    },
+    'data-driven': {
+        q: 'Give an example of a time when data contradicted your intuition or a popular opinion. What did you do?',
+        listen: [
+            'Intellectual honesty and willingness to change course',
+            'Ability to interrogate data quality and methodology',
+            'How they communicated the counterintuitive finding to others'
+        ]
+    },
+    'collaboration': {
+        q: 'Describe a cross-functional project where you had to work closely with people from very different disciplines. What made the collaboration successful?',
+        listen: [
+            'Genuine respect for other disciplines and willingness to learn',
+            'Clear communication across functional boundaries',
+            'Shared ownership and how they navigated disagreements'
+        ]
+    },
+    'time management': {
+        q: 'Tell me about a period when you had multiple high-priority deadlines competing for your time. How did you decide what to focus on first?',
+        listen: [
+            'Prioritization framework (impact, urgency, dependencies)',
+            'Proactive communication about trade-offs and expectations',
+            'Outcome — did they meet the deadlines, and at what quality?'
+        ]
+    },
+    'a/b testing': {
+        q: 'Describe an A/B test you designed that yielded surprising or inconclusive results. What did you do next?',
+        listen: [
+            'Understanding of experimental design and statistical significance',
+            "Intellectual curiosity — not just accepting results at face value",
+            'Follow-through: how they used the learning to inform next steps'
+        ]
+    },
+    'creativity': {
+        q: 'Tell me about a time you proposed a creative or unconventional solution to a problem. How did you get buy-in for your idea?',
+        listen: [
+            'Genuine originality in their thinking, not just incremental improvement',
+            'Courage to challenge the status quo with evidence',
+            'Ability to prototype or validate ideas before committing resources'
+        ]
+    },
+    'adaptability': {
+        q: 'Describe a situation where your priorities or scope changed significantly mid-project. How did you adapt without losing momentum?',
+        listen: [
+            'Emotional resilience — frustration is fine, but they should recover',
+            'Speed and effectiveness of their pivot',
+            'How they helped others on the team adjust as well'
+        ]
+    },
+    'mentoring': {
+        q: 'Tell me about someone you mentored or developed. What was your approach, and how did that person grow as a result?',
+        listen: [
+            "Genuine investment in the other person's growth, not just delegation",
+            "Tailored approach based on the mentee's needs and learning style",
+            "Concrete evidence of the mentee's progress or promotion"
+        ]
+    },
+    'negotiation': {
+        q: 'Describe a negotiation you led where the stakes were high. How did you prepare, and what was the outcome?',
+        listen: [
+            "Thorough preparation and understanding of the other party's needs",
+            'Creative deal-making — looking for value beyond just price',
+            'Ability to maintain the relationship while advocating firmly'
+        ]
+    },
+    'attention to detail': {
+        q: 'Tell me about a time when your attention to detail caught something critical that others had missed. What was the impact?',
+        listen: [
+            'Systematic quality-checking habits, not just luck',
+            'Clear articulation of the risk or consequence if it had been missed',
+            'How they communicated the finding without alienating colleagues'
+        ]
+    },
+    'strategic thinking': {
+        q: 'Give an example of when you stepped back from day-to-day work to identify a longer-term strategic opportunity. What did you do about it?',
+        listen: [
+            'Ability to zoom out and see the bigger picture',
+            'Data or insight that informed their strategic perspective',
+            'Concrete actions taken to turn strategy into execution'
+        ]
+    },
+    'resilience': {
+        q: 'Tell me about a significant professional setback or failure. How did you handle it, and what did you learn?',
+        listen: [
+            'Honesty and self-awareness about what went wrong',
+            'Constructive response — learning, adapting, not just recovering',
+            'Growth demonstrated in subsequent work'
+        ]
+    },
+    'innovation': {
+        q: 'Describe a time you introduced a new process, tool, or idea that meaningfully improved how your team worked.',
+        listen: [
+            'Proactive identification of the opportunity for improvement',
+            'Evidence of testing and iterating before full rollout',
+            'Measurable improvement in efficiency, quality, or outcomes'
+        ]
+    },
+    'customer-centric': {
+        q: 'Tell me about a time you advocated for the customer or user when it was difficult or unpopular to do so.',
+        listen: [
+            'Deep understanding of customer needs backed by evidence',
+            'Courage to push back internally on behalf of the customer',
+            'Positive outcome for both the customer and the business'
+        ]
+    }
+};
+
+// ============================================================
+// GENERIC QUESTION TEMPLATES
+// ============================================================
+const GENERIC_HARD_TEMPLATES = [
+    (s) => `Describe a project where your expertise in ${s} was critical to delivering a successful outcome. What was the challenge and how did you approach it?`,
+    (s) => `Tell me about a time you had to quickly deepen your knowledge of ${s} to meet a project need. How did you manage the learning curve while delivering results?`,
+    (s) => `Walk me through a situation where your ${s} skills helped you solve a problem that would have been significantly harder otherwise. What made the difference?`,
+    (s) => `Can you share an example of how you've used ${s} to drive a measurable impact on a team or business outcome?`
+];
+
+const GENERIC_SOFT_TEMPLATES = [
+    (s) => `Tell me about a time your ${s} was tested in a high-pressure situation. How did you handle it and what was the outcome?`,
+    (s) => `Describe a situation where your ability to demonstrate ${s} directly contributed to the success of a project or team.`,
+    (s) => `Give an example of when you had to use strong ${s} to navigate a challenging interpersonal or organizational dynamic.`,
+    (s) => `Can you share a time when you intentionally worked to improve your ${s}? What steps did you take and what changed?`
+];
+
+const GENERIC_HARD_LISTEN = (s) => [
+    `Specific, demonstrated experience with ${s} — not just theoretical knowledge`,
+    `Clear articulation of the problem-solving process and their specific contribution`,
+    `Tangible results or impact from applying ${s}`
+];
+
+const GENERIC_SOFT_LISTEN = (s) => [
+    `Self-awareness and intentionality in how they apply ${s}`,
+    `Specific examples with concrete details rather than vague generalizations`,
+    `Evidence of growth or learning from the experience`
+];
+
+// ============================================================
+// FALLBACK QUESTIONS
+// ============================================================
+const FALLBACK_QUESTIONS = [
+    {
+        skill: 'Problem Solving',
+        type: 'general',
+        q: "Walk me through the most complex problem you've faced professionally in the last year. What was your systematic approach to solving it?",
+        listen: [
+            'Structured thinking — breaking complex problems into parts',
+            'Ability to identify root causes vs. symptoms',
+            'Quality and creativity of the solution'
+        ]
+    },
+    {
+        skill: 'Leadership',
+        type: 'general',
+        q: 'Tell me about a time you took ownership of something outside your defined responsibilities. What motivated you, and what happened?',
+        listen: [
+            'Proactive initiative and sense of ownership',
+            'Ability to influence without formal authority',
+            'Positive impact on the team or project'
+        ]
+    },
+    {
+        skill: 'Collaboration',
+        type: 'general',
+        q: 'Describe a situation where you had to work with someone whose working style was very different from yours. How did you make it work?',
+        listen: [
+            'Empathy and adaptability in working with different styles',
+            'Focus on shared goals rather than personal preferences',
+            'Successful outcome from the collaboration'
+        ]
+    },
+    {
+        skill: 'Communication',
+        type: 'general',
+        q: 'Give an example of a time you had to persuade a skeptical audience to support your idea or proposal. How did you build your case?',
+        listen: [
+            "Preparation and understanding of the audience's concerns",
+            'Use of data, logic, and storytelling',
+            'Ability to handle objections gracefully'
+        ]
+    },
+    {
+        skill: 'Adaptability',
+        type: 'general',
+        q: 'Tell me about a time when something you were working on changed dramatically mid-course — a pivot, a reorg, a shift in strategy. How did you handle it?',
+        listen: [
+            'Resilience and ability to stay productive during uncertainty',
+            'Speed of adaptation and proactive communication',
+            'Positive framing of the change and lessons learned'
+        ]
+    },
+    {
+        skill: 'Decision Making',
+        type: 'general',
+        q: 'Describe a difficult decision you made with incomplete information. What was your framework and how did it play out?',
+        listen: [
+            'Clear decision-making framework, even under ambiguity',
+            'Willingness to make a call and take responsibility',
+            'Honest reflection on what they would do differently'
+        ]
+    },
+    {
+        skill: 'Impact',
+        type: 'general',
+        q: 'What accomplishment in your career are you most proud of, and why? Walk me through what made it significant.',
+        listen: [
+            'Connection between their work and meaningful outcomes',
+            'Evidence of going beyond expectations',
+            'Passion and self-awareness about what drives them'
+        ]
+    },
+    {
+        skill: 'Growth',
+        type: 'general',
+        q: 'Tell me about a piece of critical feedback you received that was hard to hear. How did you respond to it?',
+        listen: [
+            'Genuine openness to feedback — not defensive',
+            'Concrete changes in behavior or approach after the feedback',
+            'Self-awareness about areas for improvement'
+        ]
+    },
+    {
+        skill: 'Prioritization',
+        type: 'general',
+        q: 'How do you decide what to say no to? Give me a specific example of a time you declined or deprioritized a request and why.',
+        listen: [
+            'Clear prioritization criteria (impact, alignment, capacity)',
+            'Courage and tact in communicating the no',
+            'Positive outcome from maintaining focus'
+        ]
+    },
+    {
+        skill: 'Teamwork',
+        type: 'general',
+        q: 'Describe a team you were part of that was exceptionally high-performing. What do you think made it work, and what was your specific role in that?',
+        listen: [
+            'Attribution of success to team dynamics, not just individual brilliance',
+            'Self-awareness about their role and contribution',
+            'Insight into what makes teams function well'
+        ]
+    }
+];
+
+
+4. js/parser.js
+
+javascript
+javascript
+// ============================================================
+// PARSER — Extracts structured data from raw notes
+// ============================================================
+
+function parseNotes(text) {
+    const result = {
+        title: '',
+        summary: '',
+        responsibilities: [],
+        hardSkills: [],
+        softSkills: [],
+        qualifications: [],
+        experienceLevel: '',
+        niceToHaves: [],
+        rawLines: []
+    };
+
+    const clean = text.replace(/\r\n/g, '\n').trim();
+    const lines = clean.split('\n')
+        .map(l => l.replace(/^[-•*◦▪]\s*/, '').replace(/^\d+[.)]\s*/, '').trim())
+        .filter(l => l.length > 0);
+
+    result.rawLines = lines;
+
+    // Extract title
+    result.title = extractTitle(lines, clean);
+
+    // Extract experience level
+    result.experienceLevel = extractExperience(clean);
+
+    // Detect section boundaries
+    const sections = detectSections(lines);
+
+    // Extract skills from full text
+    const lowerClean = clean.toLowerCase();
+    result.hardSkills = extractHardSkills(lowerClean);
+    result.softSkills = extractSoftSkills(lowerClean);
+
+    // Extract responsibilities
+    result.responsibilities = extractResponsibilities(lines, sections);
+
+    // Extract qualifications
+    result.qualifications = extractQualifications(lines, sections);
+
+    // Extract nice-to-haves
+    result.niceToHaves = extractNiceToHaves(lines, sections);
+
+    // Generate summary if not found
+    result.summary = generateSummary(result);
+
+    return result;
+}
+
+function extractTitle(lines, fullText) {
+    // Strategy 1: Role-like first line
+    if (lines.length > 0) {
+        const first = lines[0].replace(/[:\-–—]+$/, '').trim();
+        if (first.length < 80) {
+            const lower = first.toLowerCase();
+            if (ROLE_KEYWORDS.some(k => lower.includes(k))) {
+                return first;
+            }
+            if (first.length < 50 && !first.includes('.') && lines.length > 1) {
+                return first;
+            }
+        }
+    }
+
+    // Strategy 2: Search for role pattern
+    const rolePattern = /(?:looking for|seeking|hire|hiring)\s+(?:a|an)\s+(.+?)(?:\.|,|\n|$)/i;
+    const match = fullText.match(rolePattern);
+    if (match) {
+        let candidate = match[1].trim();
+        candidate = candidate.replace(/\s+(?:to|who|that|for)\b.*$/i, '').trim();
+        if (candidate.length < 60) return capitalizeTitle(candidate);
+    }
+
+    // Strategy 3: Find a line with role keywords
+    for (const line of lines.slice(0, 5)) {
+        const lower = line.toLowerCase();
+        const hasRole = ROLE_KEYWORDS.some(k => lower.includes(k));
+        if (hasRole && line.length < 70) {
+            return line.replace(/[:\-–—]+$/, '').trim();
+        }
+    }
+
+    return 'Untitled Role';
+}
+
+function extractExperience(text) {
+    const yearMatch = text.match(/(\d+)\+?\s*years?\s+(?:of\s+)?(?:experience|exp)/i);
+    if (yearMatch) return `${yearMatch[1]}+ years`;
+
+    if (/(?:senior|sr\.?|lead|principal|staff)\s/i.test(text)) return 'Senior-level';
+    if (/(?:junior|jr\.?|entry.?level|associate)\s/i.test(text)) return 'Junior-level';
+    if (/(?:mid.?level|mid.?senior)\s/i.test(text)) return 'Mid-level';
+
+    return '';
+}
+
+function detectSections(lines) {
+    const sections = {};
+    let currentSection = 'top';
+
+    for (let i = 0; i < lines.length; i++) {
+        const lower = lines[i].toLowerCase().replace(/[:\-–—]+$/, '').trim();
+
+        if (SECTION_HEADERS.some(h => lower.startsWith(h) || lower === h) && lines[i].length < 60) {
+            currentSection = lower;
+            sections[currentSection] = [];
+        } else {
+            if (!sections[currentSection]) sections[currentSection] = [];
+            sections[currentSection].push(i);
+        }
+    }
+
+    return sections;
+}
+
+function extractHardSkills(text) {
+    const found = [];
+    for (const [category, skills] of Object.entries(HARD_SKILLS)) {
+        for (const skill of skills) {
+            const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+            if (regex.test(text)) {
+                found.push(skill);
+            }
+        }
+    }
+    return [...new Set(found)];
+}
+
+function extractSoftSkills(text) {
+    const found = [];
+    for (const skill of SOFT_SKILLS) {
+        const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+        if (regex.test(text)) {
+            let normalized = skill.replace(/-/g, ' ');
+            normalized = normalized.split(' ')
+                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(' ');
+            if (!found.some(f => f.toLowerCase() === normalized.toLowerCase())) {
+                found.push(normalized);
+            }
+        }
+    }
+    return found;
+}
+
+function extractResponsibilities(lines, sections) {
+    const resps = [];
+
+    for (const [section, indices] of Object.entries(sections)) {
+        if (section.includes('responsib') || section.includes('duties') ||
+            section.includes('what you') || section.includes('you will') ||
+            section.includes("you'll")) {
+            for (const idx of indices) {
+                if (lines[idx].length > 10) resps.push(cleanLine(lines[idx]));
+            }
+        }
+    }
+
+    if (resps.length === 0) {
+        for (const line of lines) {
+            const lower = line.toLowerCase();
+            if (ACTION_VERBS.some(v => lower.startsWith(v) || lower.match(new RegExp(`\\b${v}\\b`)))) {
+                if (line.length > 15 && line.length < 250) {
+                    resps.push(cleanLine(line));
+                }
+            }
+        }
+    }
+
+    return [...new Set(resps)].slice(0, 12);
+}
+
+function extractQualifications(lines, sections) {
+    const quals = [];
+
+    for (const [section, indices] of Object.entries(sections)) {
+        if (section.includes('require') || section.includes('qualif') ||
+            section.includes('must have') || section.includes('experience')) {
+            for (const idx of indices) {
+                if (lines[idx].length > 10) quals.push(cleanLine(lines[idx]));
+            }
+        }
+    }
+
+    return [...new Set(quals)].slice(0, 10);
+}
+
+function extractNiceToHaves(lines, sections) {
+    const nths = [];
+
+    for (const [section, indices] of Object.entries(sections)) {
+        if (section.includes('nice') || section.includes('preferred') ||
+            section.includes('bonus') || section.includes('plus') ||
+            section.includes('good to')) {
+            for (const idx of indices) {
+                if (lines[idx].length > 10) nths.push(cleanLine(lines[idx]));
+            }
+        }
+    }
+
+    return [...new Set(nths)].slice(0, 6);
+}
+
+function generateSummary(parsed) {
+    const parts = [];
+    const title = parsed.title !== 'Untitled Role' ? parsed.title : 'this role';
+    const exp = parsed.experienceLevel
+        ? ` with ${parsed.experienceLevel.includes('years')
+            ? parsed.experienceLevel + ' of experience'
+            : parsed.experienceLevel + ' experience'}`
+        : '';
+
+    parts.push(`We're looking for a ${title}${exp} to join our team and make an immediate impact.`);
+
+    if (parsed.responsibilities.length > 0) {
+        const topResp = parsed.responsibilities.slice(0, 3).map(r =>
+            r.charAt(0).toLowerCase() + r.slice(1)
+        );
+        parts.push(`In this role, you'll be responsible for ${topResp[0]}${topResp.length > 1 ? ', ' + topResp[1] : ''}${topResp.length > 2 ? ', and ' + topResp[2] : ''}.`);
+    }
+
+    if (parsed.hardSkills.length > 0 || parsed.softSkills.length > 0) {
+        const allSkills = [
+            ...parsed.hardSkills.slice(0, 3),
+            ...parsed.softSkills.slice(0, 2)
+        ];
+        parts.push(`The ideal candidate brings expertise in ${allSkills.join(', ')} and thrives in a collaborative, fast-paced environment.`);
+    }
+
+    return parts.join(' ');
+}
+
+function cleanLine(line) {
+    return line.replace(/^[-•*◦▪]\s*/, '')
+        .replace(/^\d+[.)]\s*/, '')
+        .replace(/[:\-–—]+$/, '')
+        .trim();
+}
+
+function capitalizeTitle(str) {
+    const small = ['a','an','the','and','but','or','for','nor','in','on','at','to','of','by','with'];
+    return str.split(' ').map((w, i) => {
+        if (i === 0 || !small.includes(w.toLowerCase())) {
+            return w.charAt(0).toUpperCase() + w.slice(1);
+        }
+        return w.toLowerCase();
+    }).join(' ');
+}
+
+function ensurePeriod(s) {
+    s = s.trim();
+    if (!s.match(/[.!?]$/)) s += '.';
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function formatList(items) {
+    if (items.length === 0) return '';
+    if (items.length === 1) return items[0];
+    if (items.length === 2) return `${items[0]} and ${items[1]}`;
+    return items.slice(0, -1).join(', ') + ', and ' + items[items.length - 1];
+}
+
+
+5. js/generator.js
+
+javascript
+javascript
+// ============================================================
+// GENERATORS — JD and Interview Guide builders
+// ============================================================
+
+// ---- Job Description ----
+
+function generateJD(parsed) {
+    const title = parsed.title;
+    const meta = [];
+    meta.push('Full-time');
+    if (parsed.experienceLevel) meta.push(parsed.experienceLevel);
+    meta.push('Remote / Hybrid');
+
+    const sections = [];
+
+    // About the Role
+    sections.push({
+        heading: 'About the Role',
+        content: `<p>${parsed.summary}</p>`
+    });
+
+    // What You'll Do
+    if (parsed.responsibilities.length > 0) {
+        const items = parsed.responsibilities.map(r => `<li>${ensurePeriod(r)}</li>`).join('');
+        sections.push({ heading: "What You'll Do", content: `<ul>${items}</ul>` });
+    } else {
+        const generic = generateGenericResponsibilities(parsed);
+        sections.push({
+            heading: "What You'll Do",
+            content: `<ul>${generic.map(r => `<li>${r}</li>`).join('')}</ul>`
+        });
+    }
+
+    // What You'll Bring
+    const bringItems = [];
+    if (parsed.qualifications.length > 0) {
+        bringItems.push(...parsed.qualifications.map(q => ensurePeriod(q)));
+    }
+    if (parsed.hardSkills.length > 0) {
+        bringItems.push(`Proficiency in ${formatList(parsed.hardSkills.slice(0, 6))}.`);
+    }
+    if (parsed.softSkills.length > 0) {
+        bringItems.push(`Strong ${formatList(parsed.softSkills.slice(0, 4))} skills.`);
+    }
+    if (parsed.experienceLevel && parsed.experienceLevel.includes('years')) {
+        bringItems.push(`${parsed.experienceLevel} of relevant professional experience.`);
+    }
+    if (bringItems.length === 0) {
+        bringItems.push('Relevant professional experience in a similar role.');
+        bringItems.push('Strong problem-solving and analytical abilities.');
+        bringItems.push('Excellent communication and collaboration skills.');
+    }
+
+    sections.push({
+        heading: "What You'll Bring",
+        content: `<ul>${bringItems.slice(0, 8).map(q => `<li>${q}</li>`).join('')}</ul>`
+    });
+
+    // Nice to Have
+    if (parsed.niceToHaves.length > 0) {
+        sections.push({
+            heading: 'Nice to Have',
+            content: `<ul>${parsed.niceToHaves.map(n => `<li>${ensurePeriod(n)}</li>`).join('')}</ul>`
+        });
+    }
+
+    // Key Skills
+    const allSkills = [...new Set([
+        ...parsed.hardSkills,
+        ...parsed.softSkills.map(s => s.toLowerCase())
+    ])];
+    if (allSkills.length > 0) {
+        sections.push({
+            heading: 'Key Skills',
+            content: `<div class="skill-pills">${allSkills.slice(0, 15)
+                .map(s => `<span class="skill-pill">${s}</span>`)
+                .join('')}</div>`
+        });
+    }
+
+    // What We Offer
+    sections.push({
+        heading: 'What We Offer',
+        content: `<ul>
+            <li>Competitive compensation package with equity options.</li>
+            <li>Comprehensive health, dental, and vision insurance.</li>
+            <li>Flexible work arrangements — remote-friendly with optional in-office collaboration.</li>
+            <li>Professional development budget and continuous learning opportunities.</li>
+            <li>Generous PTO policy and company-wide wellness days.</li>
+        </ul>`
+    });
+
+    // Build HTML
+    const metaHTML = meta.map(m => `<span>${m}</span>`).join('');
+    const sectionsHTML = sections.map(s => `
+        <div class="jd-section">
+            <h3>${s.heading}</h3>
+            ${s.content}
+        </div>
+    `).join('');
+
+    return `
+        <div class="jd-doc">
+            <h2 class="doc-title">${title}</h2>
+            <div class="doc-meta">${metaHTML}</div>
+            ${sectionsHTML}
+            <div class="divider"></div>
+            <p class="eoe">We are an equal opportunity employer and value diversity. We do not discriminate on the basis of race, religion, color, national origin, gender, sexual orientation, age, marital status, veteran status, or disability status.</p>
+        </div>
+    `;
+}
+
+function generateGenericResponsibilities(parsed) {
+    const resps = [
+        'Define and drive the strategic vision and roadmap for your area of ownership.',
+        'Collaborate cross-functionally with engineering, design, and business partners to deliver high-impact outcomes.',
+        'Analyze data and metrics to identify opportunities, inform decisions, and measure success.',
+        'Communicate progress, insights, and recommendations clearly to stakeholders at all levels.',
+        'Foster a culture of continuous improvement, experimentation, and accountability within the team.'
+    ];
+
+    if (parsed.hardSkills.some(s => /sql|data|analyt/i.test(s))) {
+        resps.push('Leverage data analysis tools and techniques to uncover actionable insights.');
+    }
+    if (parsed.softSkills.some(s => /lead|mentor/i.test(s))) {
+        resps.push('Mentor and develop team members, fostering their professional growth.');
+    }
+
+    return resps.slice(0, 7);
+}
+
+// ---- Interview Guide ----
+
+function simpleHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+    }
+    return Math.abs(hash);
+}
+
+function generateGuide(parsed) {
+    const questions = [];
+    const usedKeys = new Set();
+    const MAX = 10;
+
+    // 1. Specific questions for detected hard skills
+    for (const skill of parsed.hardSkills) {
+        if (questions.length >= MAX) break;
+        const key = skill.toLowerCase();
+        if (SPECIFIC_QUESTIONS[key] && !usedKeys.has(key)) {
+            questions.push({
+                number: questions.length + 1,
+                skill: skill,
+                type: 'hard',
+                question: SPECIFIC_QUESTIONS[key].q,
+                listenFor: SPECIFIC_QUESTIONS[key].listen
+            });
+            usedKeys.add(key);
+        }
+    }
+
+    // 2. Specific questions for detected soft skills
+    for (const skill of parsed.softSkills) {
+        if (questions.length >= MAX) break;
+        const key = skill.toLowerCase();
+        if (SPECIFIC_QUESTIONS[key] && !usedKeys.has(key)) {
+            questions.push({
+                number: questions.length + 1,
+                skill: skill,
+                type: 'soft',
+                question: SPECIFIC_QUESTIONS[key].q,
+                listenFor: SPECIFIC_QUESTIONS[key].listen
+            });
+            usedKeys.add(key);
+        }
+    }
+
+    // 3. Generic questions for remaining hard skills
+    for (const skill of parsed.hardSkills) {
+        if (questions.length >= MAX) break;
+        const key = skill.toLowerCase();
+        if (!usedKeys.has(key)) {
+            const hash = simpleHash(skill);
+            const template = GENERIC_HARD_TEMPLATES[hash % GENERIC_HARD_TEMPLATES.length];
+            questions.push({
+                number: questions.length + 1,
+                skill: skill,
+                type: 'hard',
+                question: template(skill),
+                listenFor: GENERIC_HARD_LISTEN(skill)
+            });
+            usedKeys.add(key);
+        }
+    }
+
+    // 4. Generic questions for remaining soft skills
+    for (const skill of parsed.softSkills) {
+        if (questions.length >= MAX) break;
+        const key = skill.toLowerCase();
+        if (!usedKeys.has(key)) {
+            const hash = simpleHash(skill);
+            const template = GENERIC_SOFT_TEMPLATES[hash % GENERIC_SOFT_TEMPLATES.length];
+            questions.push({
+                number: questions.length + 1,
+                skill: skill,
+                type: 'soft',
+                question: template(skill),
+                listenFor: GENERIC_SOFT_LISTEN(skill)
+            });
+            usedKeys.add(key);
+        }
+    }
+
+    // 5. Fill remaining with fallback
+    for (const fq of FALLBACK_QUESTIONS) {
+        if (questions.length >= MAX) break;
+        const key = fq.skill.toLowerCase();
+        if (!usedKeys.has(key)) {
+            questions.push({
+                number: questions.length + 1,
+                skill: fq.skill,
+                type: fq.type,
+                question: fq.q,
+                listenFor: fq.listen
+            });
+            usedKeys.add(key);
+        }
+    }
+
+    // Renumber
+    questions.forEach((q, i) => q.number = i + 1);
+
+    return {
+        questions,
+        hardCount: questions.filter(q => q.type === 'hard').length,
+        softCount: questions.filter(q => q.type === 'soft').length,
+        genCount: questions.filter(q => q.type === 'general').length,
+        title: parsed.title
+    };
+}
+
+function renderGuide(guide) {
+    const statsHTML = [];
+    if (guide.hardCount > 0) {
+        statsHTML.push(
+            `<span class="stat-badge hard">${guide.hardCount} technical</span>`
+        );
+    }
+    if (guide.softCount > 0) {
+        statsHTML.push(
+            `<span class="stat-badge soft">${guide.softCount} soft skill</span>`
+        );
+    }
+    if (guide.genCount > 0) {
+        statsHTML.push(
+            `<span class="stat-badge general" style="background:var(--accent-soft);color:var(--accent);border:1px solid rgba(200,155,60,0.2);">${guide.genCount} general</span>`
+        );
+    }
+
+    const questionsHTML = guide.questions.map(q => {
+        const typeClass = q.type === 'hard' ? 'hard' : q.type === 'soft' ? 'soft' : 'general';
+        const typeLabel = q.type === 'hard' ? 'Technical' : q.type === 'soft' ? 'Soft Skill' : 'General';
+        const listenHTML = q.listenFor.map(l => `<li>${l}</li>`).join('');
+
+        return `
+            <div class="question-card">
+                <div class="question-top">
+                    <span class="q-number">${String(q.number).padStart(2, '0')}</span>
+                    <span class="q-skill-tag ${typeClass}">${q.skill}</span>
+                    <span class="q-skill-tag ${typeClass}" style="opacity:0.7">${typeLabel}</span>
+                </div>
+                <p class="question-text">"${q.question}"</p>
+                <div class="listen-guide">
+                    <h4>What to listen for</h4>
+                    <ul>${listenHTML}</ul>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    return `
+        <div class="guide-doc">
+            <div class="guide-header">
+                <h2>Interview Guide: ${guide.title}</h2>
+                <p>${guide.questions.length} behavioral questions · STAR format recommended</p>
+                ${statsHTML.length > 0
+                    ? `<div class="guide-stats">${statsHTML.join('')}</div>`
+                    : ''
+                }
+            </div>
+            ${questionsHTML}
+        </div>
+    `;
+}
+
+// ---- Plain Text for Copy ----
+
+function jdToPlainText(parsed) {
+    const lines = [];
+    lines.push(parsed.title.toUpperCase());
+    lines.push(`Full-time · ${parsed.experienceLevel || 'All levels'} · Remote / Hybrid`);
+    lines.push('');
+    lines.push('ABOUT THE ROLE');
+    lines.push(stripHTML(parsed.summary));
+    lines.push('');
+
+    if (parsed.responsibilities.length > 0) {
+        lines.push("WHAT YOU'LL DO");
+        parsed.responsibilities.forEach(r => lines.push(`• ${ensurePeriod(r)}`));
+        lines.push('');
+    }
+
+    lines.push("WHAT YOU'LL BRING");
+    if (parsed.qualifications.length > 0) {
+        parsed.qualifications.forEach(q => lines.push(`• ${ensurePeriod(q)}`));
+    }
+    if (parsed.hardSkills.length > 0) {
+        lines.push(`• Proficiency in ${formatList(parsed.hardSkills.slice(0, 6))}.`);
+    }
+    if (parsed.softSkills.length > 0) {
+        lines.push(`• Strong ${formatList(parsed.softSkills.slice(0, 4))} skills.`);
+    }
+    lines.push('');
+
+    if (parsed.niceToHaves.length > 0) {
+        lines.push('NICE TO HAVE');
+        parsed.niceToHaves.forEach(n => lines.push(`• ${ensurePeriod(n)}`));
+        lines.push('');
+    }
+
+    lines.push('We are an equal opportunity employer and value diversity.');
+    return lines.join('\n');
+}
+
+function guideToPlainText(guide) {
+    const lines = [];
+    lines.push(`INTERVIEW GUIDE: ${guide.title.toUpperCase()}`);
+    lines.push(`${guide.questions.length} behavioral questions — STAR format recommended`);
+    lines.push('');
+
+    guide.questions.forEach(q => {
+        const typeLabel = q.type === 'hard' ? 'Technical' : q.type === 'soft' ? 'Soft Skill' : 'General';
+        lines.push(`${String(q.number).padStart(2, '0')}. [${typeLabel} · ${q.skill}]`);
+        lines.push(`"${q.question}"`);
+        lines.push('What to listen for:');
+        q.listenFor.forEach(l => lines.push(`  → ${l}`));
+        lines.push('');
+    });
+
+    return lines.join('\n');
+}
+
+function stripHTML(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+}
+
+
+6. js/app.js
+
+javascript
+javascript
+// ============================================================
+// APP CONTROLLER — UI logic and event handling
+// ============================================================
+
+const CONFIG = { MIN_INPUT: 15, GEN_DELAY: 700 };
+
+// State
+let currentParsed = null;
+let currentGuide = null;
+let currentTab = 'jd';
+
+// DOM references
+const DOM = {};
+
+function initUI() {
+    DOM.input         = document.getElementById('notesInput');
+    DOM.charCount     = document.getElementById('charCount');
+    DOM.sampleBtn     = document.getElementById('sampleBtn');
+    DOM.generateBtn   = document.getElementById('generateBtn');
+    DOM.errorMsg      = document.getElementById('errorMsg');
+    DOM.jdTab         = document.getElementById('jdTab');
+    DOM.guideTab      = document.getElementById('guideTab');
+    DOM.jdOutput      = document.getElementById('jdOutput');
+    DOM.jdPlaceholder = document.getElementById('jdPlaceholder');
+    DOM.guideOutput   = document.getElementById('guideOutput');
+    DOM.guidePlaceholder = document.getElementById('guidePlaceholder');
+    DOM.tabIndicator  = document.getElementById('tabIndicator');
+    DOM.copyBtn       = document.getElementById('copyBtn');
+    DOM.outputBody    = document.getElementById('outputBody');
+
+    // Events
+    DOM.input.addEventListener('input', () => {
+        const len = DOM.input.value.length;
+        DOM.charCount.textContent = `${len} character${len !== 1 ? 's' : ''}`;
+        hideError();
+    });
+
+    DOM.sampleBtn.addEventListener('click', loadSample);
+    DOM.generateBtn.addEventListener('click', handleGenerate);
+    DOM.copyBtn.addEventListener('click', handleCopy);
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    window.addEventListener('resize', updateTabIndicator);
+    requestAnimationFrame(updateTabIndicator);
+}
+
+function loadSample() {
+    const sample = `Senior Product Manager - Growth Team
+
+Looking for a senior PM to own growth strategy for our B2B SaaS platform.
+
+Responsibilities:
+- Own the product roadmap for growth and activation features
+- Design and run A/B experiments to improve conversion rates
+- Partner with engineering, design, and data science teams
+- Analyze user behavior data using SQL and analytics tools
+- Define success metrics and track KPIs for the growth team
+- Present findings and recommendations to executive leadership
+- Mentor junior product managers on the team
+
+Requirements:
+- 5+ years of product management experience
+- Strong analytical and data-driven mindset
+- Proficiency in SQL and data analysis tools (Tableau, Looker)
+- Excellent communication and stakeholder management skills
+- Experience with B2B or SaaS products
+- Track record of driving measurable business outcomes
+- Ability to thrive in a fast-paced, ambiguous environment
+
+Nice to have:
+- MBA or advanced degree
+- Experience with machine learning or AI products
+- Background in growth hacking or marketing technology
+
+We need someone who is a strong leader but also collaborative.
+They should be able to think strategically while being hands-on
+with data. Strong presentation skills are important since they'll
+be presenting to the C-suite regularly.`;
+
+    DOM.input.value = sample;
+    DOM.input.dispatchEvent(new Event('input'));
+    DOM.input.focus();
+}
+
+async function handleGenerate() {
+    const text = DOM.input.value.trim();
+
+    if (text.length < CONFIG.MIN_INPUT) {
+        showError(`Please enter at least a few sentences about the role. (${text.length}/${CONFIG.MIN_INPUT} characters)`);
+        return;
+    }
+
+    DOM.generateBtn.classList.add('loading');
+    DOM.generateBtn.disabled = true;
+    hideError();
+
+    await sleep(CONFIG.GEN_DELAY);
+
+    try {
+        const parsed = parseNotes(text);
+        currentParsed = parsed;
+
+        DOM.jdPlaceholder.style.display = 'none';
+        DOM.jdOutput.innerHTML = generateJD(parsed);
+
+        const guide = generateGuide(parsed);
+        currentGuide = guide;
+        DOM.guidePlaceholder.style.display = 'none';
+        DOM.guideOutput.innerHTML = renderGuide(guide);
+
+        DOM.copyBtn.style.display = 'flex';
+        switchTab('jd');
+
+    } catch (err) {
+        showError('Something went wrong during generation. Please try again.');
+        console.error(err);
+    }
+
+    DOM.generateBtn.classList.remove('loading');
+    DOM.generateBtn.disabled = false;
+}
+
+function switchTab(tab) {
+    currentTab = tab;
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+
+    document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.remove('active');
+    });
+
+    if (tab === 'jd') {
+        DOM.jdTab.classList.add('active');
+    } else {
+        DOM.guideTab.classList.add('active');
+    }
+
+    DOM.outputBody.scrollTop = 0;
+    updateTabIndicator();
+}
+
+function updateTabIndicator() {
+    const activeTab = document.querySelector('.tab-btn.active');
+    if (!activeTab || !DOM.tabIndicator) return;
+
+    const tabsContainer = document.getElementById('tabs');
+    const rect = activeTab.getBoundingClientRect();
+    const containerRect = tabsContainer.getBoundingClientRect();
+
+    DOM.tabIndicator.style.left = (rect.left - containerRect.left) + 'px';
+    DOM.tabIndicator.style.width = rect.width + 'px';
+}
+
+async function handleCopy() {
+    let text = '';
+    if (currentTab === 'jd' && currentParsed) {
+        text = jdToPlainText(currentParsed);
+    } else if (currentTab === 'guide' && currentGuide) {
+        text = guideToPlainText(currentGuide);
+    }
+    if (!text) return;
+
+    try {
+        await navigator.clipboard.writeText(text);
+        showCopied();
+    } catch (err) {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showCopied();
+    }
+}
+
+function showCopied() {
+    DOM.copyBtn.classList.add('copied');
+    DOM.copyBtn.querySelector('span').textContent = 'Copied!';
+    setTimeout(() => {
+        DOM.copyBtn.classList.remove('copied');
+        DOM.copyBtn.querySelector('span').textContent = 'Copy';
+    }, 2000);
+}
+
+function showError(msg) {
+    DOM.errorMsg.textContent = msg;
+    DOM.errorMsg.classList.add('show');
+}
+
+function hideError() {
+    DOM.errorMsg.classList.remove('show');
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+document.addEventListener('DOMContentLoaded', initUI);
+
+
+7. README.md
+
+markdown
+markdown
+# Recruitment Sandbox
+
+A single-page web app that transforms raw role notes into two polished recruitment documents:
+
+1. **Job Description** — LinkedIn-ready, properly formatted
+2. **Interview Guide** — 10 behavioral questions targeting the skills detected in the JD
+
+## Quick Start
+
+```bash
+git clone https://github.com/USERNAME/recruitment-sandbox.git
+cd recruitment-sandbox
+open index.html
+
+No build step. No dependencies. Just open in a browser.
+
+
+How It Works
+
+1.Paste rough notes about a role (bullet points, stream of consciousness, messy copy)
+2.Click Generate Documents
+3.Get a polished JD and a tailored interview guide
+4.Copy either document to clipboard with one click
+
+Tech Stack
+
+Vanilla HTML / CSS / JavaScript
+Google Fonts (Instrument Serif, Source Serif 4, JetBrains Mono)
+Zero dependencies
+
+Project Structure
+
+text
+text
+recruitment-sandbox/
+├── index.html          # Main HTML
+├── css/
+│   └── styles.css      # All styles
+├── js/
+│   ├── skills.js       # Skill databases & question banks
+│   ├── parser.js       # Raw text → structured data
+│   ├── generator.js    # Structured data → HTML documents
+│   └── app.js          # UI controller & events
+└── README.md
+
+License
+
+MIT
+
+text
+text
+
+---
+
+كده المشروع مفكوك لـ **7 ملفات** كل واحد ليه دور واضح. أي تعديل في أي جزء بيعمله من غير ما يلمس الباقي.
+اعمل readme احترافى
+
+markdown
+markdown
+<!-- Banner -->
+<div align="center">
+
+# 🏗️ Recruitment Sandbox
+
+### Turn messy role notes into polished hiring documents — instantly.
+
+<br>
+
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-blueviolet?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+
+<br>
+
+Paste rough notes about any role. Get back a **LinkedIn-ready Job Description** and a **tailored Interview Guide** with 10 behavioral questions — all in seconds.
+
+No sign-up. No API keys. No server. **Runs entirely in your browser.**
+
+<br>
+
+<a href="#-live-demo">Live Demo</a> · <a href="#-quick-start">Quick Start</a> · <a href="#-how-it-works">How It Works</a> · <a href="#-features">Features</a> · <a href="#-architecture">Architecture</a>
+
+</div>
+
+---
+
+## 📸 Preview
+
+<br>
+
+<div align="center">
+
+| Input (Raw Notes) | Output (Job Description) | Output (Interview Guide) |
+|:-----------------:|:------------------------:|:------------------------:|
+| ![Input](https://via.placeholder.com/300x200/09090c/c89b3c?text=Raw+Notes) | ![JD](https://via.placeholder.com/300x200/09090c/c89b3c?text=Job+Description) | ![Guide](https://via.placeholder.com/300x200/09090c/c89b3c?text=Interview+Guide) |
+
+</div>
+
+<br>
+
+---
+
+## 🚀 Live Demo
+
+> **[Open Recruitment Sandbox →](https://USERNAME.github.io/recruitment-sandbox/)**
+>
+> _Replace `USERNAME` with your GitHub username after enabling GitHub Pages._
+
+<br>
+
+---
+
+## ⚡ Quick Start
+
+### Option 1 — Clone & Open
+
+```bash
+git clone https://github.com/USERNAME/recruitment-sandbox.git
+cd recruitment-sandbox
+open index.html          # macOS
+# or: start index.html   # Windows
+# or: xdg-open index.html # Linux
+
+Option 2 — GitHub Pages
+
+1.Fork this repository
+2.Go to Settings → Pages
+3.Set Source to main branch, folder / (root)
+4.Visit https://YOUR_USERNAME.github.io/recruitment-sandbox/
+
+Option 3 — Just download
+
+Download 
+index.html
+, open it in any browser. That's it.
+
+
+
+
+
+🔍 How It Works
+
+text
+text
+┌──────────────────────────────────────────────────────┐
+│                  YOUR RAW NOTES                       │
+│                                                       │
+│  "Looking for a senior PM to lead growth.            │
+│   Needs SQL, A/B testing experience.                 │
+│   Should be a strong communicator and                │
+│   data-driven leader..."                              │
+└──────────────────────┬───────────────────────────────┘
+                       │
+                       ▼
+         ┌──────────────────────────┐
+         │      TEXT PARSER         │
+         │                          │
+         │  • Extract job title     │
+         │  • Detect experience     │
+         │  • Map 200+ hard skills  │
+         │  • Identify soft skills  │
+         │  • Parse sections        │
+         └────────────┬─────────────┘
+                      │
+                      ▼
+         ┌──────────────────────────┐
+         │   STRUCTURED DATA        │
+         │                          │
+         │  {                       │
+         │    title: "..."          │
+         │    hardSkills: [...]     │
+         │    softSkills: [...]     │
+         │    responsibilities:[…]  │
+         │    qualifications: [...] │
+         │  }                       │
+         └─────┬──────────┬─────────┘
+               │          │
+               ▼          ▼
+    ┌──────────────┐ ┌──────────────────┐
+    │ JOB          │ │ INTERVIEW        │
+    │ DESCRIPTION  │ │ GUIDE            │
+    │              │ │                  │
+    │ • About      │ │ • 10 Questions   │
+    │ • Duties     │ │ • Skill-tagged   │
+    │ • Skills     │ │ • Listen guides  │
+    │ • Benefits   │ │ • STAR format    │
+    └──────────────┘ └──────────────────┘
+
+
+
+
+✨ Features
+
+🧠 Smart Skill Detection
+
+Recognizes 200+ technical skills across 14 domains:
+
+
+Domain	Examples
+Software Engineering	Python, Java, TypeScript, Go, Rust
+Data & Databases	SQL, PostgreSQL, MongoDB, Spark, Airflow
+Cloud & DevOps	AWS, Docker, Kubernetes, Terraform, CI/CD
+AI & Machine Learning	TensorFlow, PyTorch, NLP, LLMs
+Product Management	Roadmap, A/B Testing, Agile, Scrum, Jira
+Analytics & BI	Tableau, Power BI, Looker, Snowflake
+Design	Figma, UX Design, Prototyping, Design Systems
+Marketing	SEO, PPC, HubSpot, Growth Marketing
+Sales	Salesforce, CRM, Pipeline Management
+Finance	Financial Modeling, GAAP, Valuation
++ 4 more domains	HR, Operations, Legal, Web Development
+
+Plus 50+ soft skills including leadership, communication, stakeholder management, and more.
+
+
+📄 LinkedIn-Ready Job Descriptions
+
+Professional section formatting (About, Responsibilities, Requirements, Benefits)
+Experience level auto-detection (years of experience, seniority)
+Skill pills with visual tags
+Equal Opportunity Employer statement
+One-click copy as plain text for LinkedIn or ATS systems
+
+🎯 Tailored Interview Guide
+
+10 behavioral questions per role
+Questions matched specifically to detected skills when possible
+Each tagged as Technical, Soft Skill, or General
+"What to Listen For" guide with each question — 3 evaluation criteria
+Covers hard skills (SQL, Python, ML...) and soft skills (leadership, communication...)
+
+🎨 Thoughtful Design
+
+Dark, editorial aesthetic with gold accents
+Staggered animations for smooth content reveal
+Responsive layout (desktop → tablet → mobile)
+Custom typography: Instrument Serif + Source Serif 4 + JetBrains Mono
+Grain texture overlay for visual depth
+Accessible color contrast and focus states
+
+🛠️ Zero Dependencies
+
+No frameworks (no React, no Vue, no Angular)
+No build tools (no Webpack, no Vite)
+No backend (no Node, no Python, no API calls)
+No analytics, no tracking, no cookies
+Just HTML + CSS + JavaScript
+
+
+
+
+📁 Project Architecture
+
+text
+text
+recruitment-sandbox/
+│
+├── index.html                 # Entry point — HTML structure
+│
+├── css/
+│   └── styles.css             # All styling — layout, components, animations
+│
+├── js/
+│   │
+│   ├── skills.js              # Data layer
+│   │   ├── HARD_SKILLS        #   200+ technical skills across 14 categories
+│   │   ├── SOFT_SKILLS        #   50+ interpersonal & professional skills
+│   │   ├── ACTION_VERBS       #   Verb list for responsibility detection
+│   │   ├── ROLE_KEYWORDS      #   Title detection keywords
+│   │   ├── SECTION_HEADERS    #   Section boundary markers
+│   │   ├── SPECIFIC_QUESTIONS #   Handcrafted Q&A for key skills (23 skills)
+│   │   ├── GENERIC_*_TEMPLATES#   Parametric templates for other skills
+│   │   └── FALLBACK_QUESTIONS #   10 universal behavioral questions
+│   │
+│   ├── parser.js              # Text analysis engine
+│   │   ├── parseNotes()       #   Main entry — orchestrates all extraction
+│   │   ├── extractTitle()     #   3-strategy title detection
+│   │   ├── extractExperience()#   Seniority & years parsing
+│   │   ├── detectSections()   #   Section boundary detection
+│   │   ├── extractHardSkills()#   Regex matching against skill DB
+│   │   ├── extractSoftSkills()#   Normalized soft skill detection
+│   │   ├── extract*()         #   Responsibilities, qualifications, nice-to-haves
+│   │   └── generateSummary()  #   Auto-generated role summary
+│   │
+│   ├── generator.js           # Document builders
+│   │   ├── generateJD()       #   Builds structured JD HTML
+│   │   ├── generateGuide()    #   Builds 10-question interview guide
+│   │   ├── renderGuide()      #   Converts guide data → styled HTML
+│   │   └── *ToPlainText()     #   Copy-friendly plain text versions
+│   │
+│   └── app.js                 # UI controller
+│       ├── initUI()           #   DOM binding & event listeners
+│       ├── loadSample()       #   Pre-fills sample role notes
+│       ├── handleGenerate()   #   Orchestrates parse → generate → render
+│       ├── switchTab()        #   Tab navigation with animated indicator
+│       └── handleCopy()       #   Clipboard integration
+│
+└── README.md                  # This file
+
+Data Flow
+
+text
+text
+User Input
+    │
+    ▼
+app.js::handleGenerate()
+    │
+    ├──► parser.js::parseNotes()
+    │         │
+    │         ├── extractTitle()       ──► title string
+    │         ├── extractExperience()  ──► experience level
+    │         ├── extractHardSkills()  ──► skill[] from HARD_SKILLS
+    │         ├── extractSoftSkills()  ──► skill[] from SOFT_SKILLS
+    │         ├── extractResponsibilities()
+    │         ├── extractQualifications()
+    │         └── generateSummary()
+    │
+    ├──► generator.js::generateJD(parsed)
+    │         └──► HTML string → DOM
+    │
+    └──► generator.js::generateGuide(parsed)
+              ├── Match SPECIFIC_QUESTIONS by skill
+              ├── Fill gaps with GENERIC templates
+              ├── Fill remaining with FALLBACK
+              └──► HTML string → DOM
+
+
+
+
+🧪 Sample Input
+
+
+text
+text
+Senior Product Manager - Growth Team
+
+Looking for a senior PM to own growth strategy for our B2B SaaS platform.
+
+Responsibilities:
+- Own the product roadmap for growth and activation features
+- Design and run A/B experiments to improve conversion rates
+- Partner with engineering, design, and data science teams
+- Analyze user behavior data using SQL and analytics tools
+- Define success metrics and track KPIs for the growth team
+- Present findings and recommendations to executive leadership
+- Mentor junior product managers on the team
+
+Requirements:
+- 5+ years of product management experience
+- Strong analytical and data-driven mindset
+- Proficiency in SQL and data analysis tools (Tableau, Looker)
+- Excellent communication and stakeholder management skills
+- Experience with B2B or SaaS products
+- Track record of driving measurable business outcomes
+- Ability to thrive in a fast-paced, ambiguous environment
+
+Nice to have:
+- MBA or advanced degree
+- Experience with machine learning or AI products
+- Background in growth hacking or marketing technology
+
+Generated JD detects:
+
+Title: Senior Product Manager
+Experience: 5+ years
+Hard Skills: SQL, A/B testing, Tableau, Looker, Product Management, Agile, Product Analytics
+Soft Skills: Communication, Stakeholder Management, Data-Driven, Leadership, Mentoring
+Generated Interview Guide includes questions targeting:
+
+SQL, A/B Testing, Product Management, Stakeholder Management, Communication, Leadership, Data-Driven, Mentoring, Strategic Thinking, Problem Solving
+
+
+
+🖥️ Browser Support
+
+Browser	Version	Status
+Chrome	90+	✅
+Firefox	88+	✅
+Safari	14+	✅
+Edge	90+	✅
+Mobile Safari	14+	✅
+Chrome Android	90+	✅
+
+
+
+
+🛣️ Roadmap
+
+ Export to PDF — Generate downloadable PDF documents
+ Multiple output formats — Job board variants (Indeed, Glassdoor, Workable)
+ Custom question count — Slider to choose 5, 10, or 15 questions
+ Language support — Arabic, Spanish, French job descriptions
+ Save history — LocalStorage-based session persistence
+ Dark/Light theme toggle
+ Bulk mode — Process multiple roles at once
+ Scoring rubric generator — Auto-create evaluation scorecards
+
+
+
+
+🤝 Contributing
+
+Contributions are welcome. Here's how:
+
+
+1. Fork & Clone
+
+bash
+bash
+git clone https://github.com/YOUR_USERNAME/recruitment-sandbox.git
+cd recruitment-sandbox
+
+2. Create a Branch
+
+bash
+bash
+git checkout -b feature/your-feature-name
+
+3. Make Changes
+
+The project has zero dependencies, so just edit the files and open index.html to test.
+
+
+4. Commit & Push
+
+bash
+bash
+git add .
+git commit -m "Add: brief description of your change"
+git push origin feature/your-feature-name
+
+5. Open a Pull Request
+
+Describe what you changed and why.
+
+
+Areas Where Help Is Needed
+
+Area	Files	Difficulty
+Add new skill mappings	js/skills.js	🟢 Easy
+Add new interview questions	js/skills.js	🟢 Easy
+Improve text parsing	js/parser.js	🟡 Medium
+Add PDF export	New module	🔴 Advanced
+Accessibility improvements	css/styles.css	🟡 Medium
+
+
+
+
+📄 License
+
+This project is licensed under the MIT License.
+
+
+text
+text
+MIT License
+
+Copyright (c) 2025
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+
+
+
+Built with care — zero dependencies, zero hassle.
+
+
+
+
+If this project saves you time, give it a ⭐ on GitHub.
+
+
+
+
+Report Bug · Request Feature · Contribute
+
+
+
+```
+
+ده README احترافي فيه كل حاجة:
+
+
+Badges في الأول بتوضح التقنيات والترخيص
+Diagram بيشرح flow الشغل
+جدول المهارات الـ 14 domain اللي التطبيق بيتعرف عليهم
+Architecture diagram كامل بـ data flow من الإدخال للإخراج
+Project structure مفصّل كل ملف ووظيفته
+Sample input/output مخبوطين بـ <details> عشان ميطولوش الصفحة
+Browser support جدول متصفحات
+Roadmap مكتوب فيه الخطوات الجاية
+Contributing guide كامل بخطوات واضحة وجدول صعوبة
+MIT License
+
+عايز أعدّل أي جزء فيه؟
+
+Ask me anything! Hold Shift+Enter to start a new line.
+Citation sources (0)
